@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const chartData = [79, 29];
   const navigate = useNavigate();
   const handleRedirect = () => {
     navigate("/Tasks");
@@ -52,7 +51,7 @@ const MainPage = () => {
         <div className=" bg-white rounded-md max-w-[379px] w-full p-6 flex flex-col gap-5">
           <h2 className="text-2xl "> Credits </h2>
           <div className="border border-gray-200 h-[1px] w-full"></div>
-          <CircularChart data={chartData} />
+          <CircularChart />
         </div>
         </div>
       </div>

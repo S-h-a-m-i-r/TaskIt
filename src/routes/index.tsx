@@ -7,7 +7,7 @@ import Signup from '../pages/auth/AuthDesign';
 import ForgotPassword from '../pages/auth/forgotPassword';
 import Newpassword from '../pages/auth/forgotPassword/Newpassword';
 import TasklistPage from '../pages/dashboard/TasklistPage';
-import InprogressTasklist from '../pages/dashboard/inprogressTasks';
+import InprogressTasklist from '../pages/dashboard/InprogressTasks';
 import SubmittedTasklist from '../pages/dashboard/SubmittedTasks';
 import ClosedTasklist from '../pages/dashboard/ClosedTasks';
 import RecurringTasklist from '../pages/dashboard/RecurringTasks';
