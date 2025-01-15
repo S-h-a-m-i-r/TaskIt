@@ -1,5 +1,5 @@
 import trendingUp from '../assets/icons/trendingUp_icon.svg'
-import inProgress from '../assets/icons/inProgress_icon.svg'
+import inProgress from '../assets/icons/Inprogress_icon.svg'
 import { To, useNavigate } from 'react-router-dom';
 
 interface DashboardCardProps {
