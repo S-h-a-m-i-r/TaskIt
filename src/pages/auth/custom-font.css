@@ -1,0 +1,8 @@
+font-face {
+  font-family: 'AsteriskFont';
+  src: url('path/to/asterisk-font.woff2') format('woff2');
+}
+
+.asterisk-password {
+  font-family: 'AsteriskFont';
+}
