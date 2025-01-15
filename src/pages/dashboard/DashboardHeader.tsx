@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import notifucation from '../../assets/icons/notification_icon.svg';
+import notifucation from '../../assets/icons/Notification_icon.svg';
 import search from '../../assets/icons/Search_icon.svg'
 import { To, useNavigate } from 'react-router-dom';
 import ThemeSwitcher from '../../components/ThemeSwitcher';
