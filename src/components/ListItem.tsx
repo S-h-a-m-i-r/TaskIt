@@ -1,8 +1,11 @@
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal } from "react"
+interface ListItemProps {
+  item: string | undefined;
+  icon: string | undefined;
+  content: string;
 
-const ListItem = (props: { item: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | null | undefined; icon: string | undefined; content: string | number | boolean | ReactElement<unknown, string | JSXElementConstructor<unknown>> | Iterable<ReactNode> | ReactPortal | null | undefined }) => {
-  
-  console.log('the type is', props.item)
+}
+
+const ListItem: React.FC<ListItemProps> = (props) =>  {
   
   return (
     <div className='cursor-pointer w-full flex justify-between p-4 bg-transparent rounded-md border border-[#D1D5DB]'>
