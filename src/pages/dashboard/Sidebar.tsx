@@ -89,7 +89,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-      {isModalOpen && (  <Model isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />)}
+      {isModalOpen && (  <Model setIsModalOpen={setIsModalOpen} isModal={isModalOpen} />)}
     </aside>
   );
 };

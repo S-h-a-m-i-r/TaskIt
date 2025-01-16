@@ -1,9 +1,13 @@
+type SetIsModalOpenType = (value: boolean | ((prevState: boolean) => boolean)) => void;
+interface ModelProps {
+  setIsModalOpen: SetIsModalOpenType;
+  isModal: boolean
+}
 
-const  Model = ({setIsModalOpen }) => {
+const Model: React.FC<ModelProps> = ({ setIsModalOpen, isModal }) => {
   const closeModal = () => setIsModalOpen(false);
-
-  const handleClickOutside = (event) => {
-    if (event.target.id !== "modal") { closeModal();}
+  const handleClickOutside = () => {
+    if (isModal) { closeModal();}
   };
 	return (
     <div
