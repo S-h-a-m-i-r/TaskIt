@@ -16,7 +16,7 @@ const ClosedTasklist = () => {
   return (
     <div className='p-9 w-full flex flex-col gap-4 dark:text-black'>
       <div className='flex items-center gap-2'>
-        <div className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex" onClick={handleGoBack}>
+        <div className="p-2 cursor-pointer bg-custom-background rounded-full flex" onClick={handleGoBack}>
           <img src = {backIcon} alt='back'/>
         </div> 
         <span className='font-semibold text-2xl'> {capitalizedPageTitle} Tasks</span>

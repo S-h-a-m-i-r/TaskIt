@@ -1,11 +1,24 @@
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { DashboardSvgIcon, CreditsSvgIcon, ProfileSvgIcon } from '../../components/svg';
 import taskit from '../../assets/Task_it_logo.svg'
 import addon from '../../assets/addon.png'
 import bigCloud from '../../assets/icons/big_cloud.svg'
 import smallCloud from '../../assets/icons/small_cloud.svg'
+import logout from '../../assets/icons/Logout_icon.svg'
+import Model from '../../components/Model'
 
 const Sidebar = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleLogoutClick = () => {
+    setIsModalOpen(true);
+  };
+
+
+  useEffect(() => {
+    console.log("state updated")
+  }, [isModalOpen])
+  
   return (
     <aside className="w-60 bg-white dark:bg-black py-4 flex flex-col relative ">
       <div className='sticky top-10' >
@@ -13,7 +26,7 @@ const Sidebar = () => {
           <img src = {taskit} alt='taskit logo'/>
           <h1 className='font-semibold text-2xl'>TaskIt</h1>
         </div>
-        <nav>
+        <nav className='relative'>
           <ul>
           <li className='text-black dark:text-[#FFFFFF]'>
               <NavLink
@@ -60,6 +73,8 @@ const Sidebar = () => {
                 )}
               </NavLink>
             </li>
+            <div className='my-5 w-full border'></div>
+            <li className='flex gap-2 items-center px-4 py-4 cursor-pointer hover:bg-slate-50' onClick={handleLogoutClick}> <img src ={logout}/> <span> Logout </span></li>
           </ul>
         </nav>
       </div>
@@ -74,6 +89,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+      {isModalOpen && (  <Model isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />)}
     </aside>
   );
 };

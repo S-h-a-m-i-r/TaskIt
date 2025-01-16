@@ -20,12 +20,12 @@ const CreditsPage = () => {
         </div> 
         <span className='font-semibold text-2xl'> {capitalizedPageTitle}</span>
       </div>
-      <h1 className='text-[48px] font-semibold text-left'> Your credits are <span className='text-[#ef4444]'> low </span></h1>
+      <h1 className='text-[48px] font-semibold text-left'> Your credits are <span className='text-primary-500'> low </span></h1>
       <div className='flex gap-10 w-full justify-between'>
         <PaymentForm />
         <div className='max-w-[425px] h-[627px] w-full p-9 relative bg-white rounded-md flex flex-col justify-between overflow-hidden'>
           <div className='flex items-center'>
-            <p className='text-[#ef4444] text-[128px] font-normal'>
+            <p className='text-primary-500 text-[128px] font-normal'>
               0
             </p>
             <p className='text-[#4B5563] text-lg mt-16'> Credits remaining</p>
@@ -33,7 +33,7 @@ const CreditsPage = () => {
           <div>
           <div className="relative z-10 flex flex-col gap-4 mb-6">
             <h2 className="text-[36px] text-left font-semibold">Get Monthly</h2>
-            <p className="text-lg text-left font-normal">For Only <span className='font-bold text-[#4880FF] text-lg'>55 USD</span> a month</p>
+            <p className="text-lg text-left font-normal">For Only <span className='font-bold text-primary-400 text-lg'>55 USD</span> a month</p>
             <button className="z-20 bg-primary-100 text-white w-full rounded-full p-2 mt-2 ">Buy Now</button>
           </div>
             <img src={credits} className='absolute bottom-[-20px] right-[-10px] max-h-[550px] z-0' />

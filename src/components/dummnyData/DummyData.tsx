@@ -4,10 +4,10 @@ import closed_icon from "../../assets/icons/closed_icon.svg";
 import recurring_icon from "../../assets/icons/recurring_icon.svg"
 
 export const CardsData = [
-  { title: "Tasks in progress", percent: 3.5, count: 520, icon: {inprogress_icon}, path: '/inProgress'},
-  { title: "Tasks submitted", percent: 8.5, count: 66, icon: {submitted_icon}, path: '/submitted'},
-  { title: "Tasks closed", percent: 16, count: 441, icon: {closed_icon}, path: '/closed'},
-  { title: "Recurring Tasks", percent: 7, count: 33, icon: {recurring_icon}, path: '/recurring'},
+  { title: "Tasks in progress", percent: 3.5, count: 520, icon: inprogress_icon, path: '/inProgress'},
+  { title: "Tasks submitted", percent: 8.5, count: 66, icon: submitted_icon, path: '/submitted'},
+  { title: "Tasks closed", percent: 16, count: 441, icon: closed_icon, path: '/closed'},
+  { title: "Recurring Tasks", percent: 7, count: 33, icon: recurring_icon, path: '/recurring'},
 ];
 
 export const TasksHeadersData = [

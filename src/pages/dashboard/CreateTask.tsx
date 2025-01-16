@@ -44,10 +44,10 @@ const CreateTask = () => {
       <div className='w-full flex justify-between'>
         <div className=' flex flex-col gap-5 max-w-[415px] w-full'>
           <h2 className='text-2xl font-semibold text-left '> Attachemnts</h2>
-          <button className='rounded-md py-4 px-2 flex gap-2 justify-center border border-[#D1D5DB] w-full'>
+          <button className='rounded-md py-4 px-2 flex gap-2 justify-center border border-custom-background w-full'>
             <img src={addIcon} alt='add image' /> Add
           </button>
-          <button className='rounded-md py-4 px-2 flex gap-2 justify-center border border-[#D1D5DB] w-full'>
+          <button className='rounded-md py-4 px-2 flex gap-2 justify-center border border-custom-background w-full'>
             <img src={uploadIcon} alt='add image' /> upload
           </button>
         </div>
@@ -58,7 +58,7 @@ const CreateTask = () => {
             <div className='w-full justify-start flex px-10'>
             <img src={addOn} alt='credit icon' width={30}/>
             </div>
-            <p className='text-[#00B69B] text-lg font-medium'> 12 credits left </p>
+            <p className='text-primary-300 text-lg font-medium'> 12 credits left </p>
           </div>
           <button
           className= "w-full bg-primary-100 text-white border border-gray-300 rounded-full p-3 transition-all duration-1000"

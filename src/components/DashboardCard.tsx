@@ -1,12 +1,11 @@
 import trendingUp from '../assets/icons/trendingUp_icon.svg'
-import inProgress from '../assets/icons/Inprogress_icon.svg'
 import { To, useNavigate } from 'react-router-dom';
 
 interface DashboardCardProps {
   title: string;
   percent: number;
   count: number;
-  icon: unknown;
+  icon: string | undefined;
   path: string;
 
 }
@@ -29,12 +28,13 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
           <p className='font-bold text-3xl'> {props.count} </p>
         </div>
         <div className='bg-gray-200 p-3 rounded-full'>
-          <img src={inProgress} alt = 'icon'/>
+          <img src={props.icon} alt = 'icon'/>
+
         </div>
       </div>
       <div className='flex items- justify-start mt-7 gap-2'>
           <img src={trendingUp} alt='trending up/down icon'/>
-          <span className='text-[#00B69B]'>{`${props.percent}%`}</span>
+          <span className='text-primary-300'>{`${props.percent}%`}</span>
           <span>Up</span>
         </div>
     </div>

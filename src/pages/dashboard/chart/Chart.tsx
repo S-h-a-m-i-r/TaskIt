@@ -62,7 +62,6 @@ const UsageChart = () => {
         </div>
       </div>
 
-      {/* Right side: Doughnut chart */}
       <div style={{ width: "120px", height: "120px", position: "relative" }}>
         <Doughnut data={data} options={options} />
         <div

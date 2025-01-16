@@ -23,12 +23,12 @@ const AllTasksList = () => {
               className="hover:bg-gray-200 cursor-pointer"
               onClick={() => redirection(task.task_id)}
               >
-                <td className=" text-left py-5 text-[#4880FF] font-normal text-sm border-b">{task.name}</td>
-                <td className="text-left py-5 font-normal text-sm border-b">{task.task_id}</td>
-                <td className="text-left py-5 font-normal text-sm border-b">{task.Date}</td>
-                <td className="text-left py-5 font-normal text-sm border-b">{task.status}</td>
-                <td className="text-left py-5 font-normal text-sm border-b">{task.action}</td>
-                <td className="text-left py-5 font-normal text-sm border-b">{task.Recurring}</td>
+                <td className=" text-left py-5 text-primary-400 font-normal text-sm border-b border-custom-border">{task.name}</td>
+                <td className="text-left py-5 font-normal text-sm border-b border-custom-border">{task.task_id}</td>
+                <td className="text-left py-5 font-normal text-sm border-b border-custom-border">{task.Date}</td>
+                <td className="text-left py-5 font-normal text-sm border-b border-custom-border">{task.status}</td>
+                <td className="text-left py-5 font-normal text-sm border-b border-custom-border">{task.action}</td>
+                <td className="text-left py-5 font-normal text-sm border-b border-custom-border">{task.Recurring}</td>
               </tr>
             ))}
           </tbody>
