@@ -11,7 +11,7 @@ export const CardsData = [
 ];
 
 export const TasksHeadersData = [
-  'Name', 'Task Id', 'Date', 'Status', 'Actions', 'Recurring'
+  'Name', 'Task Id', 'Date', 'Actions', 'Recurring'
 ]
 
 export const tasksBodyData = [

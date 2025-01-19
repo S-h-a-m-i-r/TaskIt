@@ -14,7 +14,7 @@ const ClosedTasklist = () => {
     navigate(-1); 
   };
   return (
-    <div className='p-9 w-full flex flex-col gap-4 dark:text-black'>
+    <div className='p-9 w-full flex flex-col gap-4'>
       <div className='flex items-center gap-2'>
         <div className="p-2 cursor-pointer bg-custom-background rounded-full flex" onClick={handleGoBack}>
           <img src = {backIcon} alt='back'/>

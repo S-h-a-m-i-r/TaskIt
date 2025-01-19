@@ -2,17 +2,28 @@ import { useNavigate, useLocation } from "react-router-dom";
 import backIcon from '../../assets/icons/ArrowLeft_icon.svg';
 import background from '../../assets/background.png';
 import profile from '../../assets/profile.png';
+import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
+import { useState } from "react";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [showPassword, setShowPassword] = useState({ password: false, confirmPassword: false });
   const pageTitle = location.pathname.split("/").pop() || 'Tasks';
   const capitalizedPageTitle = pageTitle.charAt(0).toUpperCase() + pageTitle.slice(1);
   const handleGoBack = () => {
     navigate(-1); 
   };
+
+  const togglePassword = () => {
+    setShowPassword((prev) => ({ ...prev, password: !prev.password }));
+  };
+  const toggleConfirmPassword = () => {
+    setShowPassword((prev) => ({ ...prev, confirmPassword: !prev.confirmPassword }));
+  };
+
   return (
-    <div className='p-9 w-full flex flex-col gap-10 dark:text-black'>
+    <div className='p-9 w-full flex flex-col gap-10'>
       <div className='flex items-center gap-2'>
         <div className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex" onClick={handleGoBack}>
           <img src = {backIcon} alt='back'/>
@@ -38,9 +49,6 @@ const ProfilePage = () => {
             className="bg-transparent flex-grow focus:outline-none focus:ring-0 focus:border-none"
             defaultValue="Zain"
           />
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
         </div>
       </div>
 
@@ -55,9 +63,7 @@ const ProfilePage = () => {
             className=" bg-transparent flex-grow outline-none"
             defaultValue="Zainworkspace@xyz.com"
           />
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
+
         </div>
       </div>
 
@@ -66,10 +72,12 @@ const ProfilePage = () => {
           Password
         </label>
         <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-0">
-          <input type="password" id="password" className=" bg-transparent flex-grow outline-none" defaultValue="**********" />
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
+        <input
+            type={showPassword.password ? 'text' : 'password'}
+            id="confirmPassword"
+            className=" bg-transparent flex-grow outline-none"
+          />
+          <div onClick={togglePassword}> {showPassword.password ? <IoEyeOffOutline/> : <IoEyeOutline/>}</div>
         </div>
       </div>
 
@@ -78,15 +86,12 @@ const ProfilePage = () => {
           Confirm password
         </label>
         <div className="flex items-center border rounded-md px-3 py-2 focus-within:ring-0">
-          <input
-            type="password"
+        <input
+            type={showPassword.confirmPassword ? 'text' : 'password'}
             id="confirmPassword"
             className=" bg-transparent flex-grow outline-none"
-            defaultValue="**********"
           />
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
+          <div onClick={toggleConfirmPassword}> {showPassword.confirmPassword ? <IoEyeOffOutline/> : <IoEyeOutline/>}</div>
         </div>
       </div>
 

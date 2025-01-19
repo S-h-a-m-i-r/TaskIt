@@ -17,10 +17,10 @@ const MainPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-9 dark:text-black">
+    <div className="flex flex-col gap-5 p-9 ">
       {/* dynamic name based on user */}
       <div className="flex gap-2 items-center">
-        <h1 className="text-2xl font-semibold dark:text-black"> Good Morning {`Zain`}!</h1>
+        <h1 className="text-2xl font-semibold"> Good Morning {`Zain`}!</h1>
       </div>
       <div className="mt-14 flex flex-wrap gap-4">
         {CardsData.map((element, index) => (

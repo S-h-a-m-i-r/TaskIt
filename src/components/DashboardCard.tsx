@@ -19,7 +19,7 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
 
   return (
     <div 
-      className='max-w-[262px] flex-1 w-64 bg-white dark:text-black rounded-md p-4 shadow-md cursor-pointer transform transition-transform hover:translate-y-[-5px]'
+      className='max-w-[262px] flex-1 w-64 bg-white rounded-md p-4 shadow-md cursor-pointer transform transition-transform hover:translate-y-[-5px]'
       onClick={() => handleClick(props.path)}
     >
       <div className='w-full flex justify-between items-start'> 

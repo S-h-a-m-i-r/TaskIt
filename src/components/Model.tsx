@@ -19,15 +19,15 @@ const Model: React.FC<ModelProps> = ({ setIsModalOpen, isModal }) => {
     <div className="absolute inset-0 bg-black opacity-70"></div>
   
     
-    <div className="relative z-10 w-full max-w-md max-h-full p-4 bg-white rounded-lg shadow dark:bg-gray-700">
+    <div className="relative z-10 w-full max-w-md max-h-full p-4 bg-white rounded-lg shadow ">
       
       <div className="flex items-center justify-between p-4 md:p-5 rounded-t">
-        <h3 className="w-full text-center text-[36px] font-semibold text-gray-900 dark:text-white">
+        <h3 className="w-full text-center text-[36px] font-semibold text-gray-900 ">
          Logout
         </h3>
       </div>
       <p className="text-xl text-[#9CA3AF]"> Do you really wanna logout</p>      
-      <div className="flex gap-3 items-center p-4 md:p-5 dark:border-gray-600 w-full justify-center mt-5 mb-3">
+      <div className="flex gap-3 items-center p-4 md:p-5 w-full justify-center mt-5 mb-3">
         <button
           data-modal-hide="default-modal"
           type="button"

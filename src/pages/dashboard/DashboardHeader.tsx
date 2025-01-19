@@ -2,7 +2,6 @@ import { useState } from 'react';
 import notifucation from '../../assets/icons/Notification_icon.svg';
 import search from '../../assets/icons/Search_icon.svg'
 import { To, useNavigate } from 'react-router-dom';
-import ThemeSwitcher from '../../components/ThemeSwitcher';
 
 
 const DashboardHeader = () => {
@@ -63,7 +62,6 @@ const DashboardHeader = () => {
         >
           <img src={notifucation} />
         </button>
-        <ThemeSwitcher/>
         <button
           className="bg-primary-100 text-white border border-gray-300 rounded-full p-3 transition-all duration-1000"
           onClick={() => redirection('/createTask')}
