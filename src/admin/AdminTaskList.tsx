@@ -96,7 +96,7 @@ const CustomDropdown = () => {
                 setIsOpen(false);
               }}
               >
-                <div className="px-4 flex gap-3 items-center relative">
+                <div className="px-4 flex gap-3 items-center justify-between relative">
                   {option.label}
                   <div className="flex items-center pr-2 pointer-events-none">
                   <svg
