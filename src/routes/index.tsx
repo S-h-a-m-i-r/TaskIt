@@ -14,6 +14,7 @@ import RecurringTasklist from '../pages/dashboard/RecurringTasks';
 import TaskDetailsPage from '../pages/dashboard/TaskDetailsPage';
 import NotificationPage from '../pages/dashboard/NotificationPage';
 import CreateTask from '../pages/dashboard/CreateTask';
+import AdminDashboardLayout from '../admin/layout'
 
 export const router = createBrowserRouter([
   {
@@ -87,6 +88,34 @@ export const router = createBrowserRouter([
             element: <CreateTask />,
           },
         ],
+      },
+    ],
+  },
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: 'login',
+        element: <Login />,
+      },
+      {
+        path: 'signup',
+        element: <Signup />,
+      },
+      {
+        path: 'forgot-password',
+        element: <ForgotPassword />,
+        children: [
+          {
+            path: 'new-password',
+            element: <Newpassword />,
+          },
+        ],
+      },
+      {
+        path: '/admin',
+        element: <AdminDashboardLayout />,
       },
     ],
   },

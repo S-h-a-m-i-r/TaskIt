@@ -31,23 +31,23 @@ function PaymentForm() {
           <button
             type="button"
             onClick={() => handlePaymentChange('Bank Transfer')}
-            className={`flex flex-col justify-between py-3 px-4 w-52 border rounded-md text-sm font-medium  text-gray-700
+            className={`flex flex-col justify-between py-3 px-4 text-left w-52 border rounded-md text-sm font-medium  text-gray-700
               ${paymentMethod === 'Bank Transfer' 
                 ? 'bg-white border-white' 
                 : 'bg-transparen'}`}
           >
-            <img src={banktransfer} alt='bank transfer' />
+            <img src={banktransfer} alt='bank transfer' className='h-5 w-5' />
             Bank Transfer
           </button>
           <button
             type="button"
             onClick={() => handlePaymentChange('Credit Card')}
-            className={` flex flex-col justify-between py-3 w-52 px-5 border rounded-md text-sm font-medium  text-gray-700
+            className={` flex flex-col justify-between py-3 w-52 h-20 text-left px-5 border rounded-md text-sm font-medium  text-gray-700
               ${paymentMethod === 'Credit Card' 
                 ? 'bg-white text-gray-700' 
                 : 'bg-transparent'}`}
           >
-            <img src={creditCard} alt='credit card' />
+            <img src={creditCard} alt='credit card' className='h-5 w-5' />
             Credit Card
           </button>
         </div>
