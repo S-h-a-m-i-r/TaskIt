@@ -6,9 +6,8 @@ const Sidebar = () => {
 	return (
 		<aside className="w-60 bg-white py-2 flex flex-col h-full ">
 			<div className="sticky top-10">
-				<div className="flex items-center gap-4 mx-2">
+				<div className="flex items-center gap-4 mx-2 mt-6">
 					<img src={taskit} alt="taskit logo" />
-					<h1 className="font-semibold text-2xl">TaskIt</h1>
 				</div>
 				<nav className="relative mt-12">
 					<ul>

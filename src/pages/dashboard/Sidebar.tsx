@@ -24,9 +24,8 @@ const handleNavigation = () => {
 	return (
 		<aside className="w-60 bg-white py-4 flex flex-col relative ">
 			<div className="sticky top-10">
-				<div className="flex py-9 items-center gap-4 mx-2">
+				<div className="flex pb-9 mb-12 items-center gap-4 mx-2">
 					<img src={taskit} alt="taskit logo" />
-					<h1 className="font-semibold text-2xl">TaskIt</h1>
 				</div>
 				<nav className="relative">
 					<ul>
