@@ -9,7 +9,7 @@ import logout from "../../assets/icons/Logout_icon.svg";
 import Model from "../../components/Model";
 
 const Sidebar = () => {
-  const navigate = useNavigate()
+	const navigate = useNavigate();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const handleLogoutClick = () => {
 		setIsModalOpen(true);
@@ -18,9 +18,9 @@ const Sidebar = () => {
 	useEffect(() => {
 		console.log("state updated");
 	}, [isModalOpen]);
-const handleNavigation = () => {
-  navigate('/credits')
-}
+	const handleNavigation = () => {
+		navigate("/credits");
+	};
 	return (
 		<aside className="w-60 bg-white py-4 flex flex-col relative ">
 			<div className="sticky top-10">
@@ -34,12 +34,12 @@ const handleNavigation = () => {
 								to="/"
 								className={({ isActive }) =>
 									isActive
-										? "flex py-4 px-4 w-full bg-primary-100 text-white"
+										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
 							>
 								{({ isActive }) => (
-									<div className="flex items-center gap-2">
+									<div className="flex items-center gap-2 ">
 										<DashboardSvgIcon stroke={isActive ? "white" : "black"} />
 										Dashboard
 									</div>
@@ -51,7 +51,7 @@ const handleNavigation = () => {
 								to="/credits"
 								className={({ isActive }) =>
 									isActive
-										? "flex py-4 px-4 w-full bg-primary-100 text-white"
+										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
 							>
@@ -68,7 +68,7 @@ const handleNavigation = () => {
 								to="/profile"
 								className={({ isActive }) =>
 									isActive
-										? "flex py-4 px-4 w-full bg-primary-100 text-white"
+										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
 							>
@@ -101,7 +101,7 @@ const handleNavigation = () => {
 						</p>
 						<p>Get 3 tasks credits for only</p>
 						<button
-							className="w-full rounded-full bg-primary-100 text-white flex justify-center gap-2 items-center py-1"
+							className="w-full rounded-full bg-primary-50 text-white flex justify-center gap-2 items-center py-1"
 							onClick={handleNavigation}
 						>
 							Buy Now <img src={addon} width={20} />

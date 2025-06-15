@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import InputField from "../../components/InputField";
 import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const CreditCardDetails = () => {
 	const navigate = useNavigate();
 	const {
 		register,
@@ -19,10 +19,10 @@ const Signup = () => {
 
 	const onSubmit = (data: FormData) => {
 		console.log(data);
-		navigate("/signup/plan");
+		navigate("/signup/createPassoword");
 	};
 	const handleClick = () => {
-		navigate("/signup/plan");
+		navigate("/");
 	};
 	return (
 		<form
@@ -30,72 +30,59 @@ const Signup = () => {
 			className=" text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
 		>
 			<div className=" text-center w-full space-y-2 text-[32px] font-bold [tracking:0.01em] text-primary-100">
-				<h2>Sign Up Now</h2>
+				<h2>Credit Card Details</h2>
 			</div>
 			<div className=" text-center w-full space-y-2 text-[16px] font-normal mb-1 text-gray-600">
-				<p>Sign up today and unlock the full potential of TaskAway!</p>
+				<p>Unlock the full potential of TaskAway!</p>
 			</div>
 			<div className="grid grid-cols-2 gap-4">
 				<InputField
-					id="firstName"
-					label="First Name"
+					id="cardName"
+					label="Name on the card"
 					register={register}
 					onChange={clearErrors}
 					errors={errors}
-					placeHolder="First Name"
+					placeHolder="e.g, John Doe"
 					type="text"
 				/>
 				<InputField
-					id="lastName"
-					label="Last Name"
+					id="cardNumber"
+					label="Card Number"
 					register={register}
 					onChange={clearErrors}
 					errors={errors}
-					placeHolder="Last Name"
+					placeHolder="1234 5678 9012 3456"
 					type="text"
 				/>
 
 				<InputField
-					id="email"
-					label="email"
+					id="expiry"
+					label="Expiry Date"
 					register={register}
 					onChange={clearErrors}
 					errors={errors}
-					placeHolder="email"
+					placeHolder="MM/YY"
 					type="text"
 				/>
 				<InputField
-					id="phoneNumber"
-					label="Phone Number"
+					id="CVV"
+					label="CVV"
 					register={register}
 					onChange={clearErrors}
 					errors={errors}
-					placeHolder="Phone Number"
+					placeHolder="e.g, 123"
 					type="text"
 				/>
-
-				{/* This one spans 1 columns to appear in a row by itself */}
-				<div className="col-span-1">
-					<InputField
-						id="username"
-						label="User Name"
-						register={register}
-						onChange={clearErrors}
-						errors={errors}
-						placeHolder="User Name"
-						type="text"
-					/>
-				</div>
 			</div>
 			<button
-				//  type="submit"
+				// type="submit"
 				onClick={handleClick}
 				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
 			>
-				Sign Up
+				Continue
 			</button>
 		</form>
 	);
 };
 
-export default Signup;
+export default CreditCardDetails;
