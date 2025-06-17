@@ -32,7 +32,7 @@ const DashboardHeader = () => {
 	};
 
 	return (
-		<div className="absolute top-10 right-12 flex items-center gap-2">
+		<div className="absolute hidden top-10 right-12 md:flex items-center gap-2">
 			{isExpanded ? (
 				<div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-64 transition-all duration-1000">
 					<input

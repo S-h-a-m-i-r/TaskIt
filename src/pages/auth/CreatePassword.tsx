@@ -1,17 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import InputField from "../../components/InputField";
 import { useForm } from "react-hook-form";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
-import tickMark from "../../../assets/icons/tickmark.svg";
 import { useNavigate } from "react-router-dom";
-import InputField from "../../../components/InputField";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
-interface FormData {
-	password: string;
-	confirmPassword: string;
-	confirm_password: string
-}
-
-const Newpassword: React.FC = () => {
+const CreatePassword = () => {
+	const navigate = useNavigate();
 	const [showPasswords, setShowPasswords] = useState({
 		password: false,
 		confirm_password: false,
@@ -21,20 +15,12 @@ const Newpassword: React.FC = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormData>();
-	const [buttonText, setButtonText] = useState("Update");
-	const navigate = useNavigate();
-	const onSubmit = (data: FormData) => {
-		console.log("New Password:", data.password);
-		setButtonText("Sign In");
-		if (buttonText === "Sign In") {
-			navigate("/login");
-		}
-	};
 
-	const handleClick = () => {
-		navigate("/");
-	};
-
+	interface FormData {
+		email: string;
+		password: string;
+		confirm_password: string;
+	}
 	const togglePasswordVisibility = (field: 'password' | 'confirm_password') => {
 		setShowPasswords((prev) => ({
 		  ...prev,
@@ -42,12 +28,25 @@ const Newpassword: React.FC = () => {
 		}));
 	  };
 
+	const onSubmit = (data: FormData) => {
+		console.log(data);
+		navigate("/signup/createPassoword");
+	};
+	const handleClick = () => {
+		navigate("/");
+	};
 	return (
-		<div className="flex flex-col items-center justify-center gap-5">
-			<h1 className="text-black font-bold text-2xl  w-full text-center">Forgot password</h1>
-			<p className="text-gray-100 text-xl font-normal text-center w-full">Please enter your new password below</p>
-			<form onSubmit={handleSubmit(onSubmit)} className=" w-full mt-5 gap-5">
-				<div className="flex w-full gap-5">
+		<form
+			onSubmit={handleSubmit(onSubmit)}
+			className=" text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
+		>
+			<div className=" text-center w-full space-y-2 text-[32px] font-bold [tracking:0.01em] text-primary-100">
+				<h2>Create Password</h2>
+			</div>
+			<div className=" text-center w-full space-y-2 text-[16px] font-normal mb-1 text-gray-600">
+				<p>Unlock the full potential of TaskAway!</p>
+			</div>
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div className="w-full relative">
 					<InputField<FormData>
 						id="password"
@@ -72,7 +71,6 @@ const Newpassword: React.FC = () => {
 						 {showPasswords.password ? <IoEyeOutline /> : <IoEyeOffOutline />}
 					</div>
 				</div>
-
 				<div className="w-full relative">
 				<InputField<FormData>
 					id="confirm_password"
@@ -91,25 +89,16 @@ const Newpassword: React.FC = () => {
 					{showPasswords.confirm_password ? <IoEyeOutline /> : <IoEyeOffOutline />}
 				</div>
 				</div>
-				</div>
-
-				<button
-					// type="submit"
-					className="w-full bg-primary-50 text-white py-2 px-4 mt-5 rounded-full hover:bg-primary-200"
-					onClick={handleClick}
-				>
-					{buttonText}
-				</button>
-				{buttonText === "Sign In" && (
-					<div className="flex w-full items-center gap-2 text-left">
-						{" "}
-						<img src={tickMark} />
-						<span className="text-gray-100 font-light">Password Update successfully</span>
-					</div>
-				)}
-			</form>
-		</div>
+			</div>
+			<button
+				// type="submit"
+				onClick={handleClick}
+				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
+			>
+				Create Account
+			</button>
+		</form>
 	);
 };
 
-export default Newpassword;
+export default CreatePassword;

@@ -75,7 +75,7 @@ export default function PricingPlans() {
 							selectedPlan ? "border-blue-500 border-2" : "border-gray-200"
 						} border`}
 					>
-						<div className="p-8 bg-white rounded-2xl" id="0">
+						<div className="p-8 max-md:pb-20 bg-white rounded-2xl" id="0">
 							<div className="h-full py-1 bg-white">
 								<div className="mb-6 bg-white">
 									<h2 className="text-2xl font-bold text-gray-900 mb-2 bg-white">Unlimited Plan</h2>

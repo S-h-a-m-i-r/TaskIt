@@ -31,7 +31,7 @@ const UsageChart = () => {
   };
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex max-md:flex-col max-md:gap-5 items-center justify-between">
       <div className="mr-6 flex-1">
         <div className="flex items-center justify-between w-full mb-2">
           <span

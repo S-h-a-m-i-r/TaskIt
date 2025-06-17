@@ -16,7 +16,7 @@ const AuthDesign: React.FC = () => {
 
 	return (
 		<div className="w-full flex flex-col justify-between items-center font-sans p-8">
-			<div className="h-[250px] w-full">
+			<div className="h-[500px] md:h-[250px] w-full">
 				<AuthFormSidebar image={authDesign} />
 			</div>
 

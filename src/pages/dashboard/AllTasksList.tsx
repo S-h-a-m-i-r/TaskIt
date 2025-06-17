@@ -27,11 +27,16 @@ const AllTasksList = () => {
 			<table className="w-full">
 				<thead>
 					<tr>
-						{TasksHeadersData.map((header, index) => (
-							<th key={index} className="py-3 pl-5 text-left text-[14px] font-normal">
-								{header}
-							</th>
-						))}
+					{TasksHeadersData.map((header, index) => (
+  <th
+    key={index}
+    className={`py-3 pl-5 text-left text-[14px] font-normal ${
+      ['Task Id', 'Date', 'Recurring'].includes(header) ? 'hidden md:table-cell' : ''
+    }`}
+  >
+    {header}
+  </th>
+))}
 					</tr>
 				</thead>
 				<tbody>
@@ -51,11 +56,11 @@ const AllTasksList = () => {
 							}`}
 							onClick={() => redirection(task.task_id)}
 						>
-							<td className=" text-left py-5 pl-5 text-primary-400 font-normal text-sm border-b border-custom-border">
+							<td className=" text-left py-5 pl-5 text-primary-400 font-normal text-sm border-b border-custom-border max-md:w-fit">
 								{task.name}
 							</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">{task.task_id}</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">{task.Date}</td>
+							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">{task.task_id}</td>
+							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">{task.Date}</td>
 							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">
 								<div className="relative inline-block w-full">
 									<select
@@ -68,7 +73,7 @@ const AllTasksList = () => {
 										<option value="Completed">Completed</option>
 										<option value="In Progress">In Progress</option>
 										<option value="Task Closed">Task Closed</option>
-										<option value="Pending">submitted</option>
+										<option value="Submitted">submitted</option>
 									</select>
 									<div className="absolute inset-y-0 right-5 flex items-center pr-2 pointer-events-none">
 										<svg
@@ -86,7 +91,7 @@ const AllTasksList = () => {
 									</div>
 								</div>
 							</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">
+							<td className=" max-md:hidden text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">
 								{task.Recurring}
 							</td>
 						</tr>

@@ -24,9 +24,9 @@ const CreditsPage = () => {
 				{" "}
 				Your credits are <span className="text-primary-500"> low </span>
 			</h1>
-			<div className="flex gap-10 w-full justify-between">
+			<div className="flex max-md:flex-col gap-10 w-full justify-between">
 				<PaymentForm />
-				<div className="max-w-[425px] h-[627px] w-full p-9 relative bg-white rounded-md flex flex-col justify-between overflow-hidden">
+				<div className="md:max-w-[425px] h-[627px] w-full p-9 relative bg-white rounded-md flex flex-col justify-between overflow-hidden">
 					<div className="flex items-center">
 						<p className="text-primary-500 text-[128px] font-normal">0</p>
 						<p className="text-[#4B5563] text-lg mt-16"> Credits remaining</p>

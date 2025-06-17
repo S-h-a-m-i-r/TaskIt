@@ -8,13 +8,16 @@ const Signup = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
-		clearErrors,
 	} = useForm<FormData>();
 
 	interface FormData {
 		email: string;
 		password: string;
 		confirm_password: string;
+		first_name: string;
+		last_name: string;
+		phone_number: string;
+		user_name: string;
 	}
 
 	const onSubmit = (data: FormData) => {
@@ -35,55 +38,62 @@ const Signup = () => {
 			<div className=" text-center w-full space-y-2 text-[16px] font-normal mb-1 text-gray-600">
 				<p>Sign up today and unlock the full potential of TaskAway!</p>
 			</div>
-			<div className="grid grid-cols-2 gap-4">
-				<InputField
-					id="firstName"
-					label="First Name"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="First Name"
-					type="text"
-				/>
-				<InputField
-					id="lastName"
-					label="Last Name"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="Last Name"
-					type="text"
-				/>
-
-				<InputField
-					id="email"
-					label="email"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="email"
-					type="text"
-				/>
-				<InputField
-					id="phoneNumber"
-					label="Phone Number"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="Phone Number"
-					type="text"
-				/>
+			<div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
+			<InputField<FormData>
+							id="first_name"
+							label="Card Number"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="Enter First	 Name"
+							type='text'
+						/>
+				<InputField<FormData>
+							id="last_name"
+							label="Card Number"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="Enter Last Name"
+							type='text'
+						/>
+<InputField<FormData>
+						id="email"
+						label="Email"
+						register={register}
+						errors={errors}
+						placeHolder="Email"
+						type="text"
+						validation={{
+							required: "Email is required",
+							pattern: {
+								value: /^\S+@\S+$/i,
+								message: "Invalid email address"
+							}
+						}}
+						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
+					/>
+				<InputField<FormData>
+						id="phone_number"
+						label="Phone Number"
+						register={register}
+						errors={errors}
+						placeHolder="Enter Phone No"
+						type="text"
+						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
+					/>
 
 				{/* This one spans 1 columns to appear in a row by itself */}
 				<div className="col-span-1">
-					<InputField
-						id="username"
+				<InputField<FormData>
+						id="user_name"
 						label="User Name"
 						register={register}
-						onChange={clearErrors}
 						errors={errors}
-						placeHolder="User Name"
+						placeHolder="Enter Username"
 						type="text"
+						
+						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
 					/>
 				</div>
 			</div>
@@ -92,7 +102,7 @@ const Signup = () => {
 				onClick={handleClick}
 				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
 			>
-				Sign Up
+				Continue
 			</button>
 		</form>
 	);

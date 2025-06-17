@@ -35,6 +35,7 @@ import AdminDashboardLayout from "../admin/layout";
 import Plan from "../pages/auth/PricingPlan";
 
 import CreditCardDetails from "../pages/auth/CreditCardDetails";
+import CreatePassword from "../pages/auth/CreatePassword";
 
 export const router = createBrowserRouter([
 	{
@@ -48,6 +49,7 @@ export const router = createBrowserRouter([
 				children: [
 					{ path: "plan", element: <Plan /> },
 					{ path: "creditCardDetails", element: <CreditCardDetails /> },
+					{ path: "createPassword", element: <CreatePassword /> }
 				],
 			},
 			{

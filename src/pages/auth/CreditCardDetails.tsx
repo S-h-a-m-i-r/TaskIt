@@ -8,21 +8,24 @@ const CreditCardDetails = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
-		clearErrors,
 	} = useForm<FormData>();
 
 	interface FormData {
 		email: string;
 		password: string;
 		confirm_password: string;
+		card_number: string;
+		expiry_date: string;
+		cvv: string;
+		name_on_card: string 
 	}
 
 	const onSubmit = (data: FormData) => {
 		console.log(data);
-		navigate("/signup/createPassoword");
+		// navigate("/signup/createPassoword");
 	};
 	const handleClick = () => {
-		navigate("/");
+		navigate("/signup/createPassword");
 	};
 	return (
 		<form
@@ -35,44 +38,44 @@ const CreditCardDetails = () => {
 			<div className=" text-center w-full space-y-2 text-[16px] font-normal mb-1 text-gray-600">
 				<p>Unlock the full potential of TaskAway!</p>
 			</div>
-			<div className="grid grid-cols-2 gap-4">
-				<InputField
-					id="cardName"
-					label="Name on the card"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="e.g, John Doe"
-					type="text"
-				/>
-				<InputField
-					id="cardNumber"
-					label="Card Number"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="1234 5678 9012 3456"
-					type="text"
-				/>
-
-				<InputField
-					id="expiry"
-					label="Expiry Date"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="MM/YY"
-					type="text"
-				/>
-				<InputField
-					id="CVV"
-					label="CVV"
-					register={register}
-					onChange={clearErrors}
-					errors={errors}
-					placeHolder="e.g, 123"
-					type="text"
-				/>
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+			<InputField<FormData>
+							id="name_on_card"
+							label="Name on Card"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="e.g, John Smith"
+							type= "text"
+							
+						/>
+				<InputField<FormData>
+							id="card_number"
+							label="Card Number"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="Please enter password"
+							type='text'
+						/>
+					<InputField<FormData>
+							id="expiry_date"
+							label="Card Number"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="Please enter password"
+							type='text'
+						/>
+				<InputField<FormData>
+							id="expiry_date"
+							label="Card Number"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							register={register}
+							errors={errors}
+							placeHolder="Please enter password"
+							type='text'
+						/>
 			</div>
 			<button
 				// type="submit"

@@ -6,12 +6,17 @@ import "./custom-font.css";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../components/InputField";
 
+interface FormData {
+	email: string;
+	password: string;
+	rememberMe?: boolean;
+}
+
 const Login = () => {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-		clearErrors,
 	} = useForm<FormData>();
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
@@ -20,13 +25,8 @@ const Login = () => {
 		setShowPassword(!showPassword);
 	};
 
-	interface FormData {
-		email: string;
-		password: string;
-		rememberMe?: boolean;
-	}
-
-	const onSubmit = () => {
+	const onSubmit = (data: FormData) => {
+		console.log("Form data:", data);
 		navigate("/");
 	};
 
@@ -43,26 +43,40 @@ const Login = () => {
 			</div>
 			<div className="flex w-full justify-center gap-5">
 				<div className="space-y-2 w-full max-w-[433px]">
-					<InputField
-						id="username"
-						label="User Name"
+					<InputField<FormData>
+						id="email"
+						label="Email"
 						register={register}
-						onChange={clearErrors}
 						errors={errors}
-						placeHolder="User Name"
+						placeHolder="Email"
 						type="text"
+						validation={{
+							required: "Email is required",
+							pattern: {
+								value: /^\S+@\S+$/i,
+								message: "Invalid email address"
+							}
+						}}
+						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
 					/>
 				</div>
 				<div className="w-full max-w-[433px]">
 					<div className="space-y-2 relative w-full">
-						<InputField
+						<InputField<FormData>
 							id="password"
 							label="Password"
+							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
-							onChange={clearErrors}
 							errors={errors}
 							placeHolder="Please enter password"
 							type={showPassword ? "text" : "password"}
+							validation={{
+								required: "Password is required",
+								pattern: {
+									value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
+									message: "Password must be at least 8 characters with letters and numbers"
+								}
+							}}
 						/>
 						<div
 							className="absolute top-8 right-0 pr-3 flex items-center cursor-pointer"
@@ -80,7 +94,7 @@ const Login = () => {
 			</div>
 			<button
 				type="submit"
-				className="w-full max-w-[886px] bg-primary-50 text-white py-2 px-4 mt rounded-full hover:bg-primary-200 flex justify-center self-center"
+				className="bg-primary-50 w-full max-w-[886px] bg-primary-50 text-white py-2 px-4 mt rounded-full hover:bg-primary-200 flex justify-center self-center"
 			>
 				Sign in
 			</button>

@@ -2,14 +2,15 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../../components/InputField";
-
+interface FormData {
+	email: string;
+}
 const ForgotPasswordIndex: React.FC = () => {
 	const {
-		register,
-		handleSubmit,
-		clearErrors,
-		formState: { errors },
-	} = useForm();
+			register,
+			handleSubmit,
+			formState: { errors },
+		} = useForm<FormData>();
 	const navigate = useNavigate();
 
 	const onSubmit = () => {
@@ -30,14 +31,21 @@ const ForgotPasswordIndex: React.FC = () => {
 			</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className="space-y-2">
-					<InputField
+				<InputField<FormData>
 						id="email"
 						label="Email"
 						register={register}
-						onChange={clearErrors}
 						errors={errors}
 						placeHolder="Email"
 						type="text"
+						validation={{
+							required: "Email is required",
+							pattern: {
+								value: /^\S+@\S+$/i,
+								message: "Invalid email address"
+							}
+						}}
+						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
 					/>
 				</div>
 				<button

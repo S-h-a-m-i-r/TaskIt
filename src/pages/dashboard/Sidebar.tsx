@@ -6,11 +6,14 @@ import addon from "../../assets/addon.png";
 import bigCloud from "../../assets/icons/big_cloud.svg";
 import smallCloud from "../../assets/icons/small_cloud.svg";
 import logout from "../../assets/icons/Logout_icon.svg";
-import Model from "../../components/Model";
+import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
+// import { BsCurrencyDollar } from "react-icons/bs";
 
 const Sidebar = () => {
 	const navigate = useNavigate();
 	const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for hamburger menu
+
 	const handleLogoutClick = () => {
 		setIsModalOpen(true);
 	};
@@ -21,8 +24,24 @@ const Sidebar = () => {
 	const handleNavigation = () => {
 		navigate("/credits");
 	};
+	const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+	useEffect(() => {
+        console.log("state updated");
+    }, [isModalOpen]);
 	return (
-		<aside className="w-60 bg-white py-4 flex flex-col relative ">
+		<>
+		 <div className="lg:hidden fixed top-4 left-4 z-50">
+                <button
+                    className="text-black text-2xl p-2 rounded-md bg-gray-200 hover:bg-gray-300"
+                    onClick={toggleSidebar}
+                >
+                    {isSidebarOpen ? <IoCloseOutline /> : <IoMenuOutline />}
+                </button>
+            </div>
+		
+		<aside className={` w-60 bg-white py-4 lg:flex flex-col relative transition-transform transform  ${ isSidebarOpen ? "translate-x-0 max-md:fixed max-md:z-10 max-md:h-screen " : "-translate-x-full hidden"} lg:translate-x-0  `}>
 			<div className="sticky top-10">
 				<div className="flex pb-9 mb-12 items-center gap-4 mx-2">
 					<img src={taskit} alt="taskit logo" />
@@ -37,6 +56,7 @@ const Sidebar = () => {
 										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
+								onClick={toggleSidebar}
 							>
 								{({ isActive }) => (
 									<div className="flex items-center gap-2 ">
@@ -54,6 +74,7 @@ const Sidebar = () => {
 										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
+								onClick={toggleSidebar}
 							>
 								{({ isActive }) => (
 									<div className="flex items-center gap-2">
@@ -71,6 +92,7 @@ const Sidebar = () => {
 										? "flex py-4 px-4 w-full bg-primary-50 text-white"
 										: "flex py-4 px-4 hover:bg-gray-200 text-black"
 								}
+								onClick={toggleSidebar}
 							>
 								{({ isActive }) => (
 									<div className="flex items-center gap-2">
@@ -79,6 +101,45 @@ const Sidebar = () => {
 									</div>
 								)}
 							</NavLink>
+							
+						</li>
+						<li>
+							<NavLink
+								to="/createTask"
+								className={({ isActive }) =>
+									isActive
+										? "flex py-4 px-4 w-full bg-primary-50 text-white"
+										: "flex py-4 px-4 hover:bg-gray-200 text-black"
+								}
+								onClick={toggleSidebar}
+							>
+								{({ isActive }) => (
+									<div className="flex items-center gap-2">
+										<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
+										Create Task
+									</div>
+								)}
+							</NavLink>
+							
+						</li>
+						<li>
+							<NavLink
+								to="/login"
+								className={({ isActive }) =>
+									isActive
+										? "flex py-4 px-4 w-full bg-primary-50 text-white"
+										: "flex py-4 px-4 hover:bg-gray-200 text-black"
+								}
+								onClick={toggleSidebar}
+							>
+								{({ isActive }) => (
+									<div className="flex items-center gap-2">
+										<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
+										login
+									</div>
+								)}
+							</NavLink>
+							
 						</li>
 						<div className="my-5 w-full border"></div>
 						<li
@@ -91,15 +152,16 @@ const Sidebar = () => {
 					</ul>
 				</nav>
 			</div>
-			<div className="absolute bottom-10 left-3">
-				<div className=" mt-20 max-w-[216px] max-lg:max-w-[150px] w-full justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
+			<div className="fixed bottom-3 left-3 hidden lg:block">
+				<div className=" mt-20 max-lg:max-w-[150px] w-[216px] justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
 					<img src={bigCloud} className="absolute top-0 left-0 z-0" />
 					<img src={smallCloud} className="absolute top-10 right-0 z-0" />
 					<div className="z-10">
-						<p className="text-[48px] text-primary-100">
-							10<span className="text-lg">.99</span>
+						<p className="text-[48px] text-primary-50">
+							10
+							{/* <span className="text-sm bg-primary-50"><BsCurrencyDollar/></span> */}
 						</p>
-						<p>Get 3 tasks credits for only</p>
+						<p>per credit</p>
 						<button
 							className="w-full rounded-full bg-primary-50 text-white flex justify-center gap-2 items-center py-1"
 							onClick={handleNavigation}
@@ -109,8 +171,9 @@ const Sidebar = () => {
 					</div>
 				</div>
 			</div>
-			{isModalOpen && <Model setIsModalOpen={setIsModalOpen} isModal={isModalOpen} />}
+			{/* {isModalOpen && <Model setIsModalOpen={setIsModalOpen} isModal={isModalOpen} />} */}
 		</aside>
+		</>
 	);
 };
 
