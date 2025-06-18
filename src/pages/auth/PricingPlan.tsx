@@ -119,7 +119,7 @@ export default function PricingPlans() {
 				{/* Continue Button */}
 				<div className="w-full">
 					<button
-						className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+						className="w-full h-14 bg-primary-50 hover:bg-primary-200 text-white rounded-full font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200"
 						onClick={handleclick}
 					>
 						Continue
