@@ -17,7 +17,7 @@ export const CardsData = [
 	{ title: "Recurring Tasks", percent: 7, count: 33, icon: recurring_icon, path: "/recurring" },
 ];
 
-export const TasksHeadersData = ["Name", "Task Id", "Date", "Actions", "Recurring"];
+export const TasksHeadersData = ["Name", "Task Id", "Date", "Status", "Actions", "Recurring"];
 
 export const adminTasksHeadersData = [
 	"Name",
@@ -43,7 +43,7 @@ export const tasksBodyData = [
 		name: "Project Meeting",
 		task_id: "22",
 		Date: "24th Dec 2024",
-		status: "closed",
+		status: "Task Closed",
 		date: "2023-10-02",
 		action: "closed",
 		Recurring: "Yes",
@@ -70,7 +70,7 @@ export const tasksBodyData = [
 		name: "Client Call",
 		task_id: "25",
 		Date: "27th Dec 2024",
-		status: "closed",
+		status: "Task Closed",
 		date: "2023-10-05",
 		action: "pending",
 		Recurring: "No",

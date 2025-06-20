@@ -30,7 +30,6 @@ import NotificationPage from "../pages/dashboard/NotificationPage";
 
 import CreateTask from "../pages/dashboard/CreateTask";
 
-import AdminDashboardLayout from "../admin/layout";
 
 import Plan from "../pages/auth/PricingPlan";
 
@@ -74,10 +73,10 @@ export const router = createBrowserRouter([
 					{ path: "createTask", element: <CreateTask /> },
 				],
 			},
-			{
-				path: "admin",
-				element: <AdminDashboardLayout />,
-			},
+			// {
+			// 	path: "admin",
+			// 	element: <AdminDashboardLayout />,
+			// },
 		],
 	},
 ]);

@@ -7,12 +7,16 @@ import bigCloud from "../../assets/icons/big_cloud.svg";
 import smallCloud from "../../assets/icons/small_cloud.svg";
 import logout from "../../assets/icons/Logout_icon.svg";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
+import { useWindowSize } from "../../hooks/useWindowSize";
+// import Model from "../../components/Model";
 // import { BsCurrencyDollar } from "react-icons/bs";
 
 const Sidebar = () => {
 	const navigate = useNavigate();
 	const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for hamburger menu
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const {width} = useWindowSize();
+
 
 	const handleLogoutClick = () => {
 		setIsModalOpen(true);
@@ -25,6 +29,7 @@ const Sidebar = () => {
 		navigate("/credits");
 	};
 	const toggleSidebar = () => {
+		if(width >= 1024) return;
         setIsSidebarOpen(!isSidebarOpen);
     };
 	useEffect(() => {
@@ -103,7 +108,7 @@ const Sidebar = () => {
 							</NavLink>
 							
 						</li>
-						<li>
+						<li className={`${isSidebarOpen ?  "block" : "hidden"}`}>
 							<NavLink
 								to="/createTask"
 								className={({ isActive }) =>
@@ -122,7 +127,7 @@ const Sidebar = () => {
 							</NavLink>
 							
 						</li>
-						<li>
+						<li className={`${isSidebarOpen ?  "block" : "hidden"}`}>
 							<NavLink
 								to="/login"
 								className={({ isActive }) =>
@@ -149,11 +154,9 @@ const Sidebar = () => {
 							{" "}
 							<img src={logout} /> <span> Logout </span>
 						</li>
-					</ul>
-				</nav>
-			</div>
-			<div className="fixed bottom-3 left-3 hidden lg:block">
-				<div className=" mt-20 max-lg:max-w-[150px] w-[216px] justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
+
+						<div className="hidden lg:block">
+				<div className=" mt-10 max-lg:max-w-[150px] w-[216px] justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
 					<img src={bigCloud} className="absolute top-0 left-0 z-0" />
 					<img src={smallCloud} className="absolute top-10 right-0 z-0" />
 					<div className="z-10">
@@ -171,6 +174,11 @@ const Sidebar = () => {
 					</div>
 				</div>
 			</div>
+
+					</ul>
+				</nav>
+			</div>
+			
 			{/* {isModalOpen && <Model setIsModalOpen={setIsModalOpen} isModal={isModalOpen} />} */}
 		</aside>
 		</>

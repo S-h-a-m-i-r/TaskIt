@@ -24,14 +24,15 @@ const AllTasksList = () => {
 
 	return (
 		<div className="bg-white">
-			<table className="w-full">
+			<table className="w-full border-separate border-spacing-y-2">
+
 				<thead>
 					<tr>
 					{TasksHeadersData.map((header, index) => (
   <th
     key={index}
     className={`py-3 pl-5 text-left text-[14px] font-normal ${
-      ['Task Id', 'Date', 'Recurring'].includes(header) ? 'hidden md:table-cell' : ''
+      ['Task Id', 'Date', 'Recurring', "Status"].includes(header) ? 'hidden md:table-cell' : ''
     }`}
   >
     {header}
@@ -39,11 +40,11 @@ const AllTasksList = () => {
 ))}
 					</tr>
 				</thead>
-				<tbody>
+				<tbody >
 					{tasksBodyData.map((task, index) => (
 						<tr
 							key={index}
-							className={`hover:bg-gray-200 cursor-pointer bg-green-50  ${
+							className={ ` hover:bg-gray-200/50 space-y-2 cursor-pointer  ${
 								status[task.task_id] === "Submitted"
 									? "bg-blue-50"
 									: status[task.task_id] === "Completed"
@@ -61,6 +62,7 @@ const AllTasksList = () => {
 							</td>
 							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">{task.task_id}</td>
 							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">{task.Date}</td>
+							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">{status[task.task_id]}</td>
 							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">
 								<div className="relative inline-block w-full">
 									<select
@@ -75,7 +77,7 @@ const AllTasksList = () => {
 										<option value="Task Closed">Task Closed</option>
 										<option value="Submitted">submitted</option>
 									</select>
-									<div className="absolute inset-y-0 right-5 flex items-center pr-2 pointer-events-none">
+									<div className="absolute inset-y-0 right-1 flex items-center pr-2 pointer-events-none">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											className="h-4 w-4 text-gray-600"
