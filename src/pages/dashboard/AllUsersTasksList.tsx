@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { tasksBodyData, TasksHeadersData } from "../../components/dummnyData/DummyData";
+import { tasksBodyData, TasksHeadersData } from "../../datadump";
 import { useState } from "react";
 
-const AllTasksList = () => {
+const AllUsersTasksList = () => {
 	const [status, setStatus] = useState(
 		tasksBodyData.reduce((acc: Record<string, string>, task) => {
 			acc[task.task_id] = task.status;
@@ -104,4 +104,4 @@ const AllTasksList = () => {
 	);
 };
 
-export default AllTasksList;
+export default AllUsersTasksList;

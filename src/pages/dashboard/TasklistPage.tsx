@@ -1,7 +1,7 @@
 import backIcon from '../../assets/icons/ArrowLeft_icon.svg';
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import AllTasksList from './AllTasksList';
+import AllTasksList from './AllUsersTasksList';
 
 const TasklistPage = () => {
   const navigate = useNavigate();

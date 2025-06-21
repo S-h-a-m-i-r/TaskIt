@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { DashboardSvgIcon, CreditsSvgIcon, ProfileSvgIcon } from "../../components/svg";
-import taskit from "../../assets/Task_it_logo.svg";
-import addon from "../../assets/addon.png";
-import bigCloud from "../../assets/icons/big_cloud.svg";
-import smallCloud from "../../assets/icons/small_cloud.svg";
-import logout from "../../assets/icons/Logout_icon.svg";
+import { DashboardSvgIcon, CreditsSvgIcon, ProfileSvgIcon } from "../assets/svg";
+import taskit from "../assets/Task_it_logo.svg";
+import addon from "../assets/addon.png";
+import bigCloud from "../assets/icons/big_cloud.svg";
+import smallCloud from "../assets/icons/small_cloud.svg";
+import logout from "../assets/icons/Logout_icon.svg";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
-import { useWindowSize } from "../../hooks/useWindowSize";
+import { useWindowSize } from "../hooks/useWindowSize";
 // import Model from "../../components/Model";
 // import { BsCurrencyDollar } from "react-icons/bs";
 
@@ -23,7 +23,6 @@ const {width} = useWindowSize();
 	};
 
 	useEffect(() => {
-		console.log("state updated");
 	}, [isModalOpen]);
 	const handleNavigation = () => {
 		navigate("/credits");
@@ -33,7 +32,6 @@ const {width} = useWindowSize();
         setIsSidebarOpen(!isSidebarOpen);
     };
 	useEffect(() => {
-        console.log("state updated");
     }, [isModalOpen]);
 	return (
 		<>

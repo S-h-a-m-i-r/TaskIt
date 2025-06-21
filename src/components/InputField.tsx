@@ -33,7 +33,7 @@ const InputField = <TFormValues extends FieldValues = FieldValues>({
 	const errorMessage = fieldError?.message as string;
 	
 	return (
-		<div className="w-full">
+		<div className="w-full flex flex-col gap-2">
 			<label htmlFor={id as string} className="block text-sm font-semibold mb-2 text-left">
 				{label}
 			</label>

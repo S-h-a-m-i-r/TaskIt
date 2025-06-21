@@ -35,6 +35,16 @@ import Plan from "../pages/auth/PricingPlan";
 
 import CreditCardDetails from "../pages/auth/CreditCardDetails";
 import CreatePassword from "../pages/auth/CreatePassword";
+import AdminLayout from "../admin/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import Tasks from "../pages/admin/Tasks";
+import Settings from "../pages/admin/Settings";
+import Teammanagement from "../pages/admin/Teammanagement";
+import Customers from "../pages/admin/Customers";
+import Invoices from "../pages/admin/Invoices";
+import Credits from "../pages/admin/Credits";
+import {AddCreditsToUsers, RemoveCreditsToUsers} from "../components/addRemoveCreditsToUsers";
+import AddTeamPage from "../pages/AddTeam";
 
 export const router = createBrowserRouter([
 	{
@@ -73,10 +83,27 @@ export const router = createBrowserRouter([
 					{ path: "createTask", element: <CreateTask /> },
 				],
 			},
-			// {
-			// 	path: "admin",
-			// 	element: <AdminDashboardLayout />,
-			// },
 		],
 	},
+	{
+		path: "admin",
+		element: <AdminLayout />,
+		children: [
+			{
+				path: "/admin",
+				children: [
+					{ index: true, element: <AdminDashboard /> },
+					{ path: "credits", element: <Credits /> },
+					{ path: "tasks", element: <Tasks /> },
+					{ path: "settings", element: <Settings /> },
+					{ path: "teamManagement", element: <Teammanagement /> },
+					{ path: "customers", element: <Customers /> },
+					{ path: "invoices", element: <Invoices /> },
+					{ path: "addCredits", element: <AddCreditsToUsers /> },
+					{path: "removeCredits", element: <RemoveCreditsToUsers /> },
+					{ path: "addTeam", element: <AddTeamPage /> },
+				],
+			},
+		]
+	}
 ]);
