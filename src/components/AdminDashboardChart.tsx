@@ -2,17 +2,26 @@
 import { useRef } from "react"
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
+  LineController,
   LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
   Title,
   Tooltip,
   Legend,
-  Filler,
-} from "chart.js"
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler)
+ChartJS.register(
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default function AdminRevenueChart() {
   const chartRef = useRef<ChartJS<"line"> | null>(null)

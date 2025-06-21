@@ -11,8 +11,8 @@ interface Task {
 	assignedTo?: string;
 	dueDate?: string;
 	type?: string;
-	actions?: string;
-	creditsActions?: string;
+	actions?: boolean;
+	creditsActions?: boolean;
 	taskStatus?: string;
 	customerName?: string;
 	customerEmail?: string;
@@ -24,18 +24,18 @@ interface Task {
 	customerStatus?: string;
 	customerCredits?: string;
 	customerLastLogin?: string;
-	customerActions?: string;
+	customerActions?: boolean;
 	invoiceNumber?: string;
 	user?: string;
 	invoiceDate?: string;
 	invoiceAmount?: string;
 	invoicePaymentMethod?: string;
-	invoiceActions?: string;
+	invoiceActions?: boolean;
 	teamManagementName?: string;
 	teamManagementEmail?: string;
 	teamManagementRole?: string;
 	teamManagementTeamMemberCount?: string | number;
-	teamManagementActions?: string;
+	teamManagementActions?: boolean;
 }
 type TaskTableProps = {
 	tasks: Task[];
