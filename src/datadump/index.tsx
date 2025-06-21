@@ -124,35 +124,35 @@ export const tasksPagedetails = [
 		type: 'support',
 		taskStatus: "In Progress",
 		dueDate: "2024-07-20",
-		Actions: ''
+		Actions: true
 	},
 	{
 		id: "#12346",
 		type: 'support',
 		taskStatus: "Pending",
 		dueDate: "2024-07-21",
-		actions: ''
+		actions: true
 	},
 	{
 		id: "#12347",
 		type: 'support',
 		taskStatus: "Completed",
 		dueDate: "2024-07-19",
-		actions: ''
+		actions: true
 	},
 	{
 		id: "#12348",
 		type: 'support',
 		taskStatus: "In Progress",
 		dueDate: "2024-07-22",
-		actions: ''
+		actions: true
 	},
 	{
 		id: "#12349",
 		type: 'support',
 		taskStatus: "Pending",
 		dueDate: "2024-07-23",
-		actions: ''
+		actions: true
 	},
 ];
 
@@ -171,7 +171,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "100",
 		expiringCredits: "10",
 		lastTopUpDate: "2024-07-20",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Jane Smith",
@@ -179,7 +179,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "200",
 		expiringCredits: "20",
 		lastTopUpDate: "2024-07-21",
-		creditsActions: ''	
+		creditsActions: true	
 
 	},
 	{
@@ -188,7 +188,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "150",
 		expiringCredits: "15",	
 		lastTopUpDate: "2024-07-19",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Bob Brown",
@@ -196,7 +196,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "300",
 		expiringCredits: "30",
 		lastTopUpDate: "2024-07-22",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "John Doe",
@@ -204,7 +204,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "100",
 		expiringCredits: "10",
 		lastTopUpDate: "2024-07-20",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Jane Smith",
@@ -212,7 +212,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "200",
 		expiringCredits: "20",
 		lastTopUpDate: "2024-07-21",
-		creditsActions: ''	
+		creditsActions: true	
 
 	},
 	{
@@ -221,7 +221,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "150",
 		expiringCredits: "15",	
 		lastTopUpDate: "2024-07-19",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Bob Brown",
@@ -229,14 +229,14 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "300",
 		expiringCredits: "30",
 		lastTopUpDate: "2024-07-22",
-		creditsActions: ''
+		creditsActions: true
 	},{
 		customerName: "John Doe",
 		customerEmail: "JohnDoe11@gmail.com",
 		creditsRemaining: "100",
 		expiringCredits: "10",
 		lastTopUpDate: "2024-07-20",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Jane Smith",
@@ -244,7 +244,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "200",
 		expiringCredits: "20",
 		lastTopUpDate: "2024-07-21",
-		creditsActions: ''	
+		creditsActions: true	
 
 	},
 	{
@@ -253,7 +253,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "150",
 		expiringCredits: "15",	
 		lastTopUpDate: "2024-07-19",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Bob Brown",
@@ -261,14 +261,14 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "300",
 		expiringCredits: "30",
 		lastTopUpDate: "2024-07-22",
-		creditsActions: ''
+		creditsActions: true
 	},{
 		customerName: "John Doe",
 		customerEmail: "JohnDoe11@gmail.com",
 		creditsRemaining: "100",
 		expiringCredits: "10",
 		lastTopUpDate: "2024-07-20",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Jane Smith",
@@ -276,7 +276,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "200",
 		expiringCredits: "20",
 		lastTopUpDate: "2024-07-21",
-		creditsActions: ''	
+		creditsActions: true	
 
 	},
 	{
@@ -285,7 +285,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "150",
 		expiringCredits: "15",	
 		lastTopUpDate: "2024-07-19",
-		creditsActions: ''
+		creditsActions: true
 	},
 	{
 		customerName: "Bob Brown",
@@ -293,7 +293,7 @@ export const creditsPagetaskDetails =[
 		creditsRemaining: "300",
 		expiringCredits: "30",
 		lastTopUpDate: "2024-07-22",
-		creditsActions: ''
+		creditsActions: true
 	},
 ]
 
@@ -488,7 +488,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "92",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-20",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Jane Smith",
@@ -498,7 +498,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "200",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-21",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Alice Johnson",
@@ -508,7 +508,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "150",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-19",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Bob Brown",
@@ -518,7 +518,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "300",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-22",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "John Doe",
@@ -528,7 +528,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "92",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-20",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Jane Smith",
@@ -538,7 +538,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "200",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-21",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Alice Johnson",
@@ -548,7 +548,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "150",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-19",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Bob Brown",
@@ -558,7 +558,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "300",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-22",
-		customerActions: ''
+		customerActions: true
 	},{
 		name: "John Doe",
 		customerEmail: "JohnDoe11@gmail.com",
@@ -567,7 +567,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "92",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-20",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Jane Smith",
@@ -577,7 +577,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "200",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-21",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Alice Johnson",
@@ -587,7 +587,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "150",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-19",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Bob Brown",
@@ -597,7 +597,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "300",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-22",
-		customerActions: ''
+		customerActions: true
 	},{
 		name: "John Doe",
 		customerEmail: "JohnDoe11@gmail.com",
@@ -606,7 +606,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "92",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-20",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Jane Smith",
@@ -616,7 +616,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "200",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-21",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Alice Johnson",
@@ -626,7 +626,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "150",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-19",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Bob Brown",
@@ -636,7 +636,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "300",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-22",
-		customerActions: ''
+		customerActions: true
 	},{
 		name: "John Doe",
 		customerEmail: "JohnDoe11@gmail.com",
@@ -645,7 +645,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "92",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-20",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Jane Smith",
@@ -655,7 +655,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "200",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-21",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Alice Johnson",
@@ -665,7 +665,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "150",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-19",
-		customerActions: ''
+		customerActions: true
 	},
 	{
 		name: "Bob Brown",
@@ -675,7 +675,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: "300",
 		customerStatus: "Active",
 		customerLastLogin: "2024-07-22",
-		customerActions: ''
+		customerActions: true
 	},
 
 
@@ -696,7 +696,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$100",
 	invoiceDate: "2024-07-20",
 	invoicePaymentMethod: "Credit Card",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV002",
@@ -704,7 +704,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$200",
 	invoiceDate: "2024-07-21",
 	invoicePaymentMethod: "PayPal",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV003",	
@@ -712,7 +712,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$150",
 	invoiceDate: "2024-07-19",
 	invoicePaymentMethod: "Bank Transfer",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV004",
@@ -720,7 +720,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$250",
 	invoiceDate: "2024-07-22",
 	invoicePaymentMethod: "Credit Card",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV005",
@@ -728,7 +728,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$300",
 	invoiceDate: "2024-07-23",
 	invoicePaymentMethod: "PayPal",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV006",
@@ -736,7 +736,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$400",
 	invoiceDate: "2024-07-24",
 	invoicePaymentMethod: "Bank Transfer",
-	invoiceActions: ''
+	invoiceActions: true
 },
 {
 	invoiceNumber: "INV007",
@@ -744,7 +744,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$350",
 	invoiceDate: "2024-07-25",
 	invoicePaymentMethod: "Credit Card",
-	invoiceActions: ''
+	invoiceActions: true
 	},
 {
 	invoiceNumber: "INV008",
@@ -752,7 +752,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$450",
 	invoiceDate: "2024-07-26",
 	invoicePaymentMethod: "PayPal",
-	invoiceActions: ''
+	invoiceActions: true
 	},
 {
 	invoiceNumber: "INV009",
@@ -760,7 +760,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$500",
 	invoiceDate: "2024-07-27",
 	invoicePaymentMethod: "Bank Transfer",
-	invoiceActions: ''
+	invoiceActions: true
 	},
 {	
 	invoiceNumber: "INV010",
@@ -768,7 +768,7 @@ export const adminPageInvoicesDetails = [
 	invoiceAmount: "$550",	
 	invoiceDate: "2024-07-28",
 	invoicePaymentMethod: "Credit Card",
-	invoiceActions: ''
+	invoiceActions: true
 	},
 ]
 
@@ -787,28 +787,28 @@ export const teamManagmentTableDetails = [
 		teamManagementEmail: "john.doe@example.com",
 		teamManagementRole: "Team Lead",
 		teamManagementTeamMemberCount: 5,
-		teamManagementActions: ''
+		teamManagementActions: true
 	},
 	{
 		teamManagementName: "Jane Doe",
 		teamManagementEmail: "jane.doe@example.com",
 		teamManagementRole: "Team Member",
 		teamManagementTeamMemberCount: 3,
-		teamManagementActions: ''
+		teamManagementActions: true
 	},
 	{
 		teamManagementName: "John Smith",
 		teamManagementEmail: "john.smith@example.com",
 		teamManagementRole: "Team Lead",
 		teamManagementTeamMemberCount: 7,
-		teamManagementActions: ''
+		teamManagementActions: true
 		},
 		{
 			teamManagementName: "Jane Smith",
 			teamManagementEmail: "jane.smith@example.com",
 			teamManagementRole: "Team Member",
 			teamManagementTeamMemberCount: 2,
-			teamManagementActions: ''
+			teamManagementActions: true
 			},
 			
 ]
