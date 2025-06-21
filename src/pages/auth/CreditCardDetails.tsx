@@ -30,7 +30,7 @@ const CreditCardDetails = () => {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className=" text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
+			className=" max-w-[886px] text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
 		>
 			<div className=" text-center w-full space-y-2 text-[32px] font-bold [tracking:0.01em] text-primary-100">
 				<h2>Credit Card Details</h2>
@@ -55,32 +55,32 @@ const CreditCardDetails = () => {
 							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
-							placeHolder="Please enter password"
+							placeHolder="Please enter Card number"
 							type='text'
 						/>
 					<InputField<FormData>
 							id="expiry_date"
-							label="Card Number"
+							label="Expiry Date"
 							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
-							placeHolder="Please enter password"
+							placeHolder="MM / YY"
 							type='text'
 						/>
 				<InputField<FormData>
-							id="expiry_date"
-							label="Card Number"
+							id="cvv"
+							label="CVV"
 							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
-							placeHolder="Please enter password"
+							placeHolder="e.g. 123"
 							type='text'
 						/>
 			</div>
 			<button
 				// type="submit"
 				onClick={handleClick}
-				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
+				className="w-full text-[12px] bg-primary-50 text-white py-4 px-4 mt rounded-full hover:bg-primary-200"
 			>
 				Continue
 			</button>

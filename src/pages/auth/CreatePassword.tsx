@@ -38,7 +38,7 @@ const CreatePassword = () => {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className=" text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
+			className=" max-w-[886px] text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
 		>
 			<div className=" text-center w-full space-y-2 text-[32px] font-bold [tracking:0.01em] text-primary-100">
 				<h2>Create Password</h2>
@@ -93,7 +93,7 @@ const CreatePassword = () => {
 			<button
 				// type="submit"
 				onClick={handleClick}
-				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
+				className="w-full bg-primary-50 text-white py-4 text-[12px] px-4 mt rounded-full hover:bg-primary-200"
 			>
 				Create Account
 			</button>

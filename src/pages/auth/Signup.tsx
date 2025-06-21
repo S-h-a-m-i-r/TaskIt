@@ -30,7 +30,7 @@ const Signup = () => {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className=" text-black py-5 flex flex-col gap-5 justify-center rounded-lg w-full font-sans"
+			className=" text-black py-5 flex max-w-[886px] flex-col gap-5 justify-center rounded-lg w-full font-sans"
 		>
 			<div className=" text-center w-full space-y-2 text-[32px] font-bold [tracking:0.01em] text-primary-100">
 				<h2>Sign Up Now</h2>
@@ -41,16 +41,16 @@ const Signup = () => {
 			<div className="grid  grid-cols-1 md:grid-cols-2 gap-4">
 			<InputField<FormData>
 							id="first_name"
-							label="Card Number"
+							label="First Name"
 							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
-							placeHolder="Enter First	 Name"
+							placeHolder="Enter First Name"
 							type='text'
 						/>
 				<InputField<FormData>
 							id="last_name"
-							label="Card Number"
+							label="Last Name"
 							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
@@ -100,7 +100,7 @@ const Signup = () => {
 			<button
 				//  type="submit"
 				onClick={handleClick}
-				className="w-full bg-primary-50 text-white py-2 px-4 mt rounded-md hover:bg-primary-200"
+				className="w-full bg-primary-50 text-white py-3 px-4 mt rounded-full text-[12px] hover:bg-primary-200"
 			>
 				Continue
 			</button>
