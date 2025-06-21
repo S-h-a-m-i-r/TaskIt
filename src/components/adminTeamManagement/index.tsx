@@ -19,10 +19,6 @@ const AdminTeamManagement = () => {
 				<h3 className="pl-3 text-[18px] text-left font-bold text-gray-900">Team A</h3>
 				<TaskTable tasks={teamManagmentTableDetails} tasksHeader={teamManangementHeader} />
 			</div>
-			<div>
-				<h3 className="pl-3 text-[18px] text-left font-bold text-gray-900"> Team B</h3>
-				<TaskTable tasks={teamManagmentTableDetails} tasksHeader={teamManangementHeader} />
-			</div>
 		</div>
 	);
 }

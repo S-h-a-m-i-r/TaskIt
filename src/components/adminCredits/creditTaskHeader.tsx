@@ -105,7 +105,7 @@ export default function CreditOverviewDashboard() {
 									openDropdown === filter
 										? "bg-blue-50 border-blue-200 text-blue-700"
 										: selectedFilters[filter]
-										? "bg-gray-100 border-gray-300 text-gray-900"
+										? "bg-gray-300 border-gray-300 text-gray-900"
 										: "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
 								}`}
 							>

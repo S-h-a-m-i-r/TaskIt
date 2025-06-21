@@ -789,6 +789,7 @@ export const teamManagmentTableDetails = [
 		teamManagementTeamMemberCount: 5,
 		teamManagementActions: true
 	},
+
 	{
 		teamManagementName: "Jane Doe",
 		teamManagementEmail: "jane.doe@example.com",
@@ -810,5 +811,26 @@ export const teamManagmentTableDetails = [
 			teamManagementTeamMemberCount: 2,
 			teamManagementActions: true
 			},
+			{
+				teamManagementName: "John Doe",
+				teamManagementEmail: "john.doe@example.com",
+				teamManagementRole: "Team Lead",
+				teamManagementTeamMemberCount: 5,
+				teamManagementActions: true
+			},
+			{
+				teamManagementName: "John Smith",
+				teamManagementEmail: "john.smith@example.com",
+				teamManagementRole: "Team Lead",
+				teamManagementTeamMemberCount: 7,
+				teamManagementActions: true
+				},
+				{
+					teamManagementName: "Jane Smith",
+					teamManagementEmail: "jane.smith@example.com",
+					teamManagementRole: "Team Member",
+					teamManagementTeamMemberCount: 2,
+					teamManagementActions: true
+					},
 			
 ]
