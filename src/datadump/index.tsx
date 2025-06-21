@@ -121,35 +121,35 @@ export const teamTasksdetails = [
 export const tasksPagedetails = [
 	{
 		id: "#12345",
-		type: 'support',
+		type: 'Support',
 		taskStatus: "In Progress",
 		dueDate: "2024-07-20",
 		Actions: true
 	},
 	{
 		id: "#12346",
-		type: 'support',
+		type: 'Admin',
 		taskStatus: "Pending",
 		dueDate: "2024-07-21",
 		actions: true
 	},
 	{
 		id: "#12347",
-		type: 'support',
+		type: 'Support',
 		taskStatus: "Completed",
 		dueDate: "2024-07-19",
 		actions: true
 	},
 	{
 		id: "#12348",
-		type: 'support',
+		type: 'Admin',
 		taskStatus: "In Progress",
 		dueDate: "2024-07-22",
 		actions: true
 	},
 	{
 		id: "#12349",
-		type: 'support',
+		type: 'Admin',
 		taskStatus: "Pending",
 		dueDate: "2024-07-23",
 		actions: true
