@@ -1,7 +1,7 @@
 import { useState } from "react";
 import DashboardCard from "../../components/DashboardCard";
-import { CardsData } from "../../../src/components/dummnyData/DummyData";
-import AllTasksList from "./AllTasksList";
+import { CardsData } from "../../datadump";
+import AllTasksList from "./AllUsersTasksList";
 import extend from "../../assets/icons/extends_icon.svg";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";

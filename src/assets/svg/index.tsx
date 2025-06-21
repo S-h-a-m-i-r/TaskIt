@@ -1,0 +1,11 @@
+export { default as ProfileSvgIcon } from './ProfileIcon';
+export { default as DashboardSvgIcon } from './DashbaordIcon';
+export { default as CreditsSvgIcon } from './CreditsIcon';
+export { default as WavyHandSvgIcon } from './WavyHandIcon';
+export { default as LogoutIcon } from './LogoutIcon';
+export {default as TaskSvgIcon } from './TaskSvg';
+export {default as TeamManagementSvgIcon } from './TeamManagement';
+export { default as SettingsSvgIcon } from './SettingSvg';
+export { default as CreditSvgIcon } from './CreditSvg';;
+export { default as TasksSvgIcon } from './TaskSvg';
+export { default as CustomerSvgIcon } from './CustomerSvg';

@@ -1,4 +1,4 @@
-import { adminTasksBodyData, adminTasksHeadersData } from "../components/dummnyData/DummyData"
+import { adminTasksBodyData, adminTasksHeadersData } from "../datadump/index"
 import FilterIcon from '../assets/icons/FilterIcon'
 import { useState } from "react"
 const AdminTaskList = () => {

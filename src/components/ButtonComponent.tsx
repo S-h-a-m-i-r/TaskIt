@@ -1,15 +1,19 @@
 interface ButtonProps {
-	icon: string;
+	icon?: string;
 	title: string;
+	className?: string
 }
 
 const ButtonComponent = (props: ButtonProps) => {
+	const {className} = props
 	return (
 		<button
 			type="button"
-			className="flex items-center justify-center gap-2 w-full border border-none text-gray-500 font-sans font-normal py-2 px-4 rounded-md bg-white mt-2 "
-		>
+			className={className}
+		>	
+		{props.icon && 
 			<img src={props.icon} alt={props.title} className="w-5 h-5" />
+		}
 			{props.title}
 		</button>
 	);
