@@ -42,22 +42,22 @@ export const ManagerAdminRoutes = [
 	{
 		label: "Dashboard",
 		Icon: DashboardSvgIcon  ,
-		route: "/admin",
+		route: "/manager",
 	},
 	{
 		label: "Tasks",
 		Icon: TasksSvgIcon ,
-		route: "/admin/tasks",
+		route: "/manager/tasks",
 	},
 	{
 		label: "Credits",
 		Icon: CreditSvgIcon ,
-		route: "/admin/crdits",
+		route: "/manager/credits",
 	},
 
 	{
 		label: "Invoices",
 		Icon: CustomerSvgIcon ,
-		route: "/admin/invoices",
+		route: "/manager/invoices",
 	},
 ];

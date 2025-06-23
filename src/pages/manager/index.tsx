@@ -1,55 +1,54 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import Layout from "../components/layout/Layout";
+import Layout from "../../components/layout/Layout";
 
-import { MainPage, CreditsPage, ProfilePage } from "../pages/dashboard";
+import { MainPage, CreditsPage, ProfilePage } from "../../pages/dashboard";
 
-import DashboardLayout from "../pages/dashboard/Layout";
+import DashboardLayout from "../../pages/dashboard/Layout";
 
-import Login from "../pages/auth/AuthDesign";
+import Login from "../../pages/auth/AuthDesign";
 
-import Signup from "../pages/auth/AuthDesign";
+import Signup from "../../pages/auth/AuthDesign";
 
-import ForgotPassword from "../pages/auth/forgotPassword";
+import ForgotPassword from "../../pages/auth/forgotPassword";
 
-import Newpassword from "../pages/auth/forgotPassword/Newpassword";
+import Newpassword from "../../pages/auth/forgotPassword/Newpassword";
 
-import TasklistPage from "../pages/dashboard/TasklistPage";
+import TasklistPage from "../../pages/dashboard/TasklistPage";
 
-import InprogressTasklist from "../pages/dashboard/InprogressTasks";
+import InprogressTasklist from "../../pages/dashboard/InprogressTasks";
 
-import SubmittedTasklist from "../pages/dashboard/SubmittedTasks";
+import SubmittedTasklist from "../../pages/dashboard/SubmittedTasks";
 
-import ClosedTasklist from "../pages/dashboard/ClosedTasks";
+import ClosedTasklist from "../../pages/dashboard/ClosedTasks";
 
-import RecurringTasklist from "../pages/dashboard/RecurringTasks";
+import RecurringTasklist from "../../pages/dashboard/RecurringTasks";
 
-import TaskDetailsPage from "../pages/dashboard/TaskDetailsPage";
+import TaskDetailsPage from "../../pages/dashboard/TaskDetailsPage";
 
-import NotificationPage from "../pages/dashboard/NotificationPage";
+import NotificationPage from "../../pages/dashboard/NotificationPage";
 
-import CreateTask from "../pages/dashboard/CreateTask";
+import CreateTask from "../../pages/dashboard/CreateTask";
 
 
-import Plan from "../pages/auth/PricingPlan";
+import Plan from "../../pages/auth/PricingPlan";
 
-import CreditCardDetails from "../pages/auth/CreditCardDetails";
-import CreatePassword from "../pages/auth/CreatePassword";
-import AdminLayout from "../admin/AdminLayout";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import Tasks from "../pages/admin/Tasks";
-import Settings from "../pages/admin/Settings";
-import Teammanagement from "../pages/admin/Teammanagement";
-import Customers from "../pages/admin/Customers";
-import Invoices from "../pages/admin/Invoices";
-import Credits from "../pages/admin/Credits";
-import ManagerCredits from "../pages/manager/Credits"
-import ManagerTasks from "../pages/manager/Tasks"
-import ManagerInvoices from "../pages/manager/Invoices"
-import {AddCreditsToUsers, RemoveCreditsToUsers} from "../components/addRemoveCreditsToUsers";
-import AddTeamPage from "../pages/AddTeam";
-import ManagerLayout from "../pages/manager/ManagerLayout";
-import ManagerDashboard from "../pages/manager/ManagerDashboard";
+import CreditCardDetails from "../../pages/auth/CreditCardDetails";
+import CreatePassword from "../../pages/auth/CreatePassword";
+import AdminLayout from "../../admin/AdminLayout";
+import AdminDashboard from "../../pages/admin/AdminDashboard";
+import Tasks from "../../pages/admin/Tasks";
+import Settings from "../../pages/admin/Settings";
+import Teammanagement from "../../pages/admin/Teammanagement";
+import Customers from "../../pages/admin/Customers";
+import Invoices from "../../pages/admin/Invoices";
+import Credits from "../../pages/admin/Credits";
+import ManagerCredits from "../../pages/manager/Credits"
+import ManagerTasks from "../../pages/manager/Tasks"
+import {AddCreditsToUsers, RemoveCreditsToUsers} from "../../components/addRemoveCreditsToUsers";
+import AddTeamPage from "../../pages/AddTeam";
+import ManagerLayout from "../../pages/manager/ManagerLayout";
+import ManagerDashboard from "../../pages/manager/ManagerDashboard";
 
 export const router = createBrowserRouter([
 	{
@@ -121,7 +120,7 @@ export const router = createBrowserRouter([
 					{ index: true, element: <ManagerDashboard /> },
 					{ path: "credits", element: <ManagerCredits /> },
 					{ path: "tasks", element: <ManagerTasks /> },
-					{ path: "invoices", element: <ManagerInvoices /> },
+					{ path: "invoices", element: <Invoices /> },
 					{ path: "addCredits", element: <AddCreditsToUsers /> },
 					{path: "removeCredits", element: <RemoveCreditsToUsers /> },
 				],

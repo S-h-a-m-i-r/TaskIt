@@ -40,9 +40,10 @@ interface Task {
 type TaskTableProps = {
 	tasks: Task[];
 	tasksHeader: string[];
+	manager?: boolean
 };
 
-const TaskTable = ({ tasks, tasksHeader }: TaskTableProps) => {
+const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
 	const getStatusBadge = (status: string) => {
 		const baseClasses = "px-4 py-2 rounded-full text-sm font-medium";
 
@@ -57,7 +58,6 @@ const TaskTable = ({ tasks, tasksHeader }: TaskTableProps) => {
 				return `${baseClasses} bg-[#E8EDF2] text-primary-100`;
 		}
 	};
-
 	return (
 		<div className="w-full py-4">
 			<div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -180,10 +180,13 @@ const TaskTable = ({ tasks, tasksHeader }: TaskTableProps) => {
 													title="Download PDF"
 													className=" bg-[#EBEDF2] text-[12px] text-black font-medium hover:bg-gray-300 px-3 py-2 rounded-full w-[150px]"
 												/>
+												{
+												!manager &&
 												<ButtonComponent
 													title="Email Invoice"
 													className=" bg-[#EBEDF2] text-[12px] text-black font-medium hover:bg-gray-300 px-3 py-2 rounded-full w-[150px]"
 												/>
+											}
 											</div>
 										</td>
 									)}
