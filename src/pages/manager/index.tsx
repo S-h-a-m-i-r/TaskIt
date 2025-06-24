@@ -2,9 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Layout from "../../components/layout/Layout";
 
-import { MainPage, CreditsPage, ProfilePage } from "../../pages/dashboard";
+import { MainPage, CreditsPage, ProfilePage } from "../user";
 
-import DashboardLayout from "../../pages/dashboard/Layout";
+import DashboardLayout from "../user/Layout";
 
 import Login from "../../pages/auth/AuthDesign";
 
@@ -14,21 +14,21 @@ import ForgotPassword from "../../pages/auth/forgotPassword";
 
 import Newpassword from "../../pages/auth/forgotPassword/Newpassword";
 
-import TasklistPage from "../../pages/dashboard/TasklistPage";
+import TasklistPage from "../user/TasklistPage";
 
-import InprogressTasklist from "../../pages/dashboard/InprogressTasks";
+import InprogressTasklist from "../user/InprogressTasks";
 
-import SubmittedTasklist from "../../pages/dashboard/SubmittedTasks";
+import SubmittedTasklist from "../user/SubmittedTasks";
 
-import ClosedTasklist from "../../pages/dashboard/ClosedTasks";
+import ClosedTasklist from "../user/ClosedTasks";
 
-import RecurringTasklist from "../../pages/dashboard/RecurringTasks";
+import RecurringTasklist from "../user/RecurringTasks";
 
-import TaskDetailsPage from "../../pages/dashboard/TaskDetailsPage";
+import TaskDetailsPage from "../user/TaskDetailsPage";
 
-import NotificationPage from "../../pages/dashboard/NotificationPage";
+import NotificationPage from "../user/NotificationPage";
 
-import CreateTask from "../../pages/dashboard/CreateTask";
+import CreateTask from "../user/CreateTask";
 
 
 import Plan from "../../pages/auth/PricingPlan";
@@ -45,7 +45,7 @@ import Invoices from "../../pages/admin/Invoices";
 import Credits from "../../pages/admin/Credits";
 import ManagerCredits from "../../pages/manager/Credits"
 import ManagerTasks from "../../pages/manager/Tasks"
-import {AddCreditsToUsers, RemoveCreditsToUsers} from "../../components/addRemoveCreditsToUsers";
+import {AddCreditsToUsers, RemoveCreditsToUsers} from "../../components/generalComponents/addRemoveCreditsToUsers";
 import AddTeamPage from "../../pages/AddTeam";
 import ManagerLayout from "../../pages/manager/ManagerLayout";
 import ManagerDashboard from "../../pages/manager/ManagerDashboard";

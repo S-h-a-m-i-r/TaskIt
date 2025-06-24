@@ -1,4 +1,4 @@
-import AdminPageCustomers from '../../components/adminPageCustomers'
+import AdminPageCustomers from '../../components/adminComponents/adminPageCustomers'
 
 const Customers = () => {
   return (

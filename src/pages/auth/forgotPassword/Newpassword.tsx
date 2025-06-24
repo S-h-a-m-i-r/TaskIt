@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import tickMark from "../../../assets/icons/tickmark.svg";
 import { useNavigate } from "react-router-dom";
-import InputField from "../../../components/InputField";
+import InputField from "../../../components/generalComponents/InputField";
 
 interface FormData {
 	password: string;

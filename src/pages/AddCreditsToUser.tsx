@@ -1,4 +1,4 @@
-import {AddCreditsToUsers} from '../components/addRemoveCreditsToUsers';
+import {AddCreditsToUsers} from '../components/generalComponents/addRemoveCreditsToUsers';
 const AddCreditsToUser = () => {
   return (
     <>

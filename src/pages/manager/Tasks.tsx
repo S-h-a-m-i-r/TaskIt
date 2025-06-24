@@ -1,4 +1,4 @@
-import AdminTasks from '../../components/adminTasks'
+import AdminTasks from '../../components/adminComponents/adminTasks'
 
 const Tasks = () => {
   return (

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import InputField from "../../components/InputField";
+import InputField from "../../components/generalComponents/InputField";
 import { useNavigate } from "react-router-dom";
 
 const CreditCardDetails = () => {

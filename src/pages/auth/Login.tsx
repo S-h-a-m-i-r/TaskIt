@@ -4,7 +4,8 @@ import { useForm } from "react-hook-form";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import "./custom-font.css";
 import { useNavigate } from "react-router-dom";
-import InputField from "../../components/InputField";
+import InputField from "../../components/generalComponents/InputField";
+import { message } from "antd";
 
 interface FormData {
 	email: string;
@@ -25,10 +26,35 @@ const Login = () => {
 		setShowPassword(!showPassword);
 	};
 
+const VITE_USER_EMAIL='taskawayUser@gmail.com'
+const VITE_USER_PASSWORD='taskaway2025'
+
+// # manager cresidentials
+const VITE_MANAGER_EMAIL='taskawayManager@gmail.com'
+
+// # user cresidentials
+const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
+
 	const onSubmit = (data: FormData) => {
-		console.log("Form data:", data);
+		if (data.email === VITE_USER_EMAIL && VITE_USER_PASSWORD) {
+		localStorage.setItem("token", '1234567890');
+		localStorage.setItem('role', 'user');
+			message.success('logged in successfully');
 		navigate("/");
-	};
+		} else if (data.email === VITE_MANAGER_EMAIL && VITE_USER_PASSWORD) {
+			localStorage.setItem("token", '1234567890');
+			localStorage.setItem('role', 'manager');
+				message.success('logged in successfully');
+			navigate("/manager");
+			} else if (data.email === VITE_SUPER_ADMIN_EMAIL && VITE_USER_PASSWORD) {
+			localStorage.setItem("token", '1234567890');
+			localStorage.setItem('role', 'admin');
+				message.success('logged in successfully');
+			navigate("/admin");
+			} else {
+			message.error('invalid email or password');
+		}
+	}
 
 	return (
 		<form
@@ -57,7 +83,7 @@ const Login = () => {
 								message: "Invalid email address"
 							}
 						}}
-						className="border border-gray-300 rounded-md p-2 text-black focus:text-black"
+						className="border border-gray-300 rounded-md p-2 !text-black focus:text-black"
 					/>
 				</div>
 				<div className="w-full max-w-[433px]">
@@ -65,7 +91,7 @@ const Login = () => {
 						<InputField<FormData>
 							id="password"
 							label="Password"
-							className="border border-gray-300 rounded-md p-2 text-black focus:text-black active:border-primary-200"
+							className="border border-gray-300 rounded-md p-2 !text-black focus:text-black active:border-primary-200"
 							register={register}
 							errors={errors}
 							placeHolder="Please enter password"

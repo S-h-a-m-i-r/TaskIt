@@ -1,5 +1,5 @@
-import ButtonComponent from "../../components/ButtonComponent";
-import CreditsDropdown from "../../components/adminCredits/CreditDropDown";
+import ButtonComponent from "../../components/generalComponents/ButtonComponent";
+import CreditsDropdown from "../../components/adminComponents/adminCredits/CreditDropDown";
 
 interface Task {
 	id?: string;

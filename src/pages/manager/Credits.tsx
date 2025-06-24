@@ -1,4 +1,4 @@
-import ManagerCredits from '../../components/managerCredits'
+import ManagerCredits from '../../components/managerComponents/managerCredits'
 const Credits = () => {
   return (
     <>

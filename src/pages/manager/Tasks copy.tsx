@@ -1,4 +1,4 @@
-import ManagerTasks from '../../components/managerTasks'
+import ManagerTasks from '../../components/managerComponents/managerTasks'
 
 const Tasks = () => {
   return (

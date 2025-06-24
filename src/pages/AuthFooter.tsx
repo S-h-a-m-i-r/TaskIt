@@ -1,4 +1,4 @@
-import ButtonComponent from "../components/ButtonComponent";
+import ButtonComponent from "../components/generalComponents/ButtonComponent";
 import gIcon from "../assets/icons/Google_icon.svg";
 import { Link } from "react-router-dom";
 interface AuthFooterProps {

@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import AdminSidebar from '../../components/AdminSideBar';
-import { ManagerAdminRoutes } from '../../routes/adminRoutes';
+import AdminSidebar from '../../components/generalComponents/AdminManagerSideBar';
+import { ManagerAdminRoutes } from '../../routes/routes';
 // import DashboardHeader from './DashboardHeader';
 
 const ManagerLayout = () => {

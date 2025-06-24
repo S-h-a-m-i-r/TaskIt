@@ -1,4 +1,4 @@
-import AdminSettingsPage from '../../components/AdminSetting.tsx'
+import AdminSettingsPage from '../../components/adminComponents/AdminSetting.tsx/index.tsx'
 const Settings = () => {
   return (
     <>

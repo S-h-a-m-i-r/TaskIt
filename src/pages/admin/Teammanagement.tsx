@@ -1,4 +1,4 @@
-import AdminTeamManagement from '../../components/adminTeamManagement'
+import AdminTeamManagement from '../../components/adminComponents/adminTeamManagement'
 
 const Teammanagement = () => {
   return (

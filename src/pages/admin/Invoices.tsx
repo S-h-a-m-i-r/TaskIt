@@ -1,4 +1,4 @@
-import AdminPageInvoices from '../../components/adminPageInvoices'
+import AdminPageInvoices from '../../components/adminComponents/adminPageInvoices'
 
 const Invoices = () => {
   return (

@@ -1,4 +1,4 @@
-import AddTeam from '../components/adminTeamManagement/AddTeam'
+import AddTeam from '../components/adminComponents/adminTeamManagement/AddTeam'
 
 const AddTeamPage = () => {
   return (

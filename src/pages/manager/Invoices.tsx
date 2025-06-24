@@ -1,4 +1,4 @@
-import ManagerPageInvoices from '../../components/managerPageInvoices'
+import ManagerPageInvoices from '../../components/managerComponents/managerPageInvoices'
 
 const Invoices = () => {
   return (

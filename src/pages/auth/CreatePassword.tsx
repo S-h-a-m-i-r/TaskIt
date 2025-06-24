@@ -1,5 +1,5 @@
 import { useState } from "react";
-import InputField from "../../components/InputField";
+import InputField from "../../components/generalComponents/InputField";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";

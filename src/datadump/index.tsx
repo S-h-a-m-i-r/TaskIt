@@ -834,3 +834,41 @@ export const teamManagmentTableDetails = [
 					},
 			
 ]
+
+export const  statsCards = [
+	{
+		title: "Total Credits Issued",
+		value: "12,500",
+	},
+	{
+		title: "Credits Used This Month",
+		value: "2,300",
+	},
+	{
+		title: "Credits Remaining",
+		value: "10,200",
+	},
+	{
+		title: "Credits Expiring Soon",
+		value: "500",
+	},
+];
+
+export const  dashboardCards = [
+	{
+		title: "Total Tasks",
+		value: "125",
+	},
+	{
+		title: "Credits Balance",
+		value: "$2,300",
+	},
+	{
+		title: "Refunds Processed",
+		value: "32",
+	},
+	{
+		title: "Active Customers",
+		value: "500",
+	},
+];

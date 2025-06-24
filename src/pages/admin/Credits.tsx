@@ -1,4 +1,4 @@
-import AdminCredits from '../../components/adminCredits'
+import AdminCredits from '../../components/adminComponents/adminCredits'
 const Credits = () => {
   return (
     <>
