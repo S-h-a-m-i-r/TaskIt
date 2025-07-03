@@ -2,6 +2,7 @@ import { useState } from "react";
 import notifucation from "../../assets/icons/Notification_icon.svg";
 import search from "../../assets/icons/Search_icon.svg";
 import { To, useNavigate } from "react-router-dom";
+import ProfileDropdown from "../../components/generalComponents/ProfileButton";
 
 const DashboardHeader = () => {
 	const navigate = useNavigate();
@@ -11,6 +12,7 @@ const DashboardHeader = () => {
 	const handleButtonClick = () => {
 		setIsExpanded(true);
 	};
+	const userLoggedIn = localStorage.getItem('token')
 
 	interface InputChangeEvent {
 		target: {
@@ -30,7 +32,7 @@ const DashboardHeader = () => {
 	const redirection = (path: To) => {
 		navigate(path);
 	};
-
+const name = localStorage.getItem('role') ?? ''
 	return (
 		<div className="absolute flex top-10 right-12 min-4xl:hidden items-center gap-2">
 			{isExpanded ? (
@@ -67,12 +69,18 @@ const DashboardHeader = () => {
 			>
 				Create new task
 			</button>
-			<button
+			{
+				userLoggedIn ?
+				<ProfileDropdown userName={name} />
+				:
+				<button
 				className="bg-primary-50 hover:bg-primary-200 w-[150px] text-white border border-gray-300 rounded-full p-3 transition-all duration-200"
 				onClick={() => redirection("/login")}
 			>
 				Login
 			</button>
+			}
+			
 		</div>
 	);
 };

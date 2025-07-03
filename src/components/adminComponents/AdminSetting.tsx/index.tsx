@@ -16,12 +16,12 @@ export default function SettingsPage() {
 		<div className="w-full  mx-auto p-6 bg-transparent min-h-screen">
 			{/* Header */}
 			<div className="mb-8">
-				<h1 className="text-3xl font-semibold text-gray-900">Settings</h1>
+				<h1 className="text-3xl text-left font-semibold text-gray-900">Settings</h1>
 			</div>
 
 			{/* Data Deletion Settings */}
 			<div className="mb-10">
-				<h2 className="text-xl font-semibold text-gray-900 mb-6">Data Deletion Settings</h2>
+				<h2 className="text-xl font-semibold text-left text-gray-900 mb-6">Data Deletion Settings</h2>
 				<div className="space-y-4">
 					{/* Manual Deletion */}
 					<div className="flex text-left items-start space-x-4 p-4 border border-gray-300 rounded-lg">

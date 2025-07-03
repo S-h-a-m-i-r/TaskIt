@@ -1,29 +1,18 @@
-import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import {  useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { DashboardSvgIcon, CreditsSvgIcon, ProfileSvgIcon } from "../../assets/svg";
 import taskit from "../../assets/Task_it_logo.svg";
 import addon from "../../assets/addon.png";
 import bigCloud from "../../assets/icons/big_cloud.svg";
 import smallCloud from "../../assets/icons/small_cloud.svg";
-import logout from "../../assets/icons/Logout_icon.svg";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import { useWindowSize } from "../../hooks/useWindowSize";
-import { message, Modal } from "antd";
-// import Model from "../../components/Model";
-// import { BsCurrencyDollar } from "react-icons/bs";
+import { socialIcons } from "../../routes/routes";
 
 const Sidebar = () => {
 	const navigate = useNavigate();
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { width } = useWindowSize();
-
-	const handleLogoutClick = () => {
-		localStorage.removeItem('token')
-		localStorage.removeItem('role')
-		message.success('logged out successfully!');
-		navigate('/login')
-	};
 
 	const handleNavigation = () => {
 		navigate("/credits");
@@ -32,7 +21,7 @@ const Sidebar = () => {
 		if (width >= 1024) return;
 		setIsSidebarOpen(!isSidebarOpen);
 	};
-	useEffect(() => {}, [isModalOpen]);
+
 	return (
 		<>
 			<div className="lg:hidden fixed top-4 left-4 z-50">
@@ -142,15 +131,23 @@ const Sidebar = () => {
 									)}
 								</NavLink>
 							</li>
-							<div className="my-5 w-full border"></div>
-							<li
-								className="flex gap-2 items-center px-4 py-4 cursor-pointer hover:bg-slate-50"
-								onClick={() => {setIsModalOpen(true)}}
-							>
-								{" "}
-								<img src={logout} /> <span> Logout </span>
-							</li>
-
+							<div className="mt-5 w-full border-[0.5px] border-gray-400/50"></div>
+							<div className="flex gap-5">
+							{socialIcons.map((item, index) => (
+								<li key={index} className="flex">
+									<Link to={item.path}>
+									<button
+										className={'flex py-4 px-4 w-full'}
+									>
+										<div className="flex items-center gap-2">
+											{<item.Icon size={24}/>}											
+										</div>
+									</button>
+									</Link>
+								</li>
+							))}
+							</div>
+							<div className="mb-5 w-full border-[0.5px] border-gray-400/50"></div>
 							<div className="hidden lg:block">
 								<div className=" mt-10 max-lg:max-w-[150px] w-[216px] justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
 									<img src={bigCloud} className="absolute top-0 left-0 z-0" />
@@ -174,25 +171,7 @@ const Sidebar = () => {
 					</nav>
 				</div>
 
-				<Modal
-					open={isModalOpen}
-					closable={true}
-					cancelText="Cancel"
-					okText="Logout"
-					onCancel={() => {setIsModalOpen(false)}}
-					onOk={handleLogoutClick}
-					centered={true}
-					style={{ height: "250px" }}
-					okButtonProps={{
-						style: {
-							backgroundColor: "#EF4444", // Red-500
-							borderColor: "#EF4444",
-							color: "#fff",
-						},
-					}}
-				>
-					<p className="text-lg font-semibold text-gray-600 text-center py-10">Are you sure you want to logout?</p>
-				</Modal>
+				
 			</aside>
 		</>
 	);

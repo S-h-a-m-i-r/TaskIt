@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import React from "react";
 import TaskItLogo from "../../assets/Task_it_logo.svg";
-import { message, Modal } from "antd";
 import logout from "../../assets/icons/Logout_icon.svg";
+import { socialIcons } from "../../routes/routes";
 
 interface SidebarItem {
 	label: string;
@@ -19,7 +19,6 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 	const navigate = useNavigate();
-	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const [activeItem, setActiveItem] = useState<string>("");
 
@@ -27,12 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 		setIsSidebarOpen(!isSidebarOpen);
 	};
 
-	const handleLogoutClick = () => {
-		localStorage.removeItem('token')
-		localStorage.removeItem('role')
-		message.success('logged out successfully!');
-		navigate('/login')
-	};
+	
 
 	const handleItemClick = (route: string) => {
 		setActiveItem(route);
@@ -41,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 	};
 
 	useEffect(() => {
-		setActiveItem(location.pathname); // Set the active item to the current route
+		setActiveItem(location.pathname);
 	}, [location.pathname]);
 	return (
 		<>
@@ -79,33 +73,31 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 									</button>
 								</li>
 							))}
-							<div className="my-5 w-full border"></div>
+							<div className="mt-5 w-full border-[0.5px] border-gray-400/50"></div>
+							<div className="flex gap-5">
+							{socialIcons.map((item, index) => (
+								<li key={index} className="flex">
+									<Link to={item.path}>
+									<button
+										className={'flex py-4 px-4 w-full'}
+									>
+										<div className="flex items-center gap-2">
+											{<item.Icon size={24}/>}											
+										</div>
+									</button>
+									</Link>
+								</li>
+							))}
+							</div>
+							<div className="mb-5 w-full border-[0.5px] border-gray-400/50"></div>
 							<div
 								className="flex gap-2 items-center px-4 py-4 cursor-pointer hover:bg-slate-50"
-								onClick={() => {setIsModalOpen(true)}}
+								
 							>
 								{" "}
 								<img src={logout} /> <span> Logout </span>
 							</div>
-							<Modal
-								open={isModalOpen}
-								closable={true}
-								cancelText="Cancel"
-								okText="Logout"
-								onCancel={() => {setIsModalOpen(false)}}
-								onOk={handleLogoutClick}
-								centered={true}
-								style={{ height: "250px" }}
-								okButtonProps={{
-									style: {
-									  backgroundColor: '#EF4444', // Red-500
-									  borderColor: '#EF4444',
-									  color: '#fff',
-									},
-								  }}
-							>
-								<p className="text-lg font-semibold text-gray-600 text-center py-10">Are you sure you want to logout?</p>
-							</Modal>
+							
 						</ul>
 					</nav>
 				</div>

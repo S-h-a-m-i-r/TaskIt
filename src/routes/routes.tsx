@@ -1,4 +1,7 @@
 import { CreditSvgIcon, CustomerSvgIcon, DashboardSvgIcon, SettingsSvgIcon, TasksSvgIcon, TeamManagementSvgIcon } from "../assets/svg";
+import { FaInstagram } from "react-icons/fa6";
+import { RiFacebookCircleLine } from "react-icons/ri";
+import { LiaLinkedin } from "react-icons/lia";
 
 export const SuperAdminRoutes = [
 	{
@@ -35,6 +38,24 @@ export const SuperAdminRoutes = [
 		label: "Settings",
 		Icon: SettingsSvgIcon  ,
 		route: "/admin/settings",
+	},
+];
+
+export const socialIcons = [
+	{
+		label: "",
+		Icon: FaInstagram,
+		path: "https://www.instagram.com",
+	},
+	{
+		label: "",
+		Icon: RiFacebookCircleLine,
+		path: "https://www.facebook.com",
+	},
+	{
+		label: "",
+		Icon: LiaLinkedin,
+		path: "https://www.linkedin.com"
 	},
 ];
 

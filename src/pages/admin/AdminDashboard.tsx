@@ -10,12 +10,15 @@ import {
 } from "../../datadump";
 import TaskTable from "./TaskTable";
 import { adminTaskList as customerManagement } from "../../datadump";
+import ProfileDropdown from "../../components/generalComponents/ProfileButton";
 
 const AdminDashboard = () => {
+	const name = localStorage.getItem('role') ?? ''
 	return (
 		<>
-			<div className="mt-5">
+			<div className="mt-5 flex w-full justify-between">
 				<h1 className="font-bold text-[32px] text-primary-100 text-left"> Dashboard </h1>
+				<ProfileDropdown userName={name} />
 			</div>
 			<div>
 				<div className="mt-14 grid grid-cols-1 max-sm:justify-center sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
