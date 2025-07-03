@@ -90,13 +90,6 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 							))}
 							</div>
 							<div className="mb-5 w-full border-[0.5px] border-gray-400/50"></div>
-							<div
-								className="flex gap-2 items-center px-4 py-4 cursor-pointer hover:bg-slate-50"
-								
-							>
-								{" "}
-								<img src={logout} /> <span> Logout </span>
-							</div>
 							
 						</ul>
 					</nav>
