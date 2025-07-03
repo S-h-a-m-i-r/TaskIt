@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoMenuOutline, IoCloseOutline } from "react-icons/io5";
 import React from "react";
 import TaskItLogo from "../../assets/Task_it_logo.svg";
-import logout from "../../assets/icons/Logout_icon.svg";
 import { socialIcons } from "../../routes/routes";
 
 interface SidebarItem {
