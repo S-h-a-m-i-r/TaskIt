@@ -1,3 +1,4 @@
+import CountUp from "react-countup";
 import trendingUp from "../../assets/icons/trendingUp_icon.svg";
 import { To, useNavigate } from "react-router-dom";
 
@@ -26,7 +27,12 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
 			<div className="w-full flex justify-between items-start">
 				<div className="text-left flex flex-col gap-3">
 					<p className="font-normal text-lg"> {props.title}</p>
-					<p className="font-bold text-3xl"> {props.count} </p>
+					<p className="font-bold text-3xl"> 
+						<CountUp 
+						end={props.count}
+						duration={2}
+						/>
+						 </p>
 				</div>
 				<div className="bg-gray-200 p-3 rounded-full">
 					<img src={props.icon} alt="icon" />

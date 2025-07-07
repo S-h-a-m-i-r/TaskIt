@@ -3,6 +3,7 @@ import backIcon from '../../assets/icons/ArrowLeft_icon.svg';
 import uploadIcon from '../../assets/icons/Upload_icon.svg'
 import addOn from '../../assets/addon.png'
 import { useRef } from 'react';
+import ButtonComponent from '../../components/generalComponents/ButtonComponent';
 
 
 const CreateTask = () => {
@@ -75,6 +76,9 @@ const CreateTask = () => {
 							<p className="text-primary-300 text-lg font-medium"> 12 credits left </p>
 						</div>						
 					</div>
+				</div>
+				<div className='w-full px-72'>
+				<ButtonComponent className=' w-full rounded-xl py-3 text-xl bg-primary-50 hover:bg-primary-200 text-white' title='Create Task'/>
 				</div>
 			</div>
 		</div>

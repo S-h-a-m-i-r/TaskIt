@@ -1,12 +1,13 @@
 
 import { useState, useRef, useEffect } from "react"
 import { ChevronDown } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function CreditsDropdown() {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const [selectedOption, setSelectedOption] = useState("Add Credits")
-
+  const navigate = useNavigate()
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -24,6 +25,7 @@ export default function CreditsDropdown() {
   const handleOptionClick = (option: string) => {
     setSelectedOption(option)
     setIsOpen(false)
+    navigate('/credits')
     // Add your logic here for handling the selected option
   }
 

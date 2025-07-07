@@ -1,10 +1,9 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { ChevronDown, LogOut, User, Settings } from "lucide-react"
+import { ChevronDown, LogOut, User, Settings, UserRound, Store } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { message, Modal } from "antd"
-
 interface ProfileDropdownProps {
   userName?: string
   userAvatar?: string
@@ -51,6 +50,18 @@ const navigate = useNavigate();
     // Add your settings navigation logic here
   }
 const userRole = localStorage.getItem('role')
+
+const handleRoute = (e: React.MouseEvent<HTMLButtonElement> | undefined) => {
+  e?.stopPropagation();
+  e?.preventDefault();
+  const target = e?.target as HTMLButtonElement;
+  if (target?.id === 'aboutUs') {
+    navigate('/aboutUs');
+  } else {
+    navigate('/contactUs');
+  }
+  setIsOpen(false);
+}
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       {/* Profile Button */}
@@ -98,6 +109,22 @@ const userRole = localStorage.getItem('role')
             Settings
           </button>
           }
+          <button
+          id='contactus'
+            onClick={(e) => handleRoute(e)}
+            className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+          >
+            <UserRound className="w-4 h-4 text-gray-500" />
+            Contact Us
+          </button>
+          <button
+            onClick={(e) => handleRoute(e)}
+            id='aboutUs'
+            className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
+          >
+            <Store className="w-4 h-4 text-gray-500" />
+            About Us
+          </button>
 
           {/* Divider */}
           <div className="border-t border-gray-100 my-1"></div>

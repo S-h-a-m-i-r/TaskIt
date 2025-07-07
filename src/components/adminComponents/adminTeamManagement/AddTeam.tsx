@@ -46,14 +46,14 @@ const AddTeam = () => {
 
 	return (
 		<div>
-			<h2 className="text-[32px] text-left font-bold text-gray-900"> Add Team</h2>
+			<h2 className="text-[32px] text-left font-bold text-gray-900"> Add Team Member</h2>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<InputField<FormData>
 					id="teamName"
-					label="Team Name"
+					label="Name"
 					register={register}
 					errors={errors}
-					placeHolder="Enter team name"
+					placeHolder="Enter team member name"
 					type="text"
 					className="border border-gray-300 rounded-md p-2 text-black focus:text-black max-w-[448px] !bg-[#E8EDF2]"
 				/>
@@ -71,7 +71,7 @@ const AddTeam = () => {
 					/>
 				</div>
 				<div>
-					<h3 className="text-[18px] font-bold text-left mt-8">Team permission</h3>
+					<h3 className="text-[18px] font-bold text-left mt-8">Permission</h3>
 					<div className="w-full max-w-md py-6 bg-transparent">
 						<div className="space-y-4">
 							{checkboxItems.map((item) => (
@@ -108,7 +108,7 @@ const AddTeam = () => {
 				</div>
 				<div className="flex w-full justify-end">
 							<ButtonComponent
-								title={"Create Team"}
+								title={"Add To Team"}
 								className=" bg-primary-50 w-full hover:bg-primary-200 text-white py-3 mt rounded-full flex justify-center self-center max-w-[150px]"
 							/>							
 						</div>

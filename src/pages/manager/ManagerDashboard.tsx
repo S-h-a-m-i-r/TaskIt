@@ -10,6 +10,7 @@ import {
 import TaskTable from "../admin/TaskTable";
 import { adminTaskList as customerManagement } from "../../datadump";
 import ProfileDropdown from "../../components/generalComponents/ProfileButton";
+import CountUp from "react-countup";
 
 const ManagerDashboard = () => {
 	const name = localStorage.getItem("role") ?? "man";
@@ -29,7 +30,9 @@ const ManagerDashboard = () => {
 						>
 							<div className="space-y-2 flex flex-col justify-center h-full">
 								<h3 className="text-[16px] text-left font-medium text-gray-600 leading-tight">{card.title}</h3>
-								<p className="text-[24px] text-left font-bold text-gray-900">{card.value}</p>
+								<p className="text-[24px] text-left font-bold text-gray-900">
+									<CountUp end={Number(card.value)} duration={2}/>
+								</p>
 							</div>
 						</div>
 					))}

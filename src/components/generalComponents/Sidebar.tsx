@@ -152,14 +152,20 @@ const Sidebar = () => {
 								<div className=" mt-10 max-lg:max-w-[150px] w-[216px] justify-self-center flex flex-col justify-end p-3 rounded-lg h-[187px] bg-[#F3F4F6] relative overflow-hidden">
 									<img src={bigCloud} className="absolute top-0 left-0 z-0" />
 									<img src={smallCloud} className="absolute top-10 right-0 z-0" />
-									<div className="z-10">
-										<p className="text-[48px] text-primary-50">
-											10
-											{/* <span className="text-sm bg-primary-50"><BsCurrencyDollar/></span> */}
-										</p>
-										<p>per credit</p>
+									<div >
+									<div className="relative z-10 text-center">
+          {/* Price */}
+          <div>
+            <span className="text-5xl md:text-5xl font-medium bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
+              $5
+            </span>
+          </div>
+
+          {/* Subtitle */}
+          <p className=" mb-4 text-[16px] md:text-[16px] text-gray-600 font-medium">Per Credit</p>
+        </div>
 										<button
-											className="w-full rounded-full bg-primary-50 text-white flex justify-center gap-2 items-center py-1"
+											className="w-full rounded-full bg-primary-50 hover:bg-primary-200 text-white flex pl-5 justify-center gap-2 items-center py-1"
 											onClick={handleNavigation}
 										>
 											Buy Now <img src={addon} width={20} />

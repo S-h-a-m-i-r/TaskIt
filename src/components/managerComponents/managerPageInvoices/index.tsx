@@ -3,6 +3,7 @@ import {  adminPageInvoicesDetails, adminPageInvoicesHeader} from '../../../data
 import TaskTable from '../../../pages/admin/TaskTable'
 import {  ChevronDown } from 'lucide-react';
 import ButtonComponent from '../../generalComponents/ButtonComponent';
+import ProfileDropdown from '../../generalComponents/ProfileButton';
 
 const AdminPageInvoices = () => {
         const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -40,16 +41,20 @@ const AdminPageInvoices = () => {
             document.addEventListener("mousedown", handleClickOutside);
             return () => document.removeEventListener("mousedown", handleClickOutside);
         }, [openDropdown]);
+        const name = localStorage.getItem('role') || ''
   return (
     <>
     <div className='flex items-center justify-between mt-10 mb-4'>
-     <h2 className='mt-10 text-[32px] text-left font-bold text-gray-900 mb-2'>
+     <h2 className='text-[32px] text-left font-bold text-gray-900 mb-2'>
       Invoice Center
       </h2>
+      <div className='flex gap-2 items-center mb-4'>
       <ButtonComponent 
       title='Generate Invoice'
-      className="bg-primary-50 text-white px-4 py-2 rounded-md hover:bg-primary-200 transition-all mb-4"
+      className="bg-primary-50 text-white px-4 py-2 rounded-md hover:bg-primary-200 transition-all"
       />
+      <ProfileDropdown userName = {name}/>
+      </div>
       </div>
       <div className="space-y-6">
 				{/* Filter Buttons with Dropdowns */}

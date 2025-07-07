@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { adminpageCustomerDetails, adminpageCustomerHeader } from '../../../datadump'
 import TaskTable from '../../../pages/admin/TaskTable'
 import { Search, ChevronDown } from 'lucide-react';
+import ProfileDropdown from '../../generalComponents/ProfileButton';
 
 const AdminPageCustomers = () => {
         const [searchQuery, setSearchQuery] = useState("");
@@ -41,11 +42,15 @@ const AdminPageCustomers = () => {
             document.addEventListener("mousedown", handleClickOutside);
             return () => document.removeEventListener("mousedown", handleClickOutside);
         }, [openDropdown]);
+		const name = localStorage.getItem('role') || ''
   return (
     <>
-     <h2 className='mt-10 text-[32px] text-left font-bold text-gray-900 mb-2'>
+     <div className='mt-10 mb-5 flex justify-between items-center'>
+	 <h2 className=' text-[32px] text-left font-bold text-gray-900 mb-2'>
       Customers
       </h2>
+	  <ProfileDropdown userName={name}/>
+	  </div>
       <div className="space-y-6">
 
 				{/* Search Input */}

@@ -4,6 +4,7 @@ import search from "../../../assets/icons/Search_icon.svg";
 import TaskTable from "../../../pages/admin/TaskTable";
 import { tasksPagedetails } from "../../../datadump";
 import { Link } from "react-router-dom";
+import ProfileDropdown from "../../generalComponents/ProfileButton";
 
 interface InputChangeEvent {
 	target: {
@@ -22,17 +23,20 @@ const AdminTasks = () => {
 	const handleInputChange = (event: InputChangeEvent) => {
 		setSearchQuery(event.target.value);
 	};
-
+const name = localStorage.getItem('role') || '';
 	return (
 		<>
 			<div className="mt-10 w-full flex justify-between items-center mb-4">
 				<h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
+				<div className="flex gap-2 items-center">
 				<Link to="/createTask">
                 <ButtonComponent
 					title="New Task"
-					className="bg-primary-50 text-white text-[14px] px-4 py-2 rounded-md hover:bg-primary-200 w-[100px]"
+					className="bg-primary-50 text-white text-[14px] px-4 py-2 rounded-md hover:bg-primary-200 w-[135px]"
 				/>
                 </Link>
+				<ProfileDropdown userName={name} />
+				</div>
 			</div>
 			<div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-full transition-all duration-1000">
 				<img src={search} alt="search" />

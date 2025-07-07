@@ -51,6 +51,8 @@ import ManagerLayout from "../pages/manager/ManagerLayout";
 import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleProtectedRoute from "./ProtectedRoute";
+import AboutUsPage from "../pages/user/aboutUs";
+import ContactUsPage from "../pages/user/contactUs";
 
 export const router = createBrowserRouter([
 	{
@@ -91,6 +93,9 @@ export const router = createBrowserRouter([
 					  { path: "task/:id", element: <TaskDetailsPage /> },
 					  { path: "notification", element: <NotificationPage /> },
 					  { path: "createTask", element: <CreateTask /> },
+					  {path: "AboutUs", element: <AboutUsPage/>},
+					  {path: "ContactUs", element: <ContactUsPage/>}
+
 					],
 				  },
 				],

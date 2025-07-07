@@ -1,5 +1,8 @@
 import ButtonComponent from "../../components/generalComponents/ButtonComponent";
 import CreditsDropdown from "../../components/adminComponents/adminCredits/CreditDropDown";
+import { useNavigate } from "react-router-dom";
+import { generatePDF } from "../../utils/pdfGenerator";
+import { dummyInvoiceData, InvoiceData } from "../../components/generalComponents/InvoiceTemplate";
 
 interface Task {
 	id?: string;
@@ -44,6 +47,7 @@ type TaskTableProps = {
 };
 
 const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
+	const navigate = useNavigate()
 	const getStatusBadge = (status: string) => {
 		const baseClasses = "px-4 py-2 rounded-full text-sm font-medium";
 
@@ -58,6 +62,14 @@ const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
 				return `${baseClasses} bg-[#E8EDF2] text-primary-100`;
 		}
 	};
+
+	const handleProfile = (e: { preventDefault: () => void; })=>{
+		e.preventDefault();
+		navigate('/profile')
+	}
+	const handleDownloadPdf = async (inVoiceData: InvoiceData) => {
+		await generatePDF(inVoiceData)
+	}
 	return (
 		<div className="w-full py-4">
 			<div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
@@ -162,6 +174,7 @@ const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
 											<ButtonComponent
 												title="View Profile"
 												className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
+												onClick={() => handleProfile({ preventDefault: () => {} })}
 											/>
 										</td>
 									)}
@@ -179,6 +192,7 @@ const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
 												<ButtonComponent
 													title="Download PDF"
 													className=" bg-[#EBEDF2] text-[12px] text-black font-medium hover:bg-gray-300 px-3 py-2 rounded-full w-[150px]"
+													onClick={() => handleDownloadPdf(dummyInvoiceData)}
 												/>
 												{
 												!manager &&
@@ -199,6 +213,7 @@ const TaskTable = ({ tasks, tasksHeader,manager }: TaskTableProps) => {
 							))}
 						</tbody>
 					</table>
+					 {/* <InvoiceTemplate data={dummyInvoiceData}/> */}
 				</div>
 			</div>
 		</div>

@@ -1,12 +1,16 @@
 import { creditsPagetaskDetails, creditsPagetaskHeaders } from "../../../datadump";
 import TaskTable from "../../../pages/admin/TaskTable";
+import ProfileDropdown from "../../generalComponents/ProfileButton";
 import CreditTaskHeader from "./creditTaskHeader";
 
 const index = () => {
-    
+    const name = localStorage.getItem('role') || ''
 	return (
 		<>
-			<h2 className="mt-10 text-[32px] text-left font-bold text-gray-900 mb-2">Credits Dashboard</h2>
+		<div className="mt-10 flex justify-between items-center gap-2">
+			<h2 className=" text-[32px] text-left font-bold text-gray-900 mb-2">Credits Dashboard</h2>
+			<ProfileDropdown userName={name}/>
+			</div>
 			<p className="text-[#5C788A] text-left text-[14px] font-normal mb-4">Manage and view customer credits</p>
 			<div className="mb-8">
 				<h1 className="text-2xl text-left font-semibold text-gray-900">Current Credit Overview</h1>

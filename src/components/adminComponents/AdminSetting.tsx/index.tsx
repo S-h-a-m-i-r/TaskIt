@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ProfileDropdown from "../../generalComponents/ProfileButton";
 
 export default function SettingsPage() {
 	const [dataDeletion, setDataDeletion] = useState("manual");
@@ -11,12 +12,13 @@ export default function SettingsPage() {
 	const handlePasswordChange = () => {
 		// Handle password change logic
 	};
-
+const name = localStorage.getItem('role') || ''
 	return (
-		<div className="w-full  mx-auto p-6 bg-transparent min-h-screen">
+		<div className="w-full  mx-auto bg-transparent min-h-screen">
 			{/* Header */}
-			<div className="mb-8">
+			<div className="my-10 flex justify-between items-center">
 				<h1 className="text-3xl text-left font-semibold text-gray-900">Settings</h1>
+			<ProfileDropdown userName = {name}/>
 			</div>
 
 			{/* Data Deletion Settings */}
