@@ -8,11 +8,11 @@ const DashboardHeader = () => {
 	const navigate = useNavigate();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
-	const location = useLocation()
+	const location = useLocation();
 	const handleButtonClick = () => {
 		setIsExpanded(true);
 	};
-	const userLoggedIn = localStorage.getItem('token')
+	const userLoggedIn = localStorage.getItem("token");
 
 	interface InputChangeEvent {
 		target: {
@@ -32,7 +32,21 @@ const DashboardHeader = () => {
 	const redirection = (path: To) => {
 		navigate(path);
 	};
-const name = localStorage.getItem('role') ?? ''
+	const name = localStorage.getItem("role") ?? "";
+	const showButtonRoutes = [
+		"/",
+		"/tasks",
+		"/credits",
+		"/profile",
+		"/inProgress",
+		"/submitted",
+		"/closed",
+		"/recurring",
+	];
+	const shouldShowButton = showButtonRoutes.includes(
+		location.pathname.toLowerCase()
+	);
+
 	return (
 		<div className="absolute flex top-10 right-12 min-4xl:hidden items-center gap-2">
 			{isExpanded ? (
@@ -50,15 +64,15 @@ const name = localStorage.getItem('role') ?? ''
 				</div>
 			) : (
 				<>
-				{!location.pathname.includes("/aboutUs") && (
-				<button
-					onClick={handleButtonClick}
-					className="bg-white border border-gray-300 rounded-full p-3 transition-all duration-1000"
-				>
-					<img src={search} alt="search" />
-				</button>
-			)}
-			</>
+					{!location.pathname.includes("/aboutUs") && (
+						<button
+							onClick={handleButtonClick}
+							className="bg-white border border-gray-300 rounded-full p-3 transition-all duration-1000"
+						>
+							<img src={search} alt="search" />
+						</button>
+					)}
+				</>
 			)}
 
 			<button
@@ -67,27 +81,25 @@ const name = localStorage.getItem('role') ?? ''
 			>
 				<img src={notifucation} />
 			</button>
-			{!location.pathname.includes("/createTask") || !location.pathname.includes("/aboutUs") && (
-                <button
-                    className="bg-primary-50 hover:bg-primary-200 text-white border border-gray-300 rounded-full p-3 transition-all duration-200"
-                    onClick={() => redirection("/createTask")}
-                >
-                    Create new task
-                </button>
-            )}
-
-			{
-				userLoggedIn ?
-				<ProfileDropdown userName={name} />
-				:
+			{shouldShowButton && (
 				<button
-				className="bg-primary-50 hover:bg-primary-200 w-[150px] text-white border border-gray-300 rounded-full p-3 transition-all duration-200"
-				onClick={() => redirection("/login")}
-			>
-				Login
-			</button>
-			}
-			
+					className="bg-primary-50 hover:bg-primary-200 text-white border border-gray-300 rounded-full p-3 transition-all duration-200"
+					onClick={() => redirection("/createTask")}
+				>
+					Create new task
+				</button>
+			)}
+
+			{userLoggedIn ? (
+				<ProfileDropdown userName={name} />
+			) : (
+				<button
+					className="bg-primary-50 hover:bg-primary-200 w-[150px] text-white border border-gray-300 rounded-full p-3 transition-all duration-200"
+					onClick={() => redirection("/login")}
+				>
+					Login
+				</button>
+			)}
 		</div>
 	);
 };

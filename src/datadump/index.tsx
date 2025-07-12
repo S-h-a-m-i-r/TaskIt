@@ -316,7 +316,13 @@ export const CardsData = [
 	{ title: "Recurring Tasks", percent: 7, count: 33, icon: recurring_icon, path: "/recurring" },
 ];
 
-export const TasksHeadersData = ["Name", "Task Id", "Date", "Status", "Actions", "Recurring"];
+export const TasksHeadersData = [
+	"Name",
+	"Task Id",
+	"Date",
+	"Status",
+	"Recurring",
+];
 
 export const adminTasksHeadersData = [
 	"Name",

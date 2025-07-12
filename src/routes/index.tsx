@@ -53,6 +53,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import RoleProtectedRoute from "./ProtectedRoute";
 import AboutUsPage from "../pages/user/aboutUs";
 import ContactUsPage from "../pages/user/contactUs";
+import ConditionAndPrivacyPolicyPage from "../pages/ConditionAndPrivacyPage";
 
 export const router = createBrowserRouter([
 	{
@@ -76,35 +77,46 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "",
-				element: <ProtectedRoute allowedRoles={["user","manager", "admin"]} />,
+				element: <ProtectedRoute allowedRoles={["user", "manager", "admin"]} />,
 				children: [
-				  {
-					path: "",
-					element: <DashboardLayout />,
-					children: [
-					  { index: true, element: <MainPage /> },
-					  { path: "credits", element: <CreditsPage /> },
-					  { path: "profile", element: <ProfilePage /> },
-					  { path: "tasks", element: <TasklistPage /> },
-					  { path: "inProgress", element: <InprogressTasklist /> },
-					  { path: "submitted", element: <SubmittedTasklist /> },
-					  { path: "closed", element: <ClosedTasklist /> },
-					  { path: "recurring", element: <RecurringTasklist /> },
-					  { path: "task/:id", element: <TaskDetailsPage /> },
-					  { path: "notification", element: <NotificationPage /> },
-					  { path: "createTask", element: <CreateTask /> },
-					  {path: "AboutUs", element: <AboutUsPage/>},
-					  {path: "ContactUs", element: <ContactUsPage/>}
-
-					],
-				  },
+					{
+						path: "",
+						element: <DashboardLayout />,
+						children: [
+							{ index: true, element: <MainPage /> },
+							{ path: "credits", element: <CreditsPage /> },
+							{ path: "profile", element: <ProfilePage /> },
+							{ path: "tasks", element: <TasklistPage /> },
+							{ path: "inProgress", element: <InprogressTasklist /> },
+							{ path: "submitted", element: <SubmittedTasklist /> },
+							{ path: "closed", element: <ClosedTasklist /> },
+							{ path: "recurring", element: <RecurringTasklist /> },
+							{ path: "task/:id", element: <TaskDetailsPage /> },
+							{ path: "notification", element: <NotificationPage /> },
+							{ path: "createTask", element: <CreateTask /> },
+							{ path: "AboutUs", element: <AboutUsPage /> },
+							{ path: "ContactUs", element: <ContactUsPage /> },
+							{
+								path: "terms",
+								element: <ConditionAndPrivacyPolicyPage />,
+							},
+							{
+								path: "privacy",
+								element: <ConditionAndPrivacyPolicyPage />,
+							},
+							{
+								path: "termsAndConditions",
+								element: <ConditionAndPrivacyPolicyPage />,
+							},
+						],
+					},
 				],
-			  }
+			},
 		],
 	},
 	{
 		path: "admin",
-		element: <ProtectedRoute allowedRoles={[ "admin"]} />,
+		element: <ProtectedRoute allowedRoles={["admin"]} />,
 		children: [
 			{
 				path: "",
