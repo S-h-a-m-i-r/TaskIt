@@ -6,6 +6,7 @@ import "./custom-font.css";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../components/generalComponents/InputField";
 import { message } from "antd";
+import useAuthStore from "../../stores/authStore";
 
 interface FormData {
 	email: string;
@@ -21,40 +22,26 @@ const Login = () => {
 	} = useForm<FormData>();
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+const { login } = useAuthStore();
+
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
 	};
-
-const VITE_USER_EMAIL='taskawayUser@gmail.com'
-const VITE_USER_PASSWORD='taskaway2025'
-
-// # manager cresidentials
-const VITE_MANAGER_EMAIL='taskawayManager@gmail.com'
-
-// # user cresidentials
-const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
-
-	const onSubmit = (data: FormData) => {
-		if (data.email === VITE_USER_EMAIL && VITE_USER_PASSWORD) {
-		localStorage.setItem("token", '1234567890');
-		localStorage.setItem('role', 'user');
-			message.success('logged in successfully');
-		navigate("/");
-		} else if (data.email === VITE_MANAGER_EMAIL && VITE_USER_PASSWORD) {
-			localStorage.setItem("token", '1234567890');
-			localStorage.setItem('role', 'manager');
-				message.success('logged in successfully');
-			navigate("/manager");
-			} else if (data.email === VITE_SUPER_ADMIN_EMAIL && VITE_USER_PASSWORD) {
-			localStorage.setItem("token", '1234567890');
-			localStorage.setItem('role', 'admin');
-				message.success('logged in successfully');
-			navigate("/admin");
-			} else {
-			message.error('invalid email or password');
-		}
+	
+const onSubmit = async (data: FormData) => {
+	try {
+	  const res = await login(data);
+	  message.success('Logged in successfully');
+  
+	  const role = res.user.role;
+	  if (role === 'MANAGER') navigate('/manager');
+	  else if (role === 'ADMIN') navigate('/admin');
+	  else navigate('/');
+	} catch (err) {
+	  message.error(err.message);
 	}
+  };
 
 	return (
 		<form

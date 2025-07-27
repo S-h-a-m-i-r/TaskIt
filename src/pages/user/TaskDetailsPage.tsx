@@ -1,35 +1,111 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import backIcon from "../../assets/icons/ArrowLeft_icon.svg";
 import ListItem from "../../components/generalComponents/ListItem";
 import deleteIcon from "../../assets/icons/Delete_icon.svg";
 import attachment from "../../assets/icons/attachment_icon.svg";
 import sendIcon from "../../assets/icons/Send_icon.svg";
-import { useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useSocket } from "../../context/SocketContext";
+import useTaskStore from "../../stores/taskStore";
+import useAuthStore from "../../stores/authStore";
 
-const TaskDetailsPage = () => {
+const TaskDetailsPage = ({ messages: initialMessages, userId }) => {
 	const navigate = useNavigate();
 	const handleGoBack = () => {
 		navigate(-1);
 	};
 
-	const [messages, setMessages] = useState([
-		{
-			text: "Sharing details on the status of the UI/UX task ensures transparency and keeps all stakeholders informed.",
-			sender: "bot",
-		},
-		{ text: "UI/UX update", sender: "user" },
-		{
-			text: "Regular updates on the UI/UX task help maintain momentum and ensure alignment with task goals.",
-			sender: "bot",
-		},
-		{ text: "I'm reaching out to request the latest updates on the current UI/UX task progress.", sender: "user" },
-	]);
-	const [newMessage, setNewMessage] = useState("");
+	const { id: taskId } = useParams(); // this will be '6884a837340501974324fd41'
 
-	const handleSendMessage = () => {
-		if (newMessage.trim() !== "") {
-			setMessages([...messages, { text: newMessage, sender: "user" }]);
-			setNewMessage("");
+	const { viewTask } = useTaskStore();
+	const { user } = useAuthStore();
+
+	const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+
+	// const [newMessage, setNewMessage] = useState("");
+	const [content, setContent] = useState("");
+	const [typing, setTyping] = useState<string | null>(null);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+
+	const socket = useSocket();
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages]);
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await viewTask(taskId);
+				if (response.success) {
+					setMessages(response.data.messages);
+				} else {
+					console.error("Failed to fetch task details:", response.message);
+				}
+			} catch (error) {
+				console.error("Error fetching task details:", error);
+			}
+		};
+
+		fetchData();
+	}, [taskId]);
+
+	useEffect(() => {
+		if (!socket || !taskId) return;
+
+		// Join task chat room
+		socket.emit("joinTaskChat", taskId);
+		console.log("Joined task chat room:", taskId);
+
+		// Listen for new messages
+		socket.on("receiveMessage", (message: { sender: string; text: string }) => {
+			setMessages((prev) => [...prev, message]);
+			console.log("Received message:", message);
+		});
+
+		// Listen for typing indicators
+		socket.on("typingStarted", ({ userId: typingUserId }: { userId: string }) => {
+			console.log("User is typing:", typingUserId);
+			return setTyping(typingUserId);
+		});
+
+		socket.on("typingStopped", () => {
+			setTyping(null);
+		});
+
+		// Handle errors
+		socket.on("error", (error: unknown) => {
+			console.error("Socket error:", error);
+			alert(error);
+		});
+
+		return () => {
+			socket.off("receiveMessage");
+			socket.off("typingStarted");
+			socket.off("typingStopped");
+			socket.off("error");
+		};
+	}, [socket, taskId]);
+
+	const handleSendMessage = (e: { preventDefault: () => void } | undefined) => {
+		console.log("Sending message:", content, e?.currentTarget.value);
+		e.preventDefault();
+		if (!content.trim()) return;
+
+		socket.emit("sendMessage", { taskId, content });
+		setContent("");
+		socket.emit("typingStopped", taskId);
+	};
+
+	const handleTyping = (e: { target: { value: SetStateAction<string> } }) => {
+		setContent(e.target.value);
+		if (e.target.value) {
+			socket.emit("typingStarted", taskId);
+		} else {
+			socket.emit("typingStopped", taskId);
 		}
 	};
 
@@ -70,47 +146,69 @@ const TaskDetailsPage = () => {
 						</div>
 					</div>
 				</div>
-				<div className="bg-white h-screen flex flex-col justify-between p-4 flex-1 rounded-md">
+				<div className="bg-white flex flex-col justify-between p-4 flex-1 rounded-md">
 					<div>
 						{" "}
 						{/* Messages Container */}
 						<div className="text-xl font-bold mb-4">Assistant</div>
 						<hr className="mb-4 border-gray-300" />
-						<div className="space-y-2">
-							{messages.map((message, index) => (
-								<div
-									key={index}
-									className={`p-3 w-fit max-w-[350px] ${
-										message.sender === "user"
-											? "bg-blue-500 text-white ml-auto text-right rounded-t-lg rounded-l-lg "
-											: "bg-gray-200 text-gray-100 mr-auto shadow text-left rounded-t-lg rounded-r-lg"
-									}`}
-								>
-									{message.text}
-									<div className="text-xs text-white mt-1 text-right">12:05 AM</div>
+						<div className="flex flex-col h-screen overflow-hidden">
+							{/* Scrollable message list */}
+							<div className="flex-1 overflow-y-auto px-4 py-2">
+								<div className="space-y-2">
+									{messages?.map((message, index) => (
+										<div
+											key={index}
+											className={`p-3 w-fit max-w-[350px] ${
+												message?.senderId?._id === user?._id
+													? "bg-blue-500 text-white ml-auto text-right rounded-t-lg rounded-l-lg"
+													: "bg-gray-200 text-black mr-auto shadow text-left rounded-t-lg rounded-r-lg"
+											}`}
+										>
+											{typing && typing !== userId && (
+												<div className="text-sm italic text-gray-500">Someone is typing...</div>
+											)}
+											<div className="break-words whitespace-pre-wrap">{message.content}</div>
+											<div
+												className={`text-xs mt-1 text-right ${
+													message?.senderId?._id === user?._id ? "text-white" : "text-black"
+												}`}
+											>
+												{new Date(message.createdAt).toLocaleTimeString([], {
+													hour: "2-digit",
+													minute: "2-digit",
+												})}
+											</div>
+										</div>
+									))}
+
+									<div ref={messagesEndRef} />
 								</div>
-							))}
+							</div>
+							
+							
 						</div>
 					</div>
-
-					{/* Input Area */}
+					{/* {typing && typing !== user?._id && (
+								<div className="text-sm italic text-gray-500 px-2">Someone is typing...</div>
+							)} */}
 					<div className="flex items-center bg-white px-2 py-4 rounded-md shadow">
-						<input
-							type="text"
-							placeholder="Write here"
-							className="flex-grow outline-none"
-							value={newMessage}
-							onChange={(e) => setNewMessage(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key === "Enter") {
-									handleSendMessage();
-								}
-							}}
-						/>
-						<button onClick={handleSendMessage} className="text-gray-500 hover:text-gray-700">
-							<img src={sendIcon} />
-						</button>
-					</div>
+								<input
+									type="text"
+									placeholder="Write here"
+									className="flex-grow outline-none"
+									value={content}
+									onChange={handleTyping}
+									onKeyDown={(e) => {
+										if (e.key === "Enter") {
+											handleSendMessage(e);
+										}
+									}}
+								/>
+								<button onClick={handleSendMessage} className="text-gray-500 hover:text-gray-700">
+									<img src={sendIcon} />
+								</button>
+							</div>
 				</div>
 			</div>
 		</div>

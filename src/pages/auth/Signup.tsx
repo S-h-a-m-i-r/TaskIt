@@ -1,6 +1,17 @@
 import { useForm } from "react-hook-form";
 import InputField from "../../components/generalComponents/InputField";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/authStore";
+
+interface FormData {
+	email: string;
+	password: string;
+	confirm_password: string;
+	first_name: string;
+	last_name: string;
+	phone_number: string;
+	user_name: string;
+}
 
 const Signup = () => {
 	const navigate = useNavigate();
@@ -9,20 +20,16 @@ const Signup = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<FormData>();
-
-	interface FormData {
-		email: string;
-		password: string;
-		confirm_password: string;
-		first_name: string;
-		last_name: string;
-		phone_number: string;
-		user_name: string;
-	}
+const {registerUser} = useAuthStore();
+	
 
 	const onSubmit = (data: FormData) => {
 		console.log(data);
+		const result = registerUser(data);
+		console.log('the result', result)
+		if(result.ok){
 		navigate("/signup/plan");
+	}
 	};
 	const handleClick = () => {
 		navigate("/signup/plan");

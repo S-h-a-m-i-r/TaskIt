@@ -1,77 +1,90 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { tasksBodyData, TasksHeadersData } from "../../datadump";
-import { useState } from "react";
+import useTaskStore from "../../stores/taskStore";
+import { TasksHeadersData } from "../../datadump";
+// import { statusColor } from "../../utils/statusColor";   // path to helper
 
+export const statusColor = {
+	"Submitted":   "bg-blue-50",
+	"inProgress": "bg-yellow-50",
+	"Completed":   "bg-green-50",
+	"Task Closed": "bg-red-50",
+	default:     "bg-gray-50",
+  };
+  
 const AllUsersTasksList = () => {
-	const [status] = useState(
-		tasksBodyData.reduce((acc: Record<string, string>, task) => {
-			acc[task.task_id] = task.status;
-			return acc;
-		}, {} as Record<string, string>)
-	);
-	const navigate = useNavigate();
-	const redirection = (id: unknown) => {
-		navigate(`/task/${id}`);
-	};
+  const [tasks, setTasks] = useState([]);
+  const { getTaskList } = useTaskStore();
+  const navigate = useNavigate();
 
-	return (
-		<div className="bg-white">
-			<table className="w-full border-separate border-spacing-y-2">
-				<thead>
-					<tr>
-						{TasksHeadersData.map((header, index) => (
-							<th
-								key={index}
-								className={`py-3 pl-5 text-left text-[14px] font-normal ${
-									["Task Id", "Date", "Recurring", "Status"].includes(header)
-										? "hidden md:table-cell"
-										: ""
-								}`}
-							>
-								{header}
-							</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{tasksBodyData.map((task, index) => (
-						<tr
-							key={index}
-							className={` hover:bg-gray-200/50 space-y-2 cursor-pointer  ${
-								status[task.task_id] === "Submitted"
-									? "bg-blue-50"
-									: status[task.task_id] === "Completed"
-									? "bg-green-50"
-									: status[task.task_id] === "In Progress"
-									? "bg-yellow-50"
-									: status[task.task_id] === "Task Closed"
-									? "bg-red-50"
-									: "bg-gray-50"
-							}`}
-							onClick={() => redirection(task.task_id)}
-						>
-							<td className=" text-left py-5 pl-5 text-primary-400 font-normal text-sm border-b border-custom-border max-md:w-fit">
-								{task.name}
-							</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">
-								{task.task_id}
-							</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">
-								{task.Date}
-							</td>
-							<td className="text-left py-5 pl-5 font-normal text-sm border-b border-custom-border max-md:hidden">
-								{status[task.task_id]}
-							</td>
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const res = await getTaskList();
+      if (res.success) setTasks(res.data);
+    };
+    fetchTasks();
+  }, [getTaskList]);
 
-							<td className=" max-md:hidden text-left py-5 pl-5 font-normal text-sm border-b border-custom-border">
-								{task.Recurring}
-							</td>
-						</tr>
-					))}
-				</tbody>
-			</table>
-		</div>
-	);
+  const goToTask = (id: string) => navigate(`/task/${id}`);
+
+  return (
+    <div className="bg-white">
+      <table className="w-full border-separate border-spacing-y-2">
+        <thead>
+          <tr>
+            {TasksHeadersData.map((h) => (
+              <th
+                key={h}
+                className={`py-3 pl-5 text-left text-[14px] font-normal ${
+                  ["Task Id", "Date", "Recurring", "Status"].includes(h)
+                    ? "hidden md:table-cell"
+                    : ""
+                }`}
+              >
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {tasks.map((task) => {
+            const rowBg = statusColor[task.status] || statusColor.default;
+
+            return (
+              <tr
+                key={task._id}
+                className={`cursor-pointer hover:bg-gray-200/50 ${rowBg}`}
+                onClick={() => goToTask(task._id)}
+              >
+                <td className="py-5 pl-5 text-sm font-normal text-primary-400 border-b border-custom-border">
+                  {task.title}
+                </td>
+
+                <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+                  {task._id}
+                </td>
+
+                <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+                  {task.createdAt
+                    ? new Date(task.createdAt).toLocaleDateString("en-US")
+                    : "N/A"}
+                </td>
+
+                <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+                  {task.status}
+                </td>
+
+                <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+                  {task.recurring ? "Yes" : "No"}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 };
 
 export default AllUsersTasksList;
