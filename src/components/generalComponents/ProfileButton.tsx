@@ -1,20 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronDown, LogOut, User, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { message, Modal } from "antd";
+import { Modal } from 'antd';
+import useAuthStore from '../../stores/authStore';
+
 interface ProfileDropdownProps {
 	userName?: string;
 	userAvatar?: string;
 }
 
 export default function ProfileDropdown({
-	userName = "Admin",
-	userAvatar = "https://static.vecteezy.com/system/resources/previews/018/931/665/non_2x/black-user-icon-png.png",
+	userName,
+	userAvatar = 'https://static.vecteezy.com/system/resources/previews/018/931/665/non_2x/black-user-icon-png.png',
 }: ProfileDropdownProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const navigate = useNavigate();
+	const { logout } = useAuthStore();
 
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
@@ -26,29 +29,36 @@ export default function ProfileDropdown({
 			}
 		}
 
-		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener('mousedown', handleClickOutside);
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
 
 	const handleLogoutClick = () => {
-		localStorage.removeItem("token");
-		localStorage.removeItem("role");
-		message.success("logged out successfully!");
-		navigate("/login");
+		// Clear auth store
+		logout();
+
+		// Clear localStorage
+		localStorage.removeItem('token');
+		localStorage.removeItem('role');
+
+		// Close modal
+		setIsModalOpen(false);
+		// Navigate to login
+		navigate('/login');
 	};
 
 	const handleProfile = () => {
-		navigate("/profile");
+		navigate('/profile');
 		// Add your profile navigation logic here
 	};
 
 	const handleSettings = () => {
-		navigate("/admin/settings");
+		navigate('/admin/settings');
 		// Add your settings navigation logic here
 	};
-	const userRole = localStorage.getItem("role");
+	const userRole = localStorage.getItem('role');
 
 	// const handleRoute = (e: React.MouseEvent<HTMLButtonElement> | undefined) => {
 	//   e?.stopPropagation();
@@ -71,21 +81,19 @@ export default function ProfileDropdown({
 				{/* Avatar */}
 				<div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
 					<img
-						src={userAvatar || "/placeholder.svg"}
+						src={userAvatar || '/placeholder.svg'}
 						alt={`${userName}'s avatar`}
 						className="w-full h-full object-cover"
 					/>
 				</div>
 
 				{/* Greeting Text */}
-				<span className="text-gray-700 font-medium text-sm">
-					Hello {userName}
-				</span>
+				<span className="text-gray-700 font-medium text-sm">{userName}</span>
 
 				{/* Dropdown Arrow */}
 				<ChevronDown
 					className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${
-						isOpen ? "rotate-180" : ""
+						isOpen ? 'rotate-180' : ''
 					}`}
 				/>
 			</button>
@@ -103,7 +111,7 @@ export default function ProfileDropdown({
 					</button>
 
 					{/* Settings Option */}
-					{userRole === "admin" && (
+					{userRole === 'admin' && (
 						<button
 							onClick={handleSettings}
 							className="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
@@ -138,12 +146,12 @@ export default function ProfileDropdown({
 				}}
 				onOk={handleLogoutClick}
 				centered={true}
-				style={{ height: "250px" }}
+				style={{ height: '250px' }}
 				okButtonProps={{
 					style: {
-						backgroundColor: "#EF4444", // Red-500
-						borderColor: "#EF4444",
-						color: "#fff",
+						backgroundColor: '#EF4444', // Red-500
+						borderColor: '#EF4444',
+						color: '#fff',
 					},
 				}}
 			>

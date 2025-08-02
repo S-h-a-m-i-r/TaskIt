@@ -6,11 +6,26 @@ import "./custom-font.css";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../components/generalComponents/InputField";
 import { message } from "antd";
+import useAuthStore from "../../stores/authStore";
 
 interface FormData {
 	email: string;
 	password: string;
 	rememberMe?: boolean;
+}
+
+interface AuthStore {
+	login: (credentials: { email: string; password: string }) => Promise<{
+		user: {
+			_id: string;
+			email: string;
+			name: string;
+			role: string;
+		};
+		token: string;
+		success: boolean;
+		message?: string;
+	}>;
 }
 
 const Login = () => {
@@ -21,40 +36,27 @@ const Login = () => {
 	} = useForm<FormData>();
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+	const { login } = useAuthStore() as unknown as AuthStore;
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(!showPassword);
 	};
 
-const VITE_USER_EMAIL='taskawayUser@gmail.com'
-const VITE_USER_PASSWORD='taskaway2025'
+	const onSubmit = async (data: FormData) => {
+		try {
+			const res = await login(data);
 
-// # manager cresidentials
-const VITE_MANAGER_EMAIL='taskawayManager@gmail.com'
+			message.success('Logged in successfully');
 
-// # user cresidentials
-const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
-
-	const onSubmit = (data: FormData) => {
-		if (data.email === VITE_USER_EMAIL && VITE_USER_PASSWORD) {
-		localStorage.setItem("token", '1234567890');
-		localStorage.setItem('role', 'user');
-			message.success('logged in successfully');
-		navigate("/");
-		} else if (data.email === VITE_MANAGER_EMAIL && VITE_USER_PASSWORD) {
-			localStorage.setItem("token", '1234567890');
-			localStorage.setItem('role', 'manager');
-				message.success('logged in successfully');
-			navigate("/manager");
-			} else if (data.email === VITE_SUPER_ADMIN_EMAIL && VITE_USER_PASSWORD) {
-			localStorage.setItem("token", '1234567890');
-			localStorage.setItem('role', 'admin');
-				message.success('logged in successfully');
-			navigate("/admin");
-			} else {
-			message.error('invalid email or password');
+			const role = res.user.role;
+			if (role === 'MANAGER') navigate('/manager');
+			else if (role === 'ADMIN') navigate('/admin');
+			else navigate('/');
+		} catch (err) {
+			const error = err as Error;
+			message.error(error.message || 'Login failed');
 		}
-	}
+	};
 
 	return (
 		<form
@@ -65,7 +67,10 @@ const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
 				<h2>Welcome Back</h2>
 			</div>
 			<div className="space-y-2 text-[16px] font-normal mb-1 [tracking:0.01em] text-gray-600 text-center">
-				<p className="px-4">Today is a new day. It's your day. You shape it. Sign in to start managing your tasks.</p>
+				<p className="px-4">
+					Today is a new day. It's your day. You shape it. Sign in to start
+					managing your tasks.
+				</p>
 			</div>
 			<div className="flex w-full justify-center gap-5">
 				<div className="space-y-2 w-full max-w-[433px]">
@@ -77,11 +82,11 @@ const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
 						placeHolder="Email"
 						type="text"
 						validation={{
-							required: "Email is required",
+							required: 'Email is required',
 							pattern: {
 								value: /^\S+@\S+$/i,
-								message: "Invalid email address"
-							}
+								message: 'Invalid email address',
+							},
 						}}
 						className="border border-gray-300 rounded-md p-2 !text-black focus:text-black"
 					/>
@@ -95,13 +100,14 @@ const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
 							register={register}
 							errors={errors}
 							placeHolder="Please enter password"
-							type={showPassword ? "text" : "password"}
+							type={showPassword ? 'text' : 'password'}
 							validation={{
-								required: "Password is required",
+								required: 'Password is required',
 								pattern: {
 									value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/,
-									message: "Password must be at least 8 characters with letters and numbers"
-								}
+									message:
+										'Password must be at least 8 characters with letters and numbers',
+								},
 							}}
 						/>
 						<div
@@ -112,7 +118,10 @@ const VITE_SUPER_ADMIN_EMAIL='taskawaySuperAdmin111@gmail.com'
 						</div>
 					</div>
 					<div className="flex justify-end items-center">
-						<Link to="/forgot-password" className="text-gray-400 text-sm font-bold no-underline float-right mt-2">
+						<Link
+							to="/forgot-password"
+							className="text-gray-400 text-sm font-bold no-underline float-right mt-2"
+						>
 							Forget password?
 						</Link>
 					</div>
