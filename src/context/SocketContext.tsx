@@ -24,9 +24,8 @@ export const SocketProvider = ({ children, token }: SocketProviderProps) => {
 			console.log('No token provided, skipping socket connection');
 			return;
 		}
-		console.log('Token provided:', token);
-
-		const newSocket = io(process.env.VITE_BACKEND_BASE_URL, {
+		const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL;
+		const newSocket = io(backendUrl, {
 			auth: { token },
 		});
 		console.log('Socket instance created');
