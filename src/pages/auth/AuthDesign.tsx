@@ -6,13 +6,14 @@ import AuthFooter from "../AuthFooter";
 import { Outlet } from "react-router-dom";
 import Signup from "./Signup";
 import Login from "./Login";
+import StripeProvider from '../../components/StripeProvider';
+import RegistrationProgress from '../../components/RegistrationProgress';
 
 const AuthDesign: React.FC = () => {
 	const location = useLocation();
 	const path = location.pathname;
-
-	// Determine if the current route is a parent route
-	const isParentRoute = path === "/signup" || path === "/login";
+	const isParentRoute = path === '/signup' || path === '/login';
+	const isRegistrationFlow = path.startsWith('/signup');
 
 	return (
 		<div className="w-full flex flex-col justify-between items-center font-sans p-8">
@@ -21,11 +22,17 @@ const AuthDesign: React.FC = () => {
 			</div>
 
 			<div className="text-left text-black md:px-10 py-5 flex flex-col items-center gap-10 md:gap-10 rounded-lg w-full">
-				{/* Render parent route content or child routes dynamically */}
-				{isParentRoute ? <>{path === "/signup" ? <Signup /> : <Login />}</> : <Outlet />}
+				{isRegistrationFlow && <RegistrationProgress />}
+				{isRegistrationFlow ? (
+					<StripeProvider>
+						{isParentRoute ? <Signup /> : <Outlet />}
+					</StripeProvider>
+				) : (
+					<>{isParentRoute ? <Login /> : <Outlet />}</>
+				)}
 			</div>
 
-			<AuthFooter tab={path === "/login" ? "Login" : "Signup"} />
+			<AuthFooter tab={path === '/login' ? 'Login' : 'Signup'} />
 		</div>
 	);
 };

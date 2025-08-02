@@ -304,16 +304,36 @@ export const tasksHeader = ["Task Id", "Description", "Status", "Assigned To", "
 
 export const CardsData = [
 	{
-		title: "Tasks in progress",
+		title: 'Tasks in progress',
 		percent: 3.5,
 		count: 520,
 		icon: inprogress_icon,
-		path: "/inProgress",
-		color: "#FFFBEB",
+		path: '/inProgress',
+		color: '#FFFBEB',
 	},
-	{ title: "Tasks submitted", percent: 8.5, count: 66, icon: submitted_icon, path: "/submitted", color: "#EFF6FF" },
-	{ title: "Tasks closed", percent: 16, count: 441, icon: closed_icon, path: "/closed", color: "#FEF2F2" },
-	{ title: "Recurring Tasks", percent: 7, count: 33, icon: recurring_icon, path: "/recurring" },
+	{
+		title: 'Tasks submitted',
+		percent: 8.5,
+		count: 66,
+		icon: submitted_icon,
+		path: '/submitted',
+		color: '#EFF6FF',
+	},
+	{
+		title: 'Tasks closed',
+		percent: 16,
+		count: 441,
+		icon: closed_icon,
+		path: '/closed',
+		color: '#FEF2F2',
+	},
+	{
+		title: 'Pending Tasks',
+		percent: 7,
+		count: 33,
+		icon: recurring_icon,
+		path: '/recurring',
+	},
 ];
 
 export const TasksHeadersData = [

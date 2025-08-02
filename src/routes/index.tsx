@@ -37,75 +37,83 @@ import CreatePassword from "../pages/auth/CreatePassword";
 import AdminLayout from "../admin/AdminLayout";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import Tasks from "../pages/admin/Tasks";
-import Settings from "../pages/admin/Settings";
-import Teammanagement from "../pages/admin/Teammanagement";
-import Customers from "../pages/admin/Customers";
-import Invoices from "../pages/admin/Invoices";
-import Credits from "../pages/admin/Credits";
-import ManagerCredits from "../pages/manager/Credits";
-import ManagerTasks from "../pages/manager/Tasks";
-import ManagerInvoices from "../pages/manager/Invoices";
-import { AddCreditsToUsers, RemoveCreditsToUsers } from "../components/generalComponents/addRemoveCreditsToUsers";
-import AddTeamPage from "../pages/AddTeam";
-import ManagerLayout from "../pages/manager/ManagerLayout";
-import ManagerDashboard from "../pages/manager/ManagerDashboard";
-import ProtectedRoute from "./ProtectedRoute";
-import RoleProtectedRoute from "./ProtectedRoute";
-import AboutUsPage from "../pages/user/aboutUs";
-import ContactUsPage from "../pages/user/contactUs";
-import ConditionAndPrivacyPolicyPage from "../pages/ConditionAndPrivacyPage";
+import AdminTaskDetails from '../pages/admin/AdminTaskDetails';
+import Settings from '../pages/admin/Settings';
+import Teammanagement from '../pages/admin/Teammanagement';
+import Customers from '../pages/admin/Customers';
+import Invoices from '../pages/admin/Invoices';
+import Credits from '../pages/admin/Credits';
+import ManagerCredits from '../pages/manager/Credits';
+import ManagerTasks from '../pages/manager/Tasks';
+import ManagerInvoices from '../pages/manager/Invoices';
+import {
+	AddCreditsToUsers,
+	RemoveCreditsToUsers,
+} from '../components/generalComponents/addRemoveCreditsToUsers';
+import AddTeamPage from '../pages/AddTeam';
+import ManagerLayout from '../pages/manager/ManagerLayout';
+import ManagerDashboard from '../pages/manager/ManagerDashboard';
+import RoleProtectedRoute from './ProtectedRoute';
+import AboutUsPage from '../pages/user/aboutUs';
+import ContactUsPage from '../pages/user/contactUs';
+import ConditionAndPrivacyPolicyPage from '../pages/ConditionAndPrivacyPage';
 
 export const router = createBrowserRouter([
 	{
-		path: "/",
+		path: '/',
 		element: <Layout />,
 		children: [
-			{ path: "login", element: <Login /> },
+			{ path: 'login', element: <Login /> },
 			{
-				path: "signup",
+				path: 'signup',
 				element: <Signup />,
 				children: [
-					{ path: "plan", element: <Plan /> },
-					{ path: "creditCardDetails", element: <CreditCardDetails /> },
-					{ path: "createPassword", element: <CreatePassword /> },
+					{ path: 'plan', element: <Plan /> },
+					{ path: 'creditCardDetails', element: <CreditCardDetails /> },
+					{ path: 'createPassword', element: <CreatePassword /> },
 				],
 			},
 			{
-				path: "forgot-password",
+				path: 'forgot-password',
 				element: <ForgotPassword />,
-				children: [{ path: "new-password", element: <Newpassword /> }],
+				children: [{ path: 'new-password', element: <Newpassword /> }],
 			},
 			{
-				path: "",
-				element: <ProtectedRoute allowedRoles={["BASIC","CUSTOMER", "MANAGER", "ADMIN"]} />,
+				path: '',
+				element: (
+					<RoleProtectedRoute
+						allowedRoles={['BASIC', 'CUSTOMER', 'MANAGER', 'ADMIN']}
+					/>
+				),
 				children: [
 					{
-						path: "",
+						path: '',
 						element: <DashboardLayout />,
 						children: [
 							{ index: true, element: <MainPage /> },
-							{ path: "credits", element: <CreditsPage /> },
-							{ path: "profile", element: <ProfilePage /> },
-							{ path: "tasks", element: <TasklistPage /> },
-							{ path: "inProgress", element: <InprogressTasklist /> },
-							{ path: "submitted", element: <SubmittedTasklist /> },
-							{ path: "closed", element: <ClosedTasklist /> },
-							{ path: "recurring", element: <RecurringTasklist /> },
-							{ path: "task/:id", element: <TaskDetailsPage /> },
-							{ path: "notification", element: <NotificationPage /> },
-							{ path: "createTask", element: <CreateTask /> },
-							{ path: "AboutUs", element: <AboutUsPage /> },
-							{ path: "ContactUs", element: <ContactUsPage /> },
+							{ path: 'credits', element: <CreditsPage /> },
+							{ path: 'profile', element: <ProfilePage /> },
+							{ path: 'tasks', element: <TasklistPage /> },
+							{ path: 'inProgress', element: <InprogressTasklist /> },
+							{ path: 'submitted', element: <SubmittedTasklist /> },
+							{ path: 'closed', element: <ClosedTasklist /> },
+							{ path: 'recurring', element: <RecurringTasklist /> },
+							{ path: 'task/:id', element: <TaskDetailsPage /> },
+							{ path: 'admin-task/:id', element: <AdminTaskDetails /> },
+							{ path: 'notification', element: <NotificationPage /> },
+							{ path: 'createTask', element: <CreateTask /> },
+							{ path: 'AboutUs', element: <AboutUsPage /> },
+							{ path: 'ContactUs', element: <ContactUsPage /> },
 							{
-								path: "terms",
+								path: 'terms',
 								element: <ConditionAndPrivacyPolicyPage />,
 							},
 							{
-								path: "privacy",
+								path: 'privacy',
 								element: <ConditionAndPrivacyPolicyPage />,
 							},
 							{
-								path: "termsAndConditions",
+								path: 'termsAndConditions',
 								element: <ConditionAndPrivacyPolicyPage />,
 							},
 						],
@@ -115,41 +123,43 @@ export const router = createBrowserRouter([
 		],
 	},
 	{
-		path: "admin",
-		element: <ProtectedRoute allowedRoles={["ADMIN"]} />,
+		path: 'admin',
+		element: <RoleProtectedRoute allowedRoles={['ADMIN']} />,
 		children: [
 			{
-				path: "",
+				path: '',
 				element: <AdminLayout />,
 				children: [
 					{ index: true, element: <AdminDashboard /> },
-					{ path: "credits", element: <Credits /> },
-					{ path: "tasks", element: <Tasks /> },
-					{ path: "settings", element: <Settings /> },
-					{ path: "teamManagement", element: <Teammanagement /> },
-					{ path: "customers", element: <Customers /> },
-					{ path: "invoices", element: <Invoices /> },
-					{ path: "addCredits", element: <AddCreditsToUsers /> },
-					{ path: "removeCredits", element: <RemoveCreditsToUsers /> },
-					{ path: "addTeam", element: <AddTeamPage /> },
+					{ path: 'credits', element: <Credits /> },
+					{ path: 'tasks', element: <Tasks /> },
+					{ path: 'task/:id', element: <AdminTaskDetails /> },
+					{ path: 'settings', element: <Settings /> },
+					{ path: 'teamManagement', element: <Teammanagement /> },
+					{ path: 'customers', element: <Customers /> },
+					{ path: 'invoices', element: <Invoices /> },
+					{ path: 'addCredits', element: <AddCreditsToUsers /> },
+					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
+					{ path: 'addTeam', element: <AddTeamPage /> },
 				],
 			},
 		],
 	},
 	{
-		path: "manager",
-		element: <RoleProtectedRoute allowedRoles={["MANAGER", "ADMIN"]} />,
+		path: 'manager',
+		element: <RoleProtectedRoute allowedRoles={['MANAGER', 'ADMIN']} />,
 		children: [
 			{
-				path: "",
+				path: '',
 				element: <ManagerLayout />,
 				children: [
 					{ index: true, element: <ManagerDashboard /> },
-					{ path: "credits", element: <ManagerCredits /> },
-					{ path: "tasks", element: <ManagerTasks /> },
-					{ path: "invoices", element: <ManagerInvoices /> },
-					{ path: "addCredits", element: <AddCreditsToUsers /> },
-					{ path: "removeCredits", element: <RemoveCreditsToUsers /> },
+					{ path: 'credits', element: <ManagerCredits /> },
+					{ path: 'tasks', element: <ManagerTasks /> },
+					{ path: 'task/:id', element: <AdminTaskDetails /> },
+					{ path: 'invoices', element: <ManagerInvoices /> },
+					{ path: 'addCredits', element: <AddCreditsToUsers /> },
+					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
 				],
 			},
 		],

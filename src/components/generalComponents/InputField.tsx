@@ -34,15 +34,20 @@ const InputField = <TFormValues extends FieldValues = FieldValues>({
 	
 	return (
 		<div className="w-full flex flex-col gap-2">
-			<label htmlFor={id as string} className="block text-sm font-semibold mb-2 text-left">
+			<label
+				htmlFor={id as string}
+				className="block text-sm font-semibold mb-2 text-left"
+			>
 				{label}
 			</label>
 			<input
 				id={id as string}
 				type={type}
 				className={`w-full bg-white rounded-md border p-2 bg-transparent h-11 border-gray-200 ${
-					fieldError ? "text-red-500 focus:text-red-500 border-red-500" : "text-gray-50 focus:border-transparent"
-				} ${className || ""}`}
+					fieldError
+						? 'text-red-500 focus:text-red-500 border-red-500'
+						: 'text-black focus:text-black focus:border-transparent'
+				} ${className || ''}`}
 				placeholder={placeHolder}
 				{...register(id, {
 					required: validation?.required || `${label} is required`,

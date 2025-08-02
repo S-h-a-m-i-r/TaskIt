@@ -15,21 +15,23 @@ import { socialIcons } from "../../routes/routes";
 import AboutUsSvg from "../../assets/svg/aboutUs";
 import PrivacyPolicySvg from "../../assets/svg/PrivacyPolicySvg";
 import TermsAndCondtionsSvg from "../../assets/svg/TermsAndConditions";
+import useAuthStore from '../../stores/authStore';
 
 const Sidebar = () => {
 	const navigate = useNavigate();
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 	const { width } = useWindowSize();
+	const { user } = useAuthStore();
 
 	const handleNavigation = () => {
-		navigate("/credits");
+		navigate('/credits');
 	};
 	const toggleSidebar = () => {
 		if (width >= 1024) return;
 		setIsSidebarOpen(!isSidebarOpen);
 	};
 
-	const section = new URLSearchParams(location.search).get("section");
+	const section = new URLSearchParams(location.search).get('section');
 
 	return (
 		<>
@@ -45,8 +47,8 @@ const Sidebar = () => {
 			<aside
 				className={` w-60 bg-white py-4 lg:flex flex-col relative transition-transform transform  ${
 					isSidebarOpen
-						? "translate-x-0 max-md:fixed max-md:z-10 max-md:h-screen "
-						: "-translate-x-full hidden"
+						? 'translate-x-0 max-md:fixed max-md:z-10 max-md:h-screen '
+						: '-translate-x-full hidden'
 				} lg:translate-x-0  `}
 			>
 				<div className="sticky top-10">
@@ -60,32 +62,57 @@ const Sidebar = () => {
 									to="/"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2 ">
-											<DashboardSvgIcon stroke={isActive ? "white" : "black"} />
+											<DashboardSvgIcon stroke={isActive ? 'white' : 'black'} />
 											Dashboard
 										</div>
 									)}
 								</NavLink>
 							</li>
+							{/* Admin/Manager Dashboard Button - Only show for ADMIN and MANAGER roles */}
+							{(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
+								<li>
+									<NavLink
+										to={user?.role === 'ADMIN' ? '/admin' : '/manager'}
+										className={({ isActive }) =>
+											isActive
+												? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+												: 'flex py-4 px-4 hover:bg-gray-200 text-black'
+										}
+										onClick={toggleSidebar}
+									>
+										{({ isActive }) => (
+											<div className="flex items-center gap-2">
+												<DashboardSvgIcon
+													stroke={isActive ? 'white' : 'black'}
+												/>
+												{user?.role === 'ADMIN'
+													? 'Admin Dashboard'
+													: 'Manager Dashboard'}
+											</div>
+										)}
+									</NavLink>
+								</li>
+							)}
 							<li>
 								<NavLink
 									to="/credits"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<CreditsSvgIcon stroke={isActive ? "white" : "black"} />
+											<CreditsSvgIcon stroke={isActive ? 'white' : 'black'} />
 											Credits
 										</div>
 									)}
@@ -96,14 +123,14 @@ const Sidebar = () => {
 									to="/profile"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
+											<ProfileSvgIcon stroke={isActive ? 'white' : 'black'} />
 											Profile
 										</div>
 									)}
@@ -114,14 +141,14 @@ const Sidebar = () => {
 									to="/aboutUs"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<AboutUsSvg stroke={isActive ? "white" : "black"} />
+											<AboutUsSvg stroke={isActive ? 'white' : 'black'} />
 											About Us
 										</div>
 									)}
@@ -132,15 +159,15 @@ const Sidebar = () => {
 									to="/ContactUs"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
-											Contact Us{" "}
+											<ProfileSvgIcon stroke={isActive ? 'white' : 'black'} />
+											Contact Us{' '}
 										</div>
 									)}
 								</NavLink>
@@ -150,15 +177,15 @@ const Sidebar = () => {
 								<NavLink
 									to="/terms?section=terms"
 									className={`flex py-4 px-4 w-full ${
-										section === "terms"
-											? "bg-primary-50 text-white"
-											: "hover:bg-gray-200 text-black"
+										section === 'terms'
+											? 'bg-primary-50 text-white'
+											: 'hover:bg-gray-200 text-black'
 									}`}
 									onClick={toggleSidebar}
 								>
 									<div className="flex items-center gap-2">
 										<TermsAndCondtionsSvg
-											stroke={section === "terms" ? "white" : "black"}
+											stroke={section === 'terms' ? 'white' : 'black'}
 										/>
 										Terms and Conditions
 									</div>
@@ -168,51 +195,51 @@ const Sidebar = () => {
 								<NavLink
 									to="/terms?section=privacy"
 									className={`flex py-4 px-4 w-full ${
-										section === "privacy"
-											? "bg-primary-50 text-white"
-											: "hover:bg-gray-200 text-black"
+										section === 'privacy'
+											? 'bg-primary-50 text-white'
+											: 'hover:bg-gray-200 text-black'
 									}`}
 									onClick={toggleSidebar}
 								>
 									<div className="flex items-center gap-2">
 										<PrivacyPolicySvg
-											stroke={section === "privacy" ? "white" : "black"}
+											stroke={section === 'privacy' ? 'white' : 'black'}
 										/>
 										Privacy Policy
 									</div>
 								</NavLink>
 							</li>
-							<li className={`${isSidebarOpen ? "block" : "hidden"}`}>
+							<li className={`${isSidebarOpen ? 'block' : 'hidden'}`}>
 								<NavLink
 									to="/createTask"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
+											<ProfileSvgIcon stroke={isActive ? 'white' : 'black'} />
 											Create Task
 										</div>
 									)}
 								</NavLink>
 							</li>
-							<li className={`${isSidebarOpen ? "block" : "hidden"}`}>
+							<li className={`${isSidebarOpen ? 'block' : 'hidden'}`}>
 								<NavLink
 									to="/login"
 									className={({ isActive }) =>
 										isActive
-											? "flex py-4 px-4 w-full bg-primary-50 text-white"
-											: "flex py-4 px-4 hover:bg-gray-200 text-black"
+											? 'flex py-4 px-4 w-full bg-primary-50 text-white'
+											: 'flex py-4 px-4 hover:bg-gray-200 text-black'
 									}
 									onClick={toggleSidebar}
 								>
 									{({ isActive }) => (
 										<div className="flex items-center gap-2">
-											<ProfileSvgIcon stroke={isActive ? "white" : "black"} />
+											<ProfileSvgIcon stroke={isActive ? 'white' : 'black'} />
 											login
 										</div>
 									)}

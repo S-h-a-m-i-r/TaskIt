@@ -1,49 +1,63 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { io, Socket } from 'socket.io-client';
+
+// Define types for the context
+interface SocketContextType {
+	socket: Socket | null;
+}
 
 // 1. Create the context
-const SocketContext = createContext(null);
+const SocketContext = createContext<SocketContextType | null>(null);
 
 // 2. Context Provider Component
 interface SocketProviderProps {
 	children: React.ReactNode;
-	token: string;
+	token?: string | null;
 }
 
 export const SocketProvider = ({ children, token }: SocketProviderProps) => {
-	const [socket, setSocket] = useState(null);
+	const [socket, setSocket] = useState<Socket | null>(null);
 
 	useEffect(() => {
-		console.log("Initializing socket connection...");
-		if (!token) return;
-			console.log("Token provided:", token);
+		console.log('Initializing socket connection...');
+		if (!token) {
+			console.log('No token provided, skipping socket connection');
+			return;
+		}
+		console.log('Token provided:', token);
 
-		const newSocket = io("http://localhost:5000", {
+		const newSocket = io('http://localhost:5000', {
 			auth: { token },
 		});
-console.log("Socket instance created");
-		newSocket.on("connect", () => {
-			console.log("Socket connected");
+		console.log('Socket instance created');
+		newSocket.on('connect', () => {
+			console.log('Socket connected');
 		});
 
-		newSocket.on("error", (error) => {
-			console.error("Socket error:", error);
+		newSocket.on('error', (error) => {
+			console.error('Socket error:', error);
 		});
 
 		setSocket(newSocket);
 
 		return () => {
 			newSocket.disconnect();
-			console.log("Socket disconnected");
+			console.log('Socket disconnected');
 		};
 	}, [token]);
 
 	return (
-		<SocketContext.Provider value={socket}>
+		<SocketContext.Provider value={{ socket }}>
 			{children}
 		</SocketContext.Provider>
 	);
 };
 
 // 3. Custom hook to use socket
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = (): Socket | null => {
+	const context = useContext(SocketContext);
+	if (context === null) {
+		throw new Error('useSocket must be used within a SocketProvider');
+	}
+	return context.socket;
+};
