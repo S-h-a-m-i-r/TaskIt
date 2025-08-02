@@ -26,7 +26,7 @@ export const SocketProvider = ({ children, token }: SocketProviderProps) => {
 		}
 		console.log('Token provided:', token);
 
-		const newSocket = io('http://localhost:5000', {
+		const newSocket = io(process.env.VITE_BACKEND_BASE_URL, {
 			auth: { token },
 		});
 		console.log('Socket instance created');
