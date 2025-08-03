@@ -103,14 +103,12 @@ const TaskDetailsPage = () => {
 		// Listen for new messages
 		socket.on('receiveMessage', (message: Message) => {
 			setMessages((prev) => [...prev, message]);
-			console.log('Received message:', message);
 		});
 
 		// Listen for typing indicators
 		socket.on(
 			'typingStarted',
 			({ userId: typingUserId }: { userId: string }) => {
-				console.log('User is typing:', typingUserId);
 				return setTyping(typingUserId);
 			}
 		);
@@ -134,7 +132,6 @@ const TaskDetailsPage = () => {
 	}, [socket, taskId]);
 
 	const handleSendMessage = (e: React.FormEvent | React.MouseEvent) => {
-		console.log('Sending message:', content);
 		e.preventDefault();
 		if (!content.trim() || !socket) return;
 
@@ -154,8 +151,7 @@ const TaskDetailsPage = () => {
 			socket.emit('typingStopped', taskId);
 		}
 	};
-	const taskColor = getTaskStatusColors(task?.status || '');
-	console.log(taskColor);
+	getTaskStatusColors(task?.status || '');
 
 	return (
 		<div className="p-9 w-full flex flex-col gap-10 h-full">

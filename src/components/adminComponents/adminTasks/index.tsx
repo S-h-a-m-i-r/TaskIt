@@ -20,7 +20,8 @@ const AdminTasks = () => {
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('All');
 
-	const name = localStorage.getItem('role') || '';
+	const { user } = useAuthStore();
+	const name = user?.role || localStorage.getItem('role') || '';
 	const { getTaskList, tasks: allTasks } = useTaskStore();
 
 	const handleInputChange = (event: InputChangeEvent) => {
@@ -71,18 +72,19 @@ const AdminTasks = () => {
 			);
 		}
 
-		return filtered.map((task) => ({
-			id: task._id,
-			type: task.title || 'Task',
-			status: task.status,
-			assignedTo: task.assignedTo,
-			dueDate: task.createdAt
-				? new Date(task.createdAt).toLocaleDateString()
-				: task.dueDate || 'No due date',
-			actions: true, // Enable action buttons
-		}));
+		return filtered.map((task) => {
+			return {
+				id: task._id,
+				type: task.title || 'Task',
+				status: task.status,
+				assignedTo: task.assignedTo,
+				dueDate: task.createdAt
+					? new Date(task.createdAt).toLocaleDateString()
+					: task.dueDate || 'No due date',
+				actions: true, // Enable action buttons
+			};
+		});
 	}, [allTasks, activeTab, searchQuery]);
-	const { user } = useAuthStore();
 	return (
 		<>
 			<div className="mt-10 w-full flex justify-between items-center mb-4">
@@ -110,11 +112,13 @@ const AdminTasks = () => {
 						<span className="ml-2 text-gray-600">Loading tasks...</span>
 					</div>
 				) : (
-					<TaskTable
-						tasks={transformTasksForTable}
-						tasksHeader={taskListheaders}
-						manager={name === 'MANAGER'}
-					/>
+					<>
+						<TaskTable
+							tasks={transformTasksForTable}
+							tasksHeader={taskListheaders}
+							manager={name === 'MANAGER'}
+						/>
+					</>
 				)}
 			</div>
 		</>
