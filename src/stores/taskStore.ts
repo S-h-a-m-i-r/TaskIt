@@ -15,6 +15,9 @@ interface Task {
 	title: string;
 	description: string;
 	status: string;
+	createdAt?: string;
+	dueDate?: string;
+	assignedTo?: string;
 	// Add other task properties as needed
 }
 
