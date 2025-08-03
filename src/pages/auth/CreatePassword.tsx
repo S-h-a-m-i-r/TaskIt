@@ -74,7 +74,6 @@ const CreatePassword = () => {
 			};
 
 			const result = await completeRegistration(registrationData);
-			console.log(result);
 			if (result.success) {
 				message.success(
 					'Registration successful! Please check your email to confirm your account.'
