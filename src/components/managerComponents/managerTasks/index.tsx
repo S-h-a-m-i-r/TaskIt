@@ -11,28 +11,29 @@ interface InputChangeEvent {
 	};
 }
 
-interface Task {
-	_id: string;
-	title: string;
-	description: string;
-	status: string;
-	assignedTo?: string;
-	createdAt?: string;
-	dueDate?: string;
-}
-
 const taskListheaders = ['Id', 'Type', 'Status', 'Date', 'Actions'];
 
 const ManagerTasks = () => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const [allTasks, setAllTasks] = useState<Task[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('All');
 
-	const { getTaskList } = useTaskStore();
+	const { getTaskList, tasks: storeTasks } = useTaskStore();
 
 	const handleInputChange = (event: InputChangeEvent) => {
 		setSearchQuery(event.target.value);
+	};
+
+	// Function to refresh task list
+	const refreshTaskList = async () => {
+		try {
+			setLoading(true);
+			await getTaskList();
+		} catch (error) {
+			console.error('Failed to refresh tasks:', error);
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	// Fetch real tasks
@@ -40,10 +41,7 @@ const ManagerTasks = () => {
 		const fetchTasks = async () => {
 			try {
 				setLoading(true);
-				const response = await getTaskList();
-				if (response.success && response.tasks) {
-					setAllTasks(response.tasks);
-				}
+				await getTaskList();
 			} catch (error) {
 				console.error('Failed to fetch tasks:', error);
 			} finally {
@@ -56,18 +54,18 @@ const ManagerTasks = () => {
 
 	// Filter and transform tasks for display
 	const transformTasksForTable = useMemo(() => {
-		let filtered = allTasks;
+		let filtered = storeTasks || [];
 
 		// Apply status filter
 		if (activeTab === 'Active') {
-			filtered = allTasks?.filter(
+			filtered = filtered?.filter(
 				(task) =>
 					task.status === 'inProgress' ||
 					task.status === 'Pending' ||
 					task.status === 'Submitted'
 			);
 		} else if (activeTab === 'Completed') {
-			filtered = allTasks.filter(
+			filtered = filtered.filter(
 				(task) => task.status === 'Completed' || task.status === 'Task Closed'
 			);
 		}
@@ -91,7 +89,7 @@ const ManagerTasks = () => {
 				: task.dueDate || 'No due date',
 			actions: true, // Enable action buttons
 		}));
-	}, [allTasks, activeTab, searchQuery]);
+	}, [storeTasks, activeTab, searchQuery]);
 
 	return (
 		<>
@@ -126,6 +124,7 @@ const ManagerTasks = () => {
 					<TaskTable
 						tasks={transformTasksForTable}
 						tasksHeader={taskListheaders}
+						onTaskUpdate={refreshTaskList}
 					/>
 				)}
 			</div>

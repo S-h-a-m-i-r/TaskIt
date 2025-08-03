@@ -6,12 +6,12 @@ import {
 	teamTasksdetails,
 } from '../../datadump';
 import TaskTable from '../admin/TaskTable';
-import { adminTaskList as customerManagement } from '../../datadump';
+import { customerTasksdetails as customerManagement } from '../../datadump';
 import ProfileDropdown from '../../components/generalComponents/ProfileButton';
 import CountUp from 'react-countup';
 import useAuthStore from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import useTaskStore from '../../stores/taskStore';
 
 interface Task {
@@ -27,10 +27,10 @@ interface Task {
 }
 
 const ManagerDashboard = () => {
-	const [allTasks, setAllTasks] = useState<Task[]>([]);
+	// const [allTasks, setAllTasks] = useState<Task[]>([]);
 	const { user } = useAuthStore();
 	const navigate = useNavigate();
-	const { getTaskList } = useTaskStore();
+	const { getTaskList, tasks: allTasks } = useTaskStore();
 
 	const getTasksByStatus = useMemo(() => {
 		const tasksByStatus = {
@@ -48,17 +48,17 @@ const ManagerDashboard = () => {
 		const fetchData = async () => {
 			try {
 				// Fetch tasks
-				const taskResponse = await getTaskList();
-				if (taskResponse.success && taskResponse.tasks) {
-					setAllTasks(taskResponse.tasks);
-				}
+				await getTaskList();
+				// if (taskResponse.success && taskResponse.tasks) {
+				// 	setAllTasks(taskResponse.tasks);
+				// }
 			} catch (error) {
 				console.error('Failed to fetch data:', error);
 			}
 		};
 
 		fetchData();
-	}, [getTaskList]);
+	}, []);
 
 	const dashboardCards = [
 		{
@@ -160,7 +160,7 @@ const ManagerDashboard = () => {
 							<TaskTable
 								tasks={customerManagement}
 								tasksHeader={customerHeader}
-								manager={true}
+								manager={false}
 							/>
 						</div>
 						<div>

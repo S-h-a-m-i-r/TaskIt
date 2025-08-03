@@ -11,26 +11,17 @@ interface InputChangeEvent {
 	};
 }
 
-interface Task {
-	_id: string;
-	title: string;
-	description: string;
-	status: string;
-	assignedTo?: string;
-	createdAt?: string;
-	dueDate?: string;
-}
+
 
 const taskListheaders = ['Id', 'Type', 'Status', 'Date', 'Actions'];
 
 const AdminTasks = () => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const [allTasks, setAllTasks] = useState<Task[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('All');
 
 	const name = localStorage.getItem('role') || '';
-	const { getTaskList } = useTaskStore();
+	const { getTaskList, tasks: allTasks } = useTaskStore();
 
 	const handleInputChange = (event: InputChangeEvent) => {
 		setSearchQuery(event.target.value);
@@ -41,10 +32,7 @@ const AdminTasks = () => {
 		const fetchTasks = async () => {
 			try {
 				setLoading(true);
-				const response = await getTaskList();
-				if (response.success && response.tasks) {
-					setAllTasks(response.tasks);
-				}
+				await getTaskList();
 			} catch (error) {
 				console.error('Failed to fetch tasks:', error);
 			} finally {

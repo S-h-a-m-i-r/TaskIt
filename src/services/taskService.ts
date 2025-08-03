@@ -102,3 +102,18 @@ export const reassignTaskService = (
 		data: { userId },
 	});
 };
+
+export const updateTaskStatusService = (
+	taskId: string,
+	status: string
+): Promise<AssignTaskResponse> => {
+	return request<AssignTaskResponse>({
+		method: 'put',
+		url: `/tasks/updateTask/${taskId}`,
+		data: {
+			updateData: {
+				status,
+			},
+		},
+	});
+};

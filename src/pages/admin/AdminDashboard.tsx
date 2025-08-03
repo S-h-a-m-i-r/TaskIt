@@ -11,7 +11,7 @@ import { adminTaskList as customerManagement } from '../../datadump';
 import ProfileDropdown from '../../components/generalComponents/ProfileButton';
 import { useNavigate } from 'react-router-dom';
 import CountUp from 'react-countup';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
 interface Task {
@@ -27,9 +27,10 @@ interface Task {
 }
 
 const AdminDashboard = () => {
-	const [allTasks, setAllTasks] = useState<Task[]>([]);
+	// const [allTasks, setAllTasks] = useState<Task[]>([]);
 	// const [teamMembers, setTeamMembers] = useState<User[]>([]);
 	const { user } = useAuthStore();
+	const { tasks: allTasks } = useTaskStore();
 	const navigate = useNavigate();
 	const handleAddCredit = () => {
 		navigate('/credits');
@@ -53,10 +54,10 @@ const AdminDashboard = () => {
 		const fetchData = async () => {
 			try {
 				// Fetch tasks
-				const taskResponse = await getTaskList();
-				if (taskResponse.success && taskResponse.tasks) {
-					setAllTasks(taskResponse.tasks);
-				}
+				await getTaskList();
+				// if (taskResponse.success && taskResponse.tasks) {
+				// 	setAllTasks(taskResponse.tasks);
+				// }
 
 				// Fetch users for team management
 				// const userResponse = await getAllUsers();
