@@ -5,6 +5,10 @@ import {
 	CompleteRegistrationData,
 	AuthResponse,
 	GetUsersResponse,
+	ForgotPasswordRequest,
+	ResetPasswordRequest,
+	ForgotPasswordResponse,
+	ResetPasswordResponse,
 } from '../types/auth';
 
 export const loginUser = (
@@ -71,5 +75,32 @@ export const getUsersByRole = (roles: string[]): Promise<GetUsersResponse> => {
 	return request<GetUsersResponse>({
 		method: 'get',
 		url: `/users/by-role?role=${roles.join(',')}`,
+	});
+};
+
+export const forgotPassword = (
+	email: ForgotPasswordRequest
+): Promise<ForgotPasswordResponse> => {
+	return request<ForgotPasswordResponse>({
+		method: 'post',
+		url: '/auth/forget-password',
+		data: email as unknown as Record<string, unknown>,
+	});
+};
+
+export const resetPassword = (
+	passwordData: ResetPasswordRequest,
+	token: string
+): Promise<ResetPasswordResponse> => {
+	// Transform the data to match backend expectations
+	const transformedData = {
+		password: passwordData.password,
+		confirmPassword: passwordData.confirmPassword,
+	};
+
+	return request<ResetPasswordResponse>({
+		method: 'post',
+		url: `/auth/reset-password?id=${token}`,
+		data: transformedData as unknown as Record<string, unknown>,
 	});
 };

@@ -54,7 +54,6 @@ const MainPage = () => {
 
 		fetchTasks();
 	}, [getTaskList]);
-	console.log(allTasks);
 
 	// Calculate task counts by status
 	const taskCounts = useMemo(() => {

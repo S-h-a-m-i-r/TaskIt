@@ -87,8 +87,9 @@ const TaskTable = ({
 
 		// If assignedTo is a string (user ID), compare directly
 		if (typeof task.assignedTo === 'string') {
-			return task.assignedTo === user._id;
+			return task.assignedTo === user._id || task.assignedTo === user.email;
 		}
+		console.log(task.assignedTo, user._id, 'task.assignedTo');
 
 		// If assignedTo is an object with _id, compare the _id
 		if (typeof task.assignedTo === 'object' && task.assignedTo._id) {

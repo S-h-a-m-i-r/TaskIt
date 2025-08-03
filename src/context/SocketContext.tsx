@@ -28,10 +28,6 @@ export const SocketProvider = ({ children, token }: SocketProviderProps) => {
 		const newSocket = io(backendUrl, {
 			auth: { token },
 		});
-		console.log('backendUrl', backendUrl);
-		console.log('token', token);
-		console.log('newSocket', newSocket);
-		console.log('Socket instance created');
 		newSocket.on('connect', () => {
 			console.log('Socket connected');
 		});
