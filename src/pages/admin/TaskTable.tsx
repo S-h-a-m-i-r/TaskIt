@@ -87,7 +87,7 @@ const TaskTable = ({
 
 		// If assignedTo is a string (user ID), compare directly
 		if (typeof task.assignedTo === 'string') {
-			return task.assignedTo === user.email;
+			return task.assignedTo === user._id;
 		}
 
 		// If assignedTo is an object with _id, compare the _id
@@ -123,13 +123,6 @@ const TaskTable = ({
 	// Function to render cell content based on header
 	const renderCell = (task: Task, header: string) => {
 		const headerLower = header.toLowerCase().trim();
-		console.log(
-			headerLower,
-			'the table headers',
-			task.customerCreditsActions,
-			header
-		);
-
 		switch (headerLower) {
 			case 'id':
 			case 'task id':
