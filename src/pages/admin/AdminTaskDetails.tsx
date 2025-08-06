@@ -1,5 +1,5 @@
 // ...existing imports...
-import { Select, message } from "antd";
+import { Select, message, Modal } from "antd";
 import { Loader } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -41,6 +41,11 @@ interface Task {
 		content: string;
 		createdAt: string;
 	}>;
+	createdBy?: string | { _id: string; email: string; firstName?: string; lastName?: string };
+	customerName?: string;
+	customerEmail?: string;
+	plan?: string;
+	credits?: number;
 }
 
 const AdminTaskDetails: React.FC = () => {
@@ -55,6 +60,9 @@ const AdminTaskDetails: React.FC = () => {
 	const [assigning, setAssigning] = useState<boolean>(false);
 	const [selectedUserId, setSelectedUserId] = useState<string | undefined>();
 	const [isReassigning, setIsReassigning] = useState<boolean>(false);
+	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
+	const [isAssignModalOpen, setIsAssignModalOpen] = useState<boolean>(false);
+	const [isReassignModalOpen, setIsReassignModalOpen] = useState<boolean>(false);
 
 	// Check if user has access (admin, manager, or customer)
 	useEffect(() => {
@@ -105,19 +113,27 @@ const AdminTaskDetails: React.FC = () => {
 		}
 	}, [taskId, viewTask, user]);
 
-	// Fetch available users (customers and managers only)
+	// Fetch available users based on current user role
 	useEffect(() => {
 		const fetchAvailableUsers = async () => {
 			try {
-				// Fetch both customers and managers in a single request
-				await getUsersByRole(['CUSTOMER', 'MANAGER']);
+				if (user?.role === 'ADMIN') {
+					// Admin can see all BASIC and MANAGER users, plus themselves
+					await getUsersByRole(['BASIC', 'MANAGER', "ADMIN"]);
+				} else if (user?.role === 'MANAGER') {
+					// Manager can see all BASIC users, plus themselves
+					await getUsersByRole(['BASIC']);
+				} else if (user?.role === 'BASIC') {
+					// Basic/Customer users can only see themselves
+					await getUsersByRole(['BASIC']);
+				}
 			} catch (error) {
 				console.error('Error fetching available users:', error);
 				message.error('Error loading users');
 			}
 		};
 
-		if (user?.role === 'ADMIN' || user?.role === 'MANAGER' || user?.role === 'CUSTOMER') {
+		if (user?.role) {
 			fetchAvailableUsers();
 		}
 	}, [user, getUsersByRole]);
@@ -145,6 +161,7 @@ const AdminTaskDetails: React.FC = () => {
 			message.error('Failed to assign task. Please try again.');
 		} finally {
 			setAssigning(false);
+			setIsAssignModalOpen(false);
 		}
 	};
 
@@ -157,8 +174,14 @@ const AdminTaskDetails: React.FC = () => {
 			
 			if (response?.success) {
 				message.success('Task deleted successfully!');
-				// Navigate back to tasks list after deletion
-				handleGoBack();
+				// Navigate based on user role after successful deletion
+				if (user?.role === 'ADMIN') {
+					navigate('/admin');
+				} else if (user?.role === 'MANAGER') {
+					navigate('/manager');
+				} else {
+					navigate('/basic');
+				}
 			} else {
 				message.error(response?.message || 'Failed to delete task');
 			}
@@ -167,6 +190,7 @@ const AdminTaskDetails: React.FC = () => {
 			message.error('Failed to delete task. Please try again.');
 		} finally {
 			setAssigning(false);
+			setIsDeleteModalOpen(false);
 		}
 	};
 
@@ -194,6 +218,7 @@ const AdminTaskDetails: React.FC = () => {
 			message.error('Failed to reassign task. Please try again.');
 		} finally {
 			setAssigning(false);
+			setIsReassignModalOpen(false);
 		}
 	};
 
@@ -222,6 +247,80 @@ const AdminTaskDetails: React.FC = () => {
 
 	const taskColor = getTaskStatusColors(task.status);
 
+	// Helper function to determine plan type
+	const getPlanType = (plan?: string, credits?: number) => {
+		if (plan === '10_credits' || credits === 10) {
+			return 'Basic';
+		}
+		return 'Unlimited';
+	};
+
+	// Get customer information
+	const getCustomerInfo = () => {
+		if (task?.customerName && task?.customerEmail) {
+			return {
+				name: task.customerName,
+				email: task.customerEmail,
+				plan: getPlanType(task.plan, task.credits)
+			};
+		}
+		
+		// Fallback to createdBy if available
+		if (task?.createdBy) {
+			if (typeof task.createdBy === 'object' && task.createdBy.email) {
+				return {
+					name: `${task.createdBy.firstName || ''} ${task.createdBy.lastName || ''}`.trim() || 'Unknown',
+					email: task.createdBy.email,
+					plan: getPlanType(task.plan, task.credits)
+				};
+			}
+		}
+		
+		return null;
+	};
+
+	const customerInfo = getCustomerInfo();
+
+	// Filter available users based on current user role
+	const getAvailableUsers = () => {
+		if (!users || !user) return [];
+
+		const filteredUsers = [...users];
+
+		// Add current user to the list if they're not already included
+		const currentUserInList = users.find((u: { _id: string }) => u._id === user._id);
+		if (!currentUserInList && user._id) {
+			filteredUsers.push({
+				_id: user._id,
+				firstName: user.firstName || user.userName || 'Current',
+				lastName: user.lastName || 'User',
+				email: user.email || '',
+				role: user.role || 'BASIC',
+				userName: user.userName || user.email || ''
+			});
+		}
+
+		// Apply role-based filtering
+		if (user.role === 'ADMIN') {
+			// Admin can see all BASIC and MANAGER users, plus themselves
+			return filteredUsers.filter((u: { role: string; _id: string }) => 
+				u.role === 'BASIC' || u.role === 'MANAGER' || u._id === user._id
+			);
+		} else if (user.role === 'MANAGER') {
+			// Manager can see all BASIC users, plus themselves
+			return filteredUsers.filter((u: { role: string; _id: string }) => 
+				u.role === 'BASIC' || u._id === user._id
+			);
+		} else if (user.role === 'BASIC' || user.role === 'CUSTOMER') {
+			// Basic/Customer users can only see themselves
+			return filteredUsers.filter((u: { _id: string }) => u._id === user._id);
+		}
+
+		return filteredUsers;
+	};
+
+	const availableUsers = getAvailableUsers();
+
 	return (
 		<div className="p-4 sm:p-6 lg:p-9 w-full">
 			{/* Header */}
@@ -240,6 +339,64 @@ const AdminTaskDetails: React.FC = () => {
 					{task.status}
 				</div>
 			</div>
+
+			{/* Customer Information Section */}
+			{customerInfo && (
+				<div className="bg-gradient-to-br from-white to-blue-50 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 p-6 sm:p-8 mb-6 lg:mb-8">
+					<div className="flex items-center gap-3 mb-6">
+						<div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+							<svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+							</svg>
+						</div>
+						<h2 className="text-xl sm:text-2xl font-bold text-gray-800">Customer Information</h2>
+					</div>
+					
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+						{/* Customer Name */}
+						<div className="bg-white rounded-lg p-4 border border-slate-300 shadow-sm">
+							<div className="flex items-center gap-2 mb-3">
+								<svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+								</svg>
+								<label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Customer Name</label>
+							</div>
+							<p className="text-gray-900 font-medium">{customerInfo.name}</p>
+						</div>
+
+						{/* Customer Email */}
+						<div className="bg-white rounded-lg p-4 border border-slate-300 shadow-sm">
+							<div className="flex items-center gap-2 mb-3">
+								<svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+								</svg>
+								<label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Email</label>
+							</div>
+							<p className="text-gray-900 font-medium">{customerInfo.email}</p>
+						</div>
+
+						{/* Plan Type */}
+						<div className="bg-white rounded-lg p-4 border border-slate-300 shadow-sm">
+							<div className="flex items-center gap-2 mb-3">
+								<svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>
+								<label className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Plan Type</label>
+							</div>
+							<div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${
+								customerInfo.plan === 'Basic' 
+									? 'bg-blue-100 text-blue-800' 
+									: 'bg-purple-100 text-purple-800'
+							}`}>
+								<div className={`w-2 h-2 rounded-full ${
+									customerInfo.plan === 'Basic' ? 'bg-blue-500' : 'bg-purple-500'
+								}`}></div>
+								{customerInfo.plan}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 
 			<div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
 				{/* Task Details - Left Column */}
@@ -407,9 +564,9 @@ const AdminTaskDetails: React.FC = () => {
 											className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
 										/>
 										<ButtonComponent
-											title={assigning ? "Deleting..." : "Delete Task"}
-											onClick={handleDeleteTask}
-											className={`w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 ${assigning ? 'opacity-50 cursor-not-allowed' : ''}`}
+											title="Delete Task"
+											onClick={() => setIsDeleteModalOpen(true)}
+											className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
 										/>
 									</div>
 								) : (
@@ -426,16 +583,16 @@ const AdminTaskDetails: React.FC = () => {
 											showSearch
 											optionFilterProp="children"
 											dropdownStyle={{ maxHeight: '200px', overflow: 'auto' }}
-											options={users?.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => ({
+											options={availableUsers?.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => ({
 												label: `${user?.firstName} ${user?.lastName} (${user?.email}) - ${user?.role}`,
 												value: user?._id,
 											}))}
 										/>
 										<div className="flex gap-2">
 											<ButtonComponent
-												title={assigning ? "Reassigning..." : "Reassign Task"}
-												onClick={handleReassignTask}
-												className={`flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${(!selectedUserId || assigning) ? 'opacity-50 cursor-not-allowed' : ''}`}
+												title="Reassign Task"
+												onClick={() => setIsReassignModalOpen(true)}
+												className={`flex-1 bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 ${!selectedUserId ? 'opacity-50 cursor-not-allowed' : ''}`}
 											/>
 											<ButtonComponent
 												title="Cancel"
@@ -467,15 +624,15 @@ const AdminTaskDetails: React.FC = () => {
 										showSearch
 										optionFilterProp="children"
 										dropdownStyle={{ maxHeight: '200px', overflow: 'auto' }}
-										options={users?.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => ({
+										options={availableUsers?.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => ({
 											label: `${user?.firstName} ${user?.lastName} (${user?.email}) - ${user?.role}`,
 											value: user?._id,
 										}))}
 									/>
 									<ButtonComponent
-										title={assigning ? "Assigning..." : "Assign Task"}
-										onClick={handleAssignTask}
-										className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200 ${(!selectedUserId || assigning) ? 'opacity-50 cursor-not-allowed' : ''}`}
+										title="Assign Task"
+										onClick={() => setIsAssignModalOpen(true)}
+										className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200 ${!selectedUserId ? 'opacity-50 cursor-not-allowed' : ''}`}
 									/>
 								</div>
 							</div>
@@ -486,8 +643,8 @@ const AdminTaskDetails: React.FC = () => {
 					<div className="bg-white rounded-lg border border-slate-300 p-4 sm:p-6">
 						<h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">Available Users</h2>
 						<div className="max-h-64 overflow-y-auto space-y-2 pr-2">
-							{users?.length > 0 ? (
-								users.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => (
+							{availableUsers?.length > 0 ? (
+								availableUsers.map((user: { firstName: string; lastName: string; email: string; role: string; _id: string }) => (
 									<div key={user?._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-md hover:bg-gray-200 transition-colors border border-slate-300">
 										<div className="flex-1 min-w-0">
 											<p className="font-medium text-gray-900 truncate">{user?.firstName} {user?.lastName}</p>
@@ -509,6 +666,145 @@ const AdminTaskDetails: React.FC = () => {
 					</div>
 				</div>
 			</div>
+
+			{/* Delete Confirmation Modal */}
+			<Modal
+				open={isDeleteModalOpen}
+				closable={true}
+				cancelText="Cancel"
+				okText={assigning ? "Deleting..." : "Delete Task"}
+				onCancel={() => setIsDeleteModalOpen(false)}
+				onOk={handleDeleteTask}
+				centered={true}
+				title={
+					<div className="flex items-center gap-3">
+						<div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+							<svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+							</svg>
+						</div>
+						<span className="text-lg font-semibold text-gray-900">Delete Task</span>
+					</div>
+				}
+				okButtonProps={{
+					style: {
+						backgroundColor: '#EF4444', // Red-500
+						borderColor: '#EF4444',
+						color: '#fff',
+					},
+					disabled: assigning,
+				}}
+			>
+				<div className="py-4">
+					<p className="text-gray-700 mb-4">Are you sure you want to delete this task?</p>
+					<div className="bg-gray-50 rounded-md p-3 border border-gray-200 mb-4">
+						<p className="font-medium text-gray-900">{task?.title}</p>
+						<p className="text-sm text-gray-600 mt-1">{task?.description}</p>
+					</div>
+					<p className="text-sm text-red-600">
+						This action cannot be undone. The task and all its associated data will be permanently deleted.
+					</p>
+				</div>
+			</Modal>
+
+			{/* Assign Task Confirmation Modal */}
+			<Modal
+				open={isAssignModalOpen}
+				closable={true}
+				cancelText="Cancel"
+				okText={assigning ? "Assigning..." : "Assign Task"}
+				onCancel={() => setIsAssignModalOpen(false)}
+				onOk={handleAssignTask}
+				centered={true}
+				title={
+					<div className="flex items-center gap-3">
+						<div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+							<svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+							</svg>
+						</div>
+						<span className="text-lg font-semibold text-gray-900">Assign Task</span>
+					</div>
+				}
+				okButtonProps={{
+					style: {
+						backgroundColor: '#4880FF', // Primary blue
+						borderColor: '#4880FF',
+						color: '#fff',
+					},
+					disabled: assigning || !selectedUserId,
+				}}
+			>
+				<div className="py-4">
+					<p className="text-gray-700 mb-4">Are you sure you want to assign this task?</p>
+					<div className="bg-gray-50 rounded-md p-3 border border-gray-200 mb-4">
+						<p className="font-medium text-gray-900">{task?.title}</p>
+						<p className="text-sm text-gray-600 mt-1">{task?.description}</p>
+					</div>
+					{selectedUserId && (
+						<div className="bg-blue-50 rounded-md p-3 border border-blue-200">
+							<p className="text-sm text-blue-800">
+								<strong>Assigning to:</strong> {
+									users?.find((user: { _id: string }) => user._id === selectedUserId)?.firstName + ' ' +
+									users?.find((user: { _id: string }) => user._id === selectedUserId)?.lastName + 
+									' (' + users?.find((user: { _id: string }) => user._id === selectedUserId)?.email + ')'
+								}
+							</p>
+						</div>
+					)}
+				</div>
+			</Modal>
+
+			{/* Reassign Task Confirmation Modal */}
+			<Modal
+				open={isReassignModalOpen}
+				closable={true}
+				cancelText="Cancel"
+				okText={assigning ? "Reassigning..." : "Reassign Task"}
+				onCancel={() => setIsReassignModalOpen(false)}
+				onOk={handleReassignTask}
+				centered={true}
+				title={
+					<div className="flex items-center gap-3">
+						<div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+							<svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+							</svg>
+						</div>
+						<span className="text-lg font-semibold text-gray-900">Reassign Task</span>
+					</div>
+				}
+				okButtonProps={{
+					style: {
+						backgroundColor: '#10B981', // Green-500
+						borderColor: '#10B981',
+						color: '#fff',
+					},
+					disabled: assigning || !selectedUserId,
+				}}
+			>
+				<div className="py-4">
+					<p className="text-gray-700 mb-4">Are you sure you want to reassign this task?</p>
+					<div className="bg-gray-50 rounded-md p-3 border border-gray-200 mb-4">
+						<p className="font-medium text-gray-900">{task?.title}</p>
+						<p className="text-sm text-gray-600 mt-1">{task?.description}</p>
+					</div>
+					{selectedUserId && (
+						<div className="bg-green-50 rounded-md p-3 border border-green-200">
+							<p className="text-sm text-green-800">
+								<strong>Reassigning to:</strong> {
+									users?.find((user: { _id: string }) => user._id === selectedUserId)?.firstName + ' ' +
+									users?.find((user: { _id: string }) => user._id === selectedUserId)?.lastName + 
+									' (' + users?.find((user: { _id: string }) => user._id === selectedUserId)?.email + ')'
+								}
+							</p>
+						</div>
+					)}
+					<p className="text-sm text-orange-600 mt-3">
+						This will transfer the task from the current assignee to the new user.
+					</p>
+				</div>
+			</Modal>
 		</div>
 	);
 };
