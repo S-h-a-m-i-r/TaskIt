@@ -35,7 +35,7 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({
 	}, []);
 
 	const statusOptions = [
-		{ value: 'inProgress', label: 'In Progress' },
+		{ value: 'InProgress', label: 'In Progress' },
 		{ value: 'Submitted', label: 'Submitted' },
 		{ value: 'Completed', label: 'Completed' },
 		{ value: 'Task Closed', label: 'Task Closed' },
