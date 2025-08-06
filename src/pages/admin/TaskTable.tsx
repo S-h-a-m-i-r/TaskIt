@@ -235,7 +235,7 @@ const TaskTable = ({
 									className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
 									onClick={() => handleOpenTask(task, user?.role || '')}
 								/>
-								{manager && isUserAssignedToTask(task) && (
+								{isUserAssignedToTask(task) && (
 									<ButtonComponent
 										title="Chat"
 										className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
