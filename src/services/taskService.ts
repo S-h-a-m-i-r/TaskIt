@@ -88,7 +88,7 @@ export const deleteTaskService = (
 ): Promise<AssignTaskResponse> => {
 	return request<AssignTaskResponse>({
 		method: 'delete',
-		url: `/tasks/${taskId}`,
+		url: `/tasks/deleteTask/${taskId}`,
 	});
 };
 
