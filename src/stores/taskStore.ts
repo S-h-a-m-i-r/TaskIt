@@ -8,31 +8,7 @@ import {
 	deleteTaskService,
 	reassignTaskService,
 } from '../services/taskService';
-
-// Define types for the store
-interface Task {
-	_id: string;
-	title: string;
-	description: string;
-	status: string;
-	createdAt?: string;
-	dueDate?: string;
-	assignedTo?: string;
-	// Add other task properties as needed
-}
-
-interface Message {
-	senderId: {
-		_id: string;
-	};
-	content: string;
-	createdAt: string;
-}
-
-interface CreateTaskPayload {
-	title: string;
-	description: string;
-}
+import { Task, Message, CreateTaskPayload, TaskResponse, TaskListResponse } from '../types/task';
 
 interface TaskState {
 	tasks: Task[];
@@ -40,16 +16,8 @@ interface TaskState {
 	task: Task | null;
 	isAuthenticated: boolean;
 	loading: boolean;
-	getTaskList: () => Promise<{
-		success: boolean;
-		tasks: Task[];
-		message?: string;
-	}>;
-	viewTask: (id: string) => Promise<{
-		success: boolean;
-		data: { task: Task; messages: Message[] };
-		message?: string;
-	}>;
+	getTaskList: () => Promise<TaskListResponse>;
+	viewTask: (id: string) => Promise<TaskResponse>;
 	createTask: (payload: CreateTaskPayload) => Promise<{
 		success: boolean;
 		message?: string;

@@ -84,7 +84,7 @@ interface InvoiceTemplateProps {
   data: InvoiceData
 }
 
-export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({data}) => {
+ const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({data}) => {
     
   return (
     <div className="bg-white w-full max-w-4xl mx-auto text-black!" id="invoice-template">
@@ -216,3 +216,5 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({data}) => {
     </div>
   )
 }
+
+export default InvoiceTemplate;

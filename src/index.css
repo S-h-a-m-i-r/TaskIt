@@ -53,3 +53,18 @@
 		@apply bg-[#F3F4F8] text-foreground;
 	}
 }
+
+/* Global Modal Styles - Swapped Button Positions */
+.ant-modal-footer {
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 10px;
+}
+
+.ant-modal-footer .ant-btn .ant-btn-primary {
+	order: 1;
+}
+
+.ant-modal-footer .ant-btn:last-child {
+	order: 0;
+}

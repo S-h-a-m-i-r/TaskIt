@@ -2,11 +2,9 @@
 
 export type TaskStatus = 
   | 'Submitted' 
-  | 'inProgress' 
-  | 'In Progress'
+  | 'InProgress'
   | 'Completed' 
-  | 'Task Closed'
-  | 'Pending'
+  | 'Closed'
   | 'Unknown';
 
 // Color schemes for different use cases
@@ -25,13 +23,8 @@ const STATUS_COLORS: Record<TaskStatus, StatusColorScheme> = {
     border: 'border-blue-200',
     hover: 'hover:bg-blue-100'
   },
-  'inProgress': {
-    background: 'bg-yellow-50',
-    text: 'text-yellow-700',
-    border: 'border-yellow-200',
-    hover: 'hover:bg-yellow-100'
-  },
-  'In Progress': {
+
+  'InProgress': {
     background: 'bg-yellow-50',
     text: 'text-yellow-700',
     border: 'border-yellow-200',
@@ -43,18 +36,13 @@ const STATUS_COLORS: Record<TaskStatus, StatusColorScheme> = {
     border: 'border-green-200',
     hover: 'hover:bg-green-100'
   },
-  'Task Closed': {
+  'Closed': {
     background: 'bg-red-50',
     text: 'text-red-700',
     border: 'border-red-200',
     hover: 'hover:bg-red-100'
   },
-  'Pending': {
-    background: 'bg-orange-50',
-    text: 'text-orange-700',
-    border: 'border-orange-200',
-    hover: 'hover:bg-orange-100'
-  },
+
   'Unknown': {
     background: 'bg-gray-50',
     text: 'text-gray-700',
@@ -133,7 +121,7 @@ function normalizeStatus(status: string): TaskStatus {
   
   // Handle common variations
   if (normalized.toLowerCase().includes('progress')) {
-    return 'In Progress';
+    return 'InProgress';
   }
   if (normalized.toLowerCase().includes('submit')) {
     return 'Submitted';
@@ -142,11 +130,9 @@ function normalizeStatus(status: string): TaskStatus {
     return 'Completed';
   }
   if (normalized.toLowerCase().includes('close')) {
-    return 'Task Closed';
+    return 'Closed';
   }
-  if (normalized.toLowerCase().includes('pending')) {
-    return 'Pending';
-  }
+
   
   // Direct matches
   if (normalized in STATUS_COLORS) {
@@ -166,11 +152,9 @@ export function getStatusDisplayText(status: string): string {
   
   const displayMap: Record<TaskStatus, string> = {
     'Submitted': 'Submitted',
-    'inProgress': 'In Progress',
-    'In Progress': 'In Progress',
+    'InProgress': 'InProgress',
     'Completed': 'Completed',
-    'Task Closed': 'Task Closed',
-    'Pending': 'Pending',
+    'Closed': 'Closed',
     'Unknown': 'Unknown'
   };
   
@@ -184,7 +168,7 @@ export function getStatusDisplayText(status: string): string {
  */
 export function isTaskActive(status: string): boolean {
   const normalized = normalizeStatus(status);
-  return ['Submitted', 'inProgress', 'In Progress', 'Pending'].includes(normalized);
+  return ['Submitted', 'InProgress'].includes(normalized);
 }
 
 /**
@@ -194,5 +178,5 @@ export function isTaskActive(status: string): boolean {
  */
 export function isTaskCompleted(status: string): boolean {
   const normalized = normalizeStatus(status);
-  return ['Completed', 'Task Closed'].includes(normalized);
+  return ['Completed', 'Closed'].includes(normalized);
 } 

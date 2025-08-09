@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Modal } from 'antd';
 import useAuthStore from '../../stores/authStore';
 
+
+
 interface ProfileDropdownProps {
 	userName?: string;
 	userAvatar?: string;
@@ -154,6 +156,7 @@ export default function ProfileDropdown({
 						color: '#fff',
 					},
 				}}
+
 			>
 				<p className="text-lg font-semibold text-gray-600 text-center py-10">
 					Are you sure you want to logout?

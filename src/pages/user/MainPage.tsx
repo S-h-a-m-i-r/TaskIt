@@ -12,16 +12,8 @@ import CircularChart from './chart/Chart';
 import { useNavigate } from 'react-router-dom';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
+import { Task } from '../../types/task';
 
-interface Task {
-	_id: string;
-	title: string;
-	description: string;
-	status: string;
-	assignedTo?: string;
-	dueDate?: string;
-	recurring?: boolean;
-}
 
 const MainPage = () => {
 	const [selectedDate, setSelectedDate] = useState(new Date());
@@ -58,11 +50,11 @@ const MainPage = () => {
 	// Calculate task counts by status
 	const taskCounts = useMemo(() => {
 		const counts = {
-			inProgress: allTasks.filter((task) => task.status === 'inProgress')
+			inProgress: allTasks.filter((task) => task.status === 'InProgress')
 				.length,
 			submitted: allTasks.filter((task) => task.status === 'Submitted').length,
 			closed: allTasks.filter((task) => task.status === 'Closed').length,
-			Pending: allTasks.filter((task) => task.status === 'Pending').length,
+			completed: allTasks.filter((task) => task.status === 'Completed').length,
 		};
 
 		return counts;
@@ -86,11 +78,6 @@ const MainPage = () => {
 				count: taskCounts.closed,
 				percent: taskCounts.closed > 0 ? 16 : 0,
 			},
-			{
-				...CardsData[3], // Pending Tasks
-				count: taskCounts.Pending,
-				percent: taskCounts.Pending > 0 ? 7 : 0,
-			},
 		];
 	}, [taskCounts]);
 
@@ -105,10 +92,10 @@ const MainPage = () => {
 			</div>
 
 			{/* Task Cards with real data */}
-			<div className="mt-14 grid grid-cols-1 max-sm:justify-center sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+			<div className="mt-14 grid grid-cols-1 max-sm:justify-center sm:grid-cols-2 md:grid-cols-3 gap-4">
 				{loading ? (
 					// Beautiful skeleton loading for cards
-					<CardSkeleton count={4} />
+					<CardSkeleton count={3} />
 				) : (
 					// Real task cards
 					dynamicCardsData.map((element, index) => (

@@ -13,7 +13,7 @@ interface InputChangeEvent {
 
 
 
-const taskListheaders = ['Id', 'Type', 'Status', 'Date', 'Actions'];
+const taskListheaders = ['Customer Name', 'Task Title', 'Status', 'Date', 'Actions'];
 
 const AdminTasks = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -52,8 +52,7 @@ const AdminTasks = () => {
 		if (activeTab === 'Active') {
 			filtered = allTasks.filter(
 				(task) =>
-					task.status === 'inProgress' ||
-					task.status === 'Pending' ||
+					task.status === 'InProgress' ||
 					task.status === 'Submitted'
 			);
 		} else if (activeTab === 'Completed') {
@@ -75,7 +74,8 @@ const AdminTasks = () => {
 		return filtered.map((task) => {
 			return {
 				id: task._id,
-				type: task.title || 'Task',
+				customerName: typeof task.createdBy === "object" && task.createdBy?.userName ? task.createdBy.userName : undefined,
+				title: task.title,
 				status: task.status,
 				assignedTo: task.assignedTo,
 				dueDate: task.createdAt

@@ -3,13 +3,13 @@ import backIcon from "../../assets/icons/ArrowLeft_icon.svg";
 import ListItem from "../../components/generalComponents/ListItem";
 import deleteIcon from "../../assets/icons/Delete_icon.svg";
 import attachment from "../../assets/icons/attachment_icon.svg";
-import sendIcon from "../../assets/icons/Send_icon.svg";
-import { useEffect, useRef, useState } from 'react';
-import { useSocket } from '../../context/SocketContext';
+import { useEffect, useState, useCallback } from 'react';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
-import { Socket } from 'socket.io-client';
 import { getTaskStatusColors } from '../../utils/taskStatusUtils';
+import { Switch, message } from 'antd';
+import { updateTaskStatusService } from '../../services/taskService';
+import { ChatComponent } from '../../components/generalComponents';
 
 interface Message {
 	senderId: {
@@ -62,19 +62,62 @@ const TaskDetailsPage = () => {
 	const { user } = useAuthStore() as AuthStore;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [task, setTask] = useState<Task | null>(null);
-	const [content, setContent] = useState('');
-	const [typing, setTyping] = useState<string | null>(null);
-	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
+	const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
-	const socket = useSocket() as Socket | null;
+	// Debounced task status toggle for customer
+	const handleStatusToggle = useCallback(async (checked: boolean) => {
+		if (!task) return;
+		if (debounceTimer) {
+			clearTimeout(debounceTimer);
+		}
+		setIsUpdatingStatus(true);
+		const timer = setTimeout(async () => {
+			try {
+				const newStatus = checked ? 'Closed' : 'Completed';
+				
+				const response = await updateTaskStatusService(task._id, newStatus);
+				
+				if (response?.success) {
+					message.success(`Task ${checked ? 'closed' : 'reopened'} successfully!`);
+					// Refresh task details
+					const taskResponse = await viewTask(taskId!);
+					if (taskResponse?.success) {
+						setTask(taskResponse?.data?.task);
+					}
+				} else {
+					message.error(response?.message || 'Failed to update task status');
+				}
+			} catch (error) {
+				console.error('Error updating task status:', error);
+				message.error('Failed to update task status. Please try again.');
+			} finally {
+				setIsUpdatingStatus(false);
+			}
+		}, 500);
 
-	// const scrollToBottom = () => {
-	// 	messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-	// };
+		setDebounceTimer(timer);
+	}, [task, taskId, viewTask, debounceTimer]);
 
-	// useEffect(() => {
-	// 	scrollToBottom();
-	// }, [messages]);
+	// Cleanup timer on unmount
+	useEffect(() => {
+		return () => {
+			if (debounceTimer) {
+				clearTimeout(debounceTimer);
+			}
+		};
+	}, [debounceTimer]);
+
+	// Check if toggle should be shown (only for completed tasks)
+	const shouldShowToggle = () => {
+		return task?.status === 'Completed' || task?.status === 'Closed';
+	};
+
+	// Get toggle state (checked when task is closed)
+	const getToggleState = () => {
+		return task?.status === 'Closed';
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -92,88 +135,67 @@ const TaskDetailsPage = () => {
 
 		fetchData();
 	}, [taskId, viewTask]);
-
-	useEffect(() => {
-		if (!socket || !taskId) return;
-
-		// Join task chat room
-		socket.emit('joinTaskChat', taskId);
-		console.log('Joined task chat room:', taskId);
-
-		// Listen for new messages
-		socket.on('receiveMessage', (message: Message) => {
-			setMessages((prev) => [...prev, message]);
-		});
-
-		// Listen for typing indicators
-		socket.on(
-			'typingStarted',
-			({ userId: typingUserId }: { userId: string }) => {
-				return setTyping(typingUserId);
-			}
-		);
-
-		socket.on('typingStopped', () => {
-			setTyping(null);
-		});
-
-		// Handle errors
-		socket.on('error', (error: unknown) => {
-			console.error('Socket error:', error);
-			alert(error);
-		});
-
-		return () => {
-			socket.off('receiveMessage');
-			socket.off('typingStarted');
-			socket.off('typingStopped');
-			socket.off('error');
-		};
-	}, [socket, taskId]);
-
-	const handleSendMessage = (e: React.FormEvent | React.MouseEvent) => {
-		e.preventDefault();
-		if (!content.trim() || !socket) return;
-
-		socket.emit('sendMessage', { taskId, content });
-		setContent('');
-		socket.emit('typingStopped', taskId);
-	};
-
-	const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		setContent(value);
-		if (!socket) return;
-
-		if (value) {
-			socket.emit('typingStarted', taskId);
-		} else {
-			socket.emit('typingStopped', taskId);
-		}
-	};
 	getTaskStatusColors(task?.status || '');
 
 	return (
-		<div className="p-9 w-full flex flex-col gap-10 h-full">
-			<div className="flex items-center gap-3">
-				<div
-					className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
-					onClick={handleGoBack}
-				>
-					<img src={backIcon} alt="back" />
+		<div className="p-9 w-full flex flex-col gap-10">
+			<div className="flex items-center justify-between">
+				<div>
+				<div className="flex items-center gap-3">
+					<div
+						className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
+						onClick={handleGoBack}
+					>
+						<img src={backIcon} alt="back" />
+					</div>
+					<span className="font-semibold text-2xl">
+						{' '}
+						{task?.title}
+						<span className="text-[#3B82F6]"> {task?.status}</span>
+					</span>
 				</div>
-				<span className="font-semibold text-2xl">
-					{' '}
-					{task?.title}
-					<span className="text-[#3B82F6]"> {task?.status}</span>
-				</span>
+				{shouldShowToggle() && (
+					 <div className="flex justify-between items-center min-w-[180px] max-w-[220px] gap-4 rounded-xl px-4 py-3 border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 bg-white">
+					 <div className="flex items-center gap-2">
+					   <div
+						 className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+						   task?.status === 'Completed' ? "bg-green-500" : "bg-orange-400"
+						 }`}
+					   />
+					   <span
+						 className={`text-sm font-medium transition-colors duration-200 ${
+						   task?.status === 'Completed' ? "text-green-700" : "text-gray-700"
+						 }`}
+					   >
+						 {task?.status === 'Completed' ? "Task Complete" : "Close Task"}
+					   </span>
+					 </div>
+			   
+					 <Switch
+					   checked={getToggleState()}
+					   onChange={handleStatusToggle}
+					   loading={isUpdatingStatus}
+					   checkedChildren="✓"
+					   unCheckedChildren="○"
+					   size="default"
+					   style={{
+						 backgroundColor: getToggleState() ? "#10B981" : "#D1D5DB",
+					   }}
+					   className="flex-shrink-0"
+					 />
+				   </div>
+				)}
+				</div>
+				
+				{/* Task Status Toggle for Customer */}
+				
 			</div>
 			<div className="bg-gray-100 w-full border border-1"></div>
 			<div className="flex max-md:flex-col gap-6 h-full">
 				<div className="md:w-1/2">
 					<h2 className="text-[#3B82F6] text-xl text-left font-semibold mb-6">
 						{' '}
-						20 Dec 2024{' '}
+						{task?.createdAt ? new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
 					</h2>
 					<div className="w-full max-w-570px text-left flex flex-col gap-6 ">
 						<h2 className="font-semibold text-xl"> Task Details </h2>
@@ -233,93 +255,15 @@ const TaskDetailsPage = () => {
 						</div>
 					</div>
 				</div>
-				<div className="bg-white h-full flex flex-col justify-between p-4 flex-1 rounded-md">
-					<div>
-						{' '}
-						{/* Messages Container */}
-						<div className="text-xl font-bold mb-4">Assistant</div>
-						<hr className="mb-4 border-gray-300" />
-						<div className="flex  overflow-hidden">
-							{/* Scrollable message list */}
-							<div className="flex-1 overflow-y-auto px-4 py-2">
-								<div className="space-y-2">
-									{messages?.map((message, index) => (
-										<div
-											key={index}
-											className={`p-3 w-fit max-w-[350px] ${
-												message?.senderId?._id === user?._id
-													? 'bg-blue-500 text-white ml-auto text-right rounded-t-lg rounded-l-lg'
-													: 'bg-gray-200 text-black mr-auto shadow text-left rounded-t-lg rounded-r-lg'
-											}`}
-										>
-											<div className="break-words whitespace-pre-wrap">
-												{message.content}
-											</div>
-											<div
-												className={`text-xs mt-1 text-right ${
-													message?.senderId?._id === user?._id
-														? 'text-white'
-														: 'text-black'
-												}`}
-											>
-												{new Date(message.createdAt).toLocaleTimeString([], {
-													hour: '2-digit',
-													minute: '2-digit',
-												})}
-											</div>
-										</div>
-									))}
-
-									{/* Typing indicator - shown only once at the bottom */}
-									{typing && typing !== user?._id && (
-										<div className="text-sm italic text-gray-500 px-2 py-1">
-											Someone is typing...
-										</div>
-									)}
-
-									<div ref={messagesEndRef} />
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* Check if task is assigned */}
-					{task?.assignedTo ? (
-						<div className="flex items-center bg-white px-2 py-4 rounded-md shadow">
-							<input
-								type="text"
-								placeholder="Write here"
-								className="flex-grow outline-none"
-								value={content}
-								onChange={handleTyping}
-								onKeyDown={(e) => {
-									if (e.key === 'Enter') {
-										handleSendMessage(e);
-									}
-								}}
-							/>
-							<button
-								onClick={handleSendMessage}
-								className="text-gray-500 hover:text-gray-700"
-							>
-								<img src={sendIcon} />
-							</button>
-						</div>
-					) : (
-						<div className="flex items-center bg-gray-100 px-2 py-4 rounded-md shadow border border-gray-300">
-							<input
-								type="text"
-								placeholder="Task is not assigned yet"
-								className="flex-grow outline-none bg-gray-100 text-gray-500 cursor-not-allowed"
-								disabled
-								readOnly
-							/>
-							<button className="text-gray-400 cursor-not-allowed" disabled>
-								<img src={sendIcon} className="opacity-50" />
-							</button>
-						</div>
-					)}
-				</div>
+				{task && user && (
+					<ChatComponent
+						user={user}
+						task={task}
+						messages={messages}
+						onMessagesUpdate={setMessages}
+						className="flex-1"
+					/>
+				)}
 			</div>
 		</div>
 	);
