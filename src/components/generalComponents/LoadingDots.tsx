@@ -15,8 +15,8 @@ const LoadingDots: React.FC<LoadingDotsProps> = ({
 		<div className={`flex items-center gap-2 text-lg font-medium text-gray-700 ${className}`}>
 			{/* Loading spinner */}
 			<Triangle
-				height="20"
-				width="20"
+				height="60"
+				width="60"
 				color="#0C1421"
 				ariaLabel="triangle-loading"
 				wrapperStyle={{}}
