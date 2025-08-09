@@ -24,17 +24,7 @@ const ManagerTasks = () => {
 		setSearchQuery(event.target.value);
 	};
 
-	// Function to refresh task list
-	const refreshTaskList = async () => {
-		try {
-			setLoading(true);
-			await getTaskList();
-		} catch (error) {
-			console.error('Failed to refresh tasks:', error);
-		} finally {
-			setLoading(false);
-		}
-	};
+
 
 	// Fetch real tasks
 	useEffect(() => {
@@ -60,8 +50,7 @@ const ManagerTasks = () => {
 		if (activeTab === 'Active') {
 			filtered = filtered?.filter(
 				(task) =>
-					task.status === 'inProgress' ||
-					task.status === 'Pending' ||
+					task.status === 'InProgress' ||
 					task.status === 'Submitted'
 			);
 		} else if (activeTab === 'Completed') {
@@ -124,7 +113,6 @@ const ManagerTasks = () => {
 					<TaskTable
 						tasks={transformTasksForTable}
 						tasksHeader={taskListheaders}
-						onTaskUpdate={refreshTaskList}
 					/>
 				)}
 			</div>

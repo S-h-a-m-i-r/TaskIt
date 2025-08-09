@@ -1,7 +1,7 @@
 import inprogress_icon from "../assets/icons/Inprogress_icon.svg";
 import submitted_icon from "../assets/icons/submitted_icon.svg";
 import closed_icon from "../assets/icons/closed_icon.svg";
-import recurring_icon from "../assets/icons/recurring_icon.svg";
+
 
 export const adminTaskList = [
 	{
@@ -14,7 +14,7 @@ export const adminTaskList = [
 	{
 		id: "#12346",
 		description: "Review and approve refund request",
-		status: "Pending",
+		status: "Submitted",
 		assignedTo: "David Lee",
 		dueDate: "2024-07-21",
 	},
@@ -35,7 +35,7 @@ export const adminTaskList = [
 	{
 		id: "#12349",
 		description: "Schedule follow-up call with customer",
-		status: "Pending",
+		status: "Submitted",
 		assignedTo: "Jessica Wilson",
 		dueDate: "2024-07-23",
 	},
@@ -53,7 +53,7 @@ export const customerTasksdetails = [
 		id: "#12346",
 		name: "lorem ipsum",
 		email: "SarahMillar@gmail.com",
-		status: "Pending",
+		status: "Submitted",
 		dueDate: "2024-07-21",
 	},
 	{
@@ -74,7 +74,7 @@ export const customerTasksdetails = [
 		id: "#12349",
 		name: "lorem ipsum",
 		email: "SarahMillar@gmail.com",
-		status: "Pending",
+		status: "Submitted",
 		dueDate: "2024-07-23",
 	},
 ];
@@ -92,7 +92,7 @@ export const teamTasksdetails = [
 		id: '#12346',
 		name: 'lorem ipsum',
 		role: 'Admin',
-		status: 'Pending',
+		status: 'Submitted',
 		dueDate: '2024-07-21',
 		memberLastLogin: '2024-07-21',
 	},
@@ -116,7 +116,7 @@ export const teamTasksdetails = [
 		id: '#12349',
 		name: 'lorem ipsum',
 		role: 'Admin',
-		status: 'Pending',
+		status: 'Submitted',
 		dueDate: '2024-07-23',
 		memberLastLogin: '2024-07-23',
 	},
@@ -133,7 +133,7 @@ export const tasksPagedetails = [
 	{
 		id: "#12346",
 		type: 'Admin',
-		taskStatus: "Pending",
+		taskStatus: "Submitted",
 		dueDate: "2024-07-21",
 		actions: true
 	},
@@ -154,7 +154,7 @@ export const tasksPagedetails = [
 	{
 		id: "#12349",
 		type: 'Admin',
-		taskStatus: "Pending",
+		taskStatus: "Submitted",
 		dueDate: "2024-07-23",
 		actions: true
 	},
@@ -309,8 +309,8 @@ export const teamHeader = [
 	'Member Last Login',
 ];
 export const tasksHeader = [
-	'Task Id',
-	'Description',
+	'Customer Name',
+	'Task Title',
 	'Status',
 	'Assigned To',
 	'Due Date',
@@ -341,18 +341,11 @@ export const CardsData = [
 		path: '/closed',
 		color: '#FEF2F2',
 	},
-	{
-		title: 'Pending Tasks',
-		percent: 7,
-		count: 33,
-		icon: recurring_icon,
-		path: '/recurring',
-	},
 ];
 
 export const TasksHeadersData = [
-	'Name',
-	'Task Id',
+	'Title',
+	'Description',
 	'Date',
 	'Status',
 	'Recurring',
@@ -411,7 +404,7 @@ export const tasksBodyData = [
 		Date: '27th Dec 2024',
 		status: 'Task Closed',
 		date: '2023-10-05',
-		action: 'pending',
+		action: 'submitted',
 		Recurring: 'No',
 	},
 	{

@@ -1,27 +1,28 @@
 import ButtonComponent from "../../components/generalComponents/ButtonComponent";
-import TaskStatusDropdown from '../../components/generalComponents/TaskStatusDropdown';
 import { useNavigate } from 'react-router-dom';
 import { generatePDF } from '../../utils/pdfGenerator';
 import {
 	dummyInvoiceData,
 	InvoiceData,
 } from '../../components/generalComponents/InvoiceTemplate';
-import { getTaskStatusBadgeClasses } from '../../utils/taskStatusUtils';
+import { getTaskStatusBadgeClasses, getTaskStatusColors } from '../../utils/taskStatusUtils';
 import useAuthStore from '../../stores/authStore';
-import useTaskStore from '../../stores/taskStore';
 
 interface Task {
 	id?: string;
 	role?: string;
+	title?: string;
 	name?: string;
 	email?: string;
 	description?: string;
 	status?: string;
 	assignedTo?:
 		| string
-		| { _id: string; email: string; firstName?: string; lastName?: string };
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string};
+	createdBy?:
+		| string
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string };
 	dueDate?: string;
-	type?: string;
 	actions?: boolean;
 	creditsActions?: boolean;
 	taskStatus?: string;
@@ -68,36 +69,16 @@ type TaskTableProps = {
 	tasks: Task[];
 	tasksHeader: string[];
 	manager?: boolean;
-	onTaskUpdate?: () => void;
 };
 
 const TaskTable = ({
 	tasks,
 	tasksHeader,
 	manager,
-	onTaskUpdate,
 }: TaskTableProps) => {
 	const navigate = useNavigate();
 	const { user } = useAuthStore();
-	const { getTaskList } = useTaskStore();
 
-	// Check if current user is assigned to the task
-	const isUserAssignedToTask = (task: Task) => {
-		if (!user?._id || !task.assignedTo) return false;
-
-		// If assignedTo is a string (user ID), compare directly
-		if (typeof task.assignedTo === 'string') {
-			return task.assignedTo === user._id || task.assignedTo === user.email;
-		}
-		console.log(task.assignedTo, user._id, 'task.assignedTo');
-
-		// If assignedTo is an object with _id, compare the _id
-		if (typeof task.assignedTo === 'object' && task.assignedTo._id) {
-			return task.assignedTo._id === user._id;
-		}
-
-		return false;
-	};
 
 	const handleProfile = (e: { preventDefault: () => void }) => {
 		e.preventDefault();
@@ -112,13 +93,11 @@ const TaskTable = ({
 		navigate(`/${role.toLowerCase()}/task/${task.id}`);
 	};
 
-	const handleStatusChange = async (taskId: string, newStatus: string) => {
-		console.log(`Task ${taskId} status changed to ${newStatus}`);
-		if (onTaskUpdate) {
-			onTaskUpdate();
-		} else {
-			await getTaskList();
-		}
+	// Function to get row background color based on task status
+	const getRowBackgroundColor = (task: Task) => {
+		const status = task.status || task.taskStatus || 'Unknown';
+		const statusColors = getTaskStatusColors(status);
+		return statusColors.background;
 	};
 
 	// Function to render cell content based on header
@@ -126,23 +105,26 @@ const TaskTable = ({
 		const headerLower = header.toLowerCase().trim();
 		switch (headerLower) {
 			case 'id':
-			case 'task id':
+			case 'Customer Name':
 			case 'customer id':
 			case 'user id':
 			case 'userid':
 				return (
 					<td className="px-6 py-4 text-sm font-medium text-gray-900">
-						{task.id || task.task_id || task['User Id'] || '-'}
+						{task.id ||
+							task.task_id ||
+							task['User Id'] ||
+							(typeof task?.createdBy === 'object' && 'firstName' in task.createdBy
+								? task.createdBy.firstName
+								: '-') }
 					</td>
 				);
 
-			case 'type':
-			case 'description':
+			case 'task title':
 			case 'email':
 				return (
 					<td className="px-6 py-4 text-sm text-gray-600 max-w-xs">
-						{task.type ||
-							task.description ||
+						{task.title ||
 							task.name ||
 							task.customerEmail ||
 							task.email ||
@@ -152,25 +134,15 @@ const TaskTable = ({
 
 			case 'status':
 				return (
-					<td className="px-6 py-4 flex justify-center">
+					<td className="px-6 py-4 text-center">
 						{task.status || task.taskStatus ? (
-							user?.role === 'MANAGER' || user?.role === 'ADMIN' ? (
-								<TaskStatusDropdown
-									taskId={task.id || ''}
-									currentStatus={task?.status || task?.taskStatus || 'Unknown'}
-									onStatusChange={(newStatus) =>
-										handleStatusChange(task.id || '', newStatus)
-									}
-								/>
-							) : (
-								<span
-									className={getTaskStatusBadgeClasses(
-										task?.status || task?.taskStatus || 'Unknown'
-									)}
-								>
-									{task.status || task?.taskStatus || 'Unknown'}
-								</span>
-							)
+							<span
+								className={getTaskStatusBadgeClasses(
+									task?.status || task?.taskStatus || 'Unknown'
+								)}
+							>
+								{task.status || task?.taskStatus || 'Unknown'}
+							</span>
 						) : (
 							'-'
 						)}
@@ -235,13 +207,7 @@ const TaskTable = ({
 									className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
 									onClick={() => handleOpenTask(task, user?.role || '')}
 								/>
-								{isUserAssignedToTask(task) && (
-									<ButtonComponent
-										title="Chat"
-										className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
-										onClick={() => navigate(`/task/${task.id}`)}
-									/>
-								)}
+								
 							</div>
 						) : (
 							'-'
@@ -506,7 +472,7 @@ const TaskTable = ({
 							{tasks?.map((task, index) => (
 								<tr
 									key={index}
-									className="hover:bg-slate-300/50 transition-colors"
+									className={`${getRowBackgroundColor(task)} hover:bg-slate-300/50 transition-colors`}
 								>
 									{tasksHeader.map((header) => renderCell(task, header))}
 								</tr>

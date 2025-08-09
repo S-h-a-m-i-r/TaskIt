@@ -21,7 +21,10 @@ interface Task {
 	status: string;
 	assignedTo?:
 		| string
-		| { _id: string; email: string; firstName?: string; lastName?: string };
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string};
+	createdBy?:
+		| string
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string };
 	createdAt?: string;
 	dueDate?: string;
 }
@@ -40,9 +43,9 @@ const AdminDashboard = () => {
 	// const { getAllUsers } = useAuthStore();
 	const getTasksByStatus = useMemo(() => {
 		const tasksByStatus = {
-			inProgress: allTasks?.filter((task) => task.status === 'inProgress')
+			inProgress: allTasks?.filter((task) => task.status === 'InProgress')
 				.length,
-			pending: allTasks?.filter((task) => task.status === 'Pending').length,
+			submitted: allTasks?.filter((task) => task.status === 'Submitted').length,
 			completed: allTasks?.filter((task) => task.status === 'Completed').length,
 			closed: allTasks?.filter((task) => task.status === 'Closed').length,
 		};
@@ -80,8 +83,8 @@ const AdminDashboard = () => {
 			value: getTasksByStatus.inProgress.toString(),
 		},
 		{
-			title: 'Tasks Pending',
-			value: getTasksByStatus.pending.toString(),
+			title: 'Tasks Submitted',
+			value: getTasksByStatus.submitted.toString(),
 		},
 		{
 			title: 'Tasks Completed',
@@ -95,22 +98,28 @@ const AdminDashboard = () => {
 
 	const transformTasksForTable = (tasks: Task[]) => {
 		return tasks.map((task) => ({
-			id: task._id,
-			description: task.description,
-			status: task.status,
-			assignedTo:
-				typeof task.assignedTo === 'object' && task.assignedTo?.email
-					? `${task.assignedTo?.firstName || ''} ${
-							task.assignedTo?.lastName || ''
-					  }`.trim() || task.assignedTo?.email
-					: typeof task.assignedTo === 'string'
-					? task.assignedTo
-					: 'Unassigned',
-			dueDate: task.createdAt
-				? new Date(task.createdAt).toLocaleDateString()
-				: 'No due date',
-			actions: true, // Enable action buttons
-		}));
+      id: task._id,
+      customerName:
+        typeof task?.createdBy === "object" && task?.createdBy?.userName
+          ? task.createdBy.userName
+          : typeof task?.createdBy === "string"
+          ? task.createdBy
+          : "-",
+      title: task?.title,
+      status: task.status,
+      assignedTo:
+        typeof task.assignedTo === "object" && task.assignedTo?.email
+          ? `${task.assignedTo?.firstName || ""} ${
+              task.assignedTo?.lastName || ""
+            }`.trim() || task.assignedTo?.email
+          : typeof task.assignedTo === "string"
+          ? task.assignedTo
+          : "Unassigned",
+      dueDate: task.createdAt
+        ? new Date(task.createdAt).toLocaleDateString()
+        : "No due date",
+      actions: true, // Enable action buttons
+    }));
 	};
 
 	return (

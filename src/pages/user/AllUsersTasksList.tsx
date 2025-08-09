@@ -8,6 +8,7 @@ import { TasksHeadersData } from "../../datadump";
 interface Task {
 	_id: string;
 	title: string;
+	description: string;
 	status: string;
 	createdAt?: string;
 	recurring?: boolean;
@@ -27,9 +28,9 @@ interface StatusColorMap {
 
 export const statusColor: StatusColorMap = {
 	Submitted: 'bg-blue-50',
-	inProgress: 'bg-yellow-50',
+	InProgress: 'bg-yellow-50',
 	Completed: 'bg-green-50',
-	'Task Closed': 'bg-red-50',
+	Closed: 'bg-red-50',
 	default: 'bg-gray-50',
 };
 
@@ -89,7 +90,7 @@ const AllUsersTasksList = () => {
 								</td>
 
 								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-									{task._id}
+									{task?.description}
 								</td>
 
 								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">

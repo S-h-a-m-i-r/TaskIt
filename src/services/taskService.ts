@@ -6,6 +6,12 @@ interface Task {
 	title: string;
 	description: string;
 	status: string;
+	createdBy?:
+		| string
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string};
+	assignedTo?:
+		| string
+		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string};
 	// Add other task properties as needed
 }
 
