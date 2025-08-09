@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import DashboardCard from '../../components/generalComponents/DashboardCard';
-import Loader from '../../components/generalComponents/Loader';
+import LoadingDots from '../../components/generalComponents/LoadingDots';
 import CardSkeleton from '../../components/generalComponents/CardSkeleton';
 import { CardsData } from '../../datadump';
 import AllTasksList from './AllUsersTasksList';
@@ -126,7 +126,7 @@ const MainPage = () => {
 					</div>
 					{loading ? (
 						<div className="flex items-center justify-center h-32">
-							<Loader text="Loading tasks..." size="lg" />
+							<LoadingDots text="Loading tasks" />
 						</div>
 					) : (
 						<AllTasksList />

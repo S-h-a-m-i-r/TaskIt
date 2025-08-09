@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import search from '../../../assets/icons/Search_icon.svg';
 import TaskTable from '../../../pages/admin/TaskTable';
 import ProfileDropdown from '../../generalComponents/ProfileButton';
+import LoadingDots from '../../generalComponents/LoadingDots';
 import useTaskStore from '../../../stores/taskStore';
 import useAuthStore from '../../../stores/authStore';
 
@@ -108,8 +109,7 @@ const AdminTasks = () => {
 			<div>
 				{loading ? (
 					<div className="flex items-center justify-center py-8">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-50"></div>
-						<span className="ml-2 text-gray-600">Loading tasks...</span>
+						<LoadingDots text="Loading tasks" />
 					</div>
 				) : (
 					<>
