@@ -1,35 +1,17 @@
 // ...existing imports...
 import { Select, message, Modal, Switch } from "antd";
-import { Loader } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ButtonComponent from "../../components/generalComponents/ButtonComponent";
 import { ChatComponent } from "../../components/generalComponents";
+import LoadingDots from "../../components/generalComponents/LoadingDots";
 import useAuthStore from "../../stores/authStore";
 import useTaskStore from "../../stores/taskStore";
 import { getTaskStatusColors } from "../../utils/taskStatusUtils";
 import useUserStore from "../../stores/userStore";
 import { updateTaskStatusService } from "../../services/taskService";
 
-// Custom loading component with three dots animation
-const LoadingDots: React.FC = () => {
-  const [dots, setDots] = useState(1);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots((prev) => (prev === 3 ? 1 : prev + 1));
-    }, 500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="flex items-center gap-2 text-lg font-medium text-gray-700">
-      <Loader className="animate-spin w-5 h-5" />
-      <span className="min-w-[80px]">Loading{".".repeat(dots)}</span>
-    </div>
-  );
-};
 
 import { Task } from '../../types/task';
 

@@ -57,60 +57,62 @@ const AllUsersTasksList = () => {
 
 	return (
 		<div className="bg-white">
-			<table className="w-full border-separate border-spacing-y-2">
-				<thead>
-					<tr>
-						{TasksHeadersData.map((h) => (
-							<th
-								key={h}
-								className={`py-3 pl-5 text-left text-[14px] font-normal ${
-									['Task Id', 'Date', 'Recurring', 'Status'].includes(h)
-										? 'hidden md:table-cell'
-										: ''
-								}`}
-							>
-								{h}
-							</th>
-						))}
-					</tr>
-				</thead>
+			<div className="max-h-[500px] overflow-y-auto">
+				<table className="w-full border-separate border-spacing-y-2">
+					<thead className="sticky top-0 bg-white z-10">
+						<tr>
+							{TasksHeadersData.map((h) => (
+								<th
+									key={h}
+									className={`py-3 pl-5 text-left text-[14px] font-normal ${
+										['Task Id', 'Date', 'Recurring', 'Status'].includes(h)
+											? 'hidden md:table-cell'
+											: ''
+									}`}
+								>
+									{h}
+								</th>
+							))}
+						</tr>
+					</thead>
 
-				<tbody>
-					{tasks?.map((task) => {
-						const rowBg = statusColor[task.status] || statusColor.default;
+					<tbody>
+						{tasks?.map((task) => {
+							const rowBg = statusColor[task.status] || statusColor.default;
 
-						return (
-							<tr
-								key={task._id}
-								className={` text-left cursor-pointer hover:bg-gray-200/50 ${rowBg}`}
-								onClick={() => goToTask(task._id)}
-							>
-								<td className=" py-5 pl-5 text-sm font-normal text-primary-400 border-b border-custom-border">
-									{task.title}
-								</td>
+							return (
+								<tr
+									key={task._id}
+									className={` text-left cursor-pointer hover:bg-gray-200/50 ${rowBg}`}
+									onClick={() => goToTask(task._id)}
+								>
+									<td className=" py-5 pl-5 text-sm font-normal text-primary-400 border-b border-custom-border">
+										{task.title}
+									</td>
 
-								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-									{task?.description}
-								</td>
+									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+										{task?.description}
+									</td>
 
-								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-									{task.createdAt
-										? new Date(task.createdAt).toLocaleDateString('en-US')
-										: 'N/A'}
-								</td>
+									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+										{task.createdAt
+											? new Date(task.createdAt).toLocaleDateString('en-US')
+											: 'N/A'}
+									</td>
 
-								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-									{task.status}
-								</td>
+									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+										{task.status}
+									</td>
 
-								<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-									{task.recurring ? 'Yes' : 'No'}
-								</td>
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+										{task.recurring ? 'Yes' : 'No'}
+									</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
+			</div>
 		</div>
 	);
 };

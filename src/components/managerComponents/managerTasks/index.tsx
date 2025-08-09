@@ -3,6 +3,7 @@ import ButtonComponent from '../../generalComponents/ButtonComponent';
 import search from '../../assets/icons/Search_icon.svg';
 import TaskTable from '../../../pages/admin/TaskTable';
 import { Link } from 'react-router-dom';
+import LoadingDots from '../../generalComponents/LoadingDots';
 import useTaskStore from '../../../stores/taskStore';
 
 interface InputChangeEvent {
@@ -106,8 +107,7 @@ const ManagerTasks = () => {
 			<div>
 				{loading ? (
 					<div className="flex items-center justify-center py-8">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-50"></div>
-						<span className="ml-2 text-gray-600">Loading tasks...</span>
+						<LoadingDots text="Loading tasks" />
 					</div>
 				) : (
 					<TaskTable
