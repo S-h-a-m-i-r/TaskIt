@@ -10,6 +10,7 @@ import { getTaskStatusColors } from '../../utils/taskStatusUtils';
 import { Switch, message } from 'antd';
 import { updateTaskStatusService } from '../../services/taskService';
 import { ChatComponent } from '../../components/generalComponents';
+import LoadingDots from '../../components/generalComponents/LoadingDots';
 
 interface Message {
 	senderId: {
@@ -62,6 +63,7 @@ const TaskDetailsPage = () => {
 	const { user } = useAuthStore() as AuthStore;
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [task, setTask] = useState<Task | null>(null);
+	const [loading, setLoading] = useState<boolean>(true);
 	const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
 	const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
@@ -121,6 +123,7 @@ const TaskDetailsPage = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
+				setLoading(true);
 				const response = await viewTask(taskId!);
 				if (response.success) {
 					setMessages(response.data.messages);
@@ -130,6 +133,8 @@ const TaskDetailsPage = () => {
 				}
 			} catch (error) {
 				console.error('Error fetching task details:', error);
+			} finally {
+				setLoading(false);
 			}
 		};
 
@@ -139,21 +144,27 @@ const TaskDetailsPage = () => {
 
 	return (
 		<div className="p-9 w-full flex flex-col gap-10">
-			<div className="flex items-center justify-between">
-				<div>
-				<div className="flex items-center gap-3">
-					<div
-						className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
-						onClick={handleGoBack}
-					>
-						<img src={backIcon} alt="back" />
-					</div>
-					<span className="font-semibold text-2xl">
-						{' '}
-						{task?.title}
-						<span className="text-[#3B82F6]"> {task?.status}</span>
-					</span>
+			{loading ? (
+				<div className="flex items-center justify-center h-64">
+					<LoadingDots text="Loading task details" />
 				</div>
+			) : (
+				<>
+					<div className="flex items-center justify-between">
+						<div>
+						<div className="flex items-center gap-3">
+							<div
+								className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
+								onClick={handleGoBack}
+							>
+								<img src={backIcon} alt="back" />
+							</div>
+							<span className="font-semibold text-2xl">
+								{' '}
+								{task?.title}
+								<span className="text-[#3B82F6]"> {task?.status}</span>
+							</span>
+						</div>
 				{shouldShowToggle() && (
 					 <div className="flex justify-between items-center min-w-[180px] max-w-[220px] gap-4 rounded-xl px-4 py-3 border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 bg-white">
 					 <div className="flex items-center gap-2">
@@ -265,6 +276,8 @@ const TaskDetailsPage = () => {
 					/>
 				)}
 			</div>
+				</>
+			)}
 		</div>
 	);
 };

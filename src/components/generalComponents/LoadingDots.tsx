@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Triangle } from 'react-loader-spinner';
 
 interface LoadingDotsProps {
 	text?: string;
@@ -6,22 +7,22 @@ interface LoadingDotsProps {
 }
 
 const LoadingDots: React.FC<LoadingDotsProps> = ({ 
-	text = 'Loading', 
 	className = '' 
 }) => {
-	const [dots, setDots] = useState(1);
-
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setDots((prev) => (prev === 3 ? 1 : prev + 1));
-		}, 500);
-
-		return () => clearInterval(interval);
-	}, []);
+	
 
 	return (
 		<div className={`flex items-center gap-2 text-lg font-medium text-gray-700 ${className}`}>
-			<span className="min-w-[80px]">{text}{".".repeat(dots)}</span>
+			{/* Loading spinner */}
+			<Triangle
+				height="20"
+				width="20"
+				color="#0C1421"
+				ariaLabel="triangle-loading"
+				wrapperStyle={{}}
+				wrapperClass=""
+				visible={true}
+			/>
 		</div>
 	);
 };
