@@ -1,16 +1,16 @@
 import { useNavigate, useParams } from "react-router-dom";
 import backIcon from "../../assets/icons/ArrowLeft_icon.svg";
-import ListItem from "../../components/generalComponents/ListItem";
-import deleteIcon from "../../assets/icons/Delete_icon.svg";
-import attachment from "../../assets/icons/attachment_icon.svg";
 import { useEffect, useState, useCallback } from 'react';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
 import { getTaskStatusColors } from '../../utils/taskStatusUtils';
 import { Switch, message } from 'antd';
 import { updateTaskStatusService } from '../../services/taskService';
+
 import { ChatComponent } from '../../components/generalComponents';
 import LoadingDots from '../../components/generalComponents/LoadingDots';
+import TaskFiles from '../../components/generalComponents/TaskFiles';
+import { TaskFile } from '../../types/task';
 
 interface Message {
 	senderId: {
@@ -27,13 +27,19 @@ interface Task {
 	description: string;
 	createdBy: string;
 	creditCost: number;
-	files: string[];
 	createdAt: string;
 	updatedAt: string;
 	__v: number;
 	assignedTo?:
 		| string
 		| { _id: string; email: string; firstName?: string; lastName?: string };
+	files?: Array<{
+		filename: string;
+		fileSize: number;
+		fileType: string;
+		fileKey: string;
+		uploadedAt: string;
+	}>;
 }
 interface TaskStore {
 	viewTask: (id: string) => Promise<{
@@ -118,6 +124,33 @@ const TaskDetailsPage = () => {
 	// Get toggle state (checked when task is closed)
 	const getToggleState = () => {
 		return task?.status === 'Closed';
+	};
+
+	// Handle file removal - only update local state since useFileUpload.removeFile handles backend
+	const handleRemoveFile = async (fileKey: string) => {
+		if (!task) return;
+		
+		// Remove file from local state only
+		// The backend request is already handled by useFileUpload.removeFile
+		const updatedFiles = task.files?.filter(file => file.fileKey !== fileKey) || [];
+		setTask(prev => prev ? { ...prev, files: updatedFiles } : null);
+	};
+
+	// Handle new files added
+	const handleFilesAdded = (newFiles: TaskFile[]) => {
+		if (!task) return;
+		
+		const updatedFiles = [
+			...(task.files || []),
+			...newFiles.map(file => ({
+				filename: file.filename,
+				fileSize: file.fileSize,
+				fileType: file.fileType,
+				fileKey: file.fileKey,
+				uploadedAt: file.uploadedAt,
+			}))
+		];
+		setTask(prev => prev ? { ...prev, files: updatedFiles } : null);
 	};
 
 	useEffect(() => {
@@ -245,24 +278,14 @@ const TaskDetailsPage = () => {
 						<div className="bg-gray-100 w-full border border-1"></div>
 						<div>
 							<h2 className="mb-6"> Attachments</h2>
-							<div className="flex flex-col gap-5">
-								{/* actual files comes here  */}
-								<ListItem
-									icon={attachment}
-									content="Img343621.png"
-									item={deleteIcon}
-								/>
-								<ListItem
-									icon={attachment}
-									content="Img343621.png"
-									item={deleteIcon}
-								/>
-								<ListItem
-									icon={attachment}
-									content="Img343621.png"
-									item={deleteIcon}
-								/>
-							</div>
+							<TaskFiles 
+								files={task?.files || []} 
+								readonly={false}
+								taskId={task?._id}
+								onRemoveFile={handleRemoveFile}
+								onFilesAdded={handleFilesAdded}
+								className="mt-4"
+							/>
 						</div>
 					</div>
 				</div>

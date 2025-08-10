@@ -1,4 +1,5 @@
 import { request } from './request';
+import { TaskFile } from '../types/task';
 
 // Define types for task responses
 interface Task {
@@ -13,6 +14,7 @@ interface Task {
 		| string
 		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string};
 	// Add other task properties as needed
+	files?: TaskFile[];
 }
 
 interface Message {
@@ -41,6 +43,7 @@ interface ViewTaskResponse {
 interface CreateTaskPayload {
 	title: string;
 	description: string;
+	files?: File[];
 }
 
 interface CreateTaskResponse {

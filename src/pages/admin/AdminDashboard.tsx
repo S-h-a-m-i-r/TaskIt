@@ -102,8 +102,6 @@ const AdminDashboard = () => {
       customerName:
         typeof task?.createdBy === "object" && task?.createdBy?.userName
           ? task.createdBy.userName
-          : typeof task?.createdBy === "string"
-          ? task.createdBy
           : "-",
       title: task?.title,
       status: task.status,

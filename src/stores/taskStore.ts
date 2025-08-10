@@ -9,6 +9,12 @@ import {
 	reassignTaskService,
 } from '../services/taskService';
 import { Task, Message, CreateTaskPayload, TaskResponse, TaskListResponse } from '../types/task';
+import { 
+	getUploadUrlService, 
+	attachFilesToTaskService, 
+	uploadFileToS3,
+	FileInfo 
+} from '../services/fileService';
 
 interface TaskState {
 	tasks: Task[];
@@ -20,6 +26,7 @@ interface TaskState {
 	viewTask: (id: string) => Promise<TaskResponse>;
 	createTask: (payload: CreateTaskPayload) => Promise<{
 		success: boolean;
+		task: Task;
 		message?: string;
 	}>;
 	assignTask: (
@@ -37,6 +44,11 @@ interface TaskState {
 		taskId: string,
 		userId: string
 	) => Promise<{
+		success: boolean;
+		message?: string;
+	}>;
+	uploadFiles: (files: File[]) => Promise<FileInfo[]>;
+	attachFilesToTask: (taskId: string, files: FileInfo[]) => Promise<{
 		success: boolean;
 		message?: string;
 	}>;
@@ -90,6 +102,47 @@ const useTaskStore = create(
 						throw error;
 					} finally {
 						set({ loading: false });
+					}
+				},
+				uploadFiles: async (files: File[]) => {
+					const uploadedFiles: FileInfo[] = [];
+					
+					for (const file of files) {
+						try {
+							// Get presigned URL
+							const uploadUrlRes = await getUploadUrlService(
+								file.name,
+								file.type,
+								file.size
+							);
+							
+							if (uploadUrlRes.success) {
+								// Upload to S3
+								await uploadFileToS3(file, uploadUrlRes.uploadUrl);
+								
+								// Add to uploaded files list
+								uploadedFiles.push({
+									fileName: file.name,
+									fileSize: file.size,
+									fileType: file.type,
+									fileKey: uploadUrlRes.fileKey,
+								});
+							}
+						} catch (error) {
+							console.error(`Failed to upload file ${file.name}:`, error);
+							throw new Error(`Failed to upload file ${file.name}`);
+						}
+					}
+					
+					return uploadedFiles;
+				},
+				attachFilesToTask: async (taskId: string, files: FileInfo[]) => {
+					try {
+						const res = await attachFilesToTaskService(taskId, files);
+						return res;
+					} catch (error) {
+						console.error('Failed to attach files to task:', error);
+						throw error;
 					}
 				},
 				assignTask: async (taskId: string, userId: string) => {
