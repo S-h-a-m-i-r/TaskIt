@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ButtonComponent from "../../components/generalComponents/ButtonComponent";
 import { ChatComponent } from "../../components/generalComponents";
 import LoadingDots from "../../components/generalComponents/LoadingDots";
+import TaskFiles from "../../components/generalComponents/TaskFiles";
 import useAuthStore from "../../stores/authStore";
 import useTaskStore from "../../stores/taskStore";
 import { getTaskStatusColors } from "../../utils/taskStatusUtils";
@@ -772,6 +773,15 @@ const AdminTaskDetails: React.FC = () => {
                 </p>
               </div>
             </div>
+
+            {/* Task Files Section */}
+            <div className="mt-6">
+              <TaskFiles
+                files={task.files || []}
+                readonly={true}
+                className="bg-white rounded-lg p-4 border border-slate-300 shadow-sm"
+              />
+            </div>
           </div>
         </div>
 
@@ -1269,28 +1279,7 @@ const AdminTaskDetails: React.FC = () => {
           <div className="flex-1 overflow-hidden">
             <ChatComponent
               user={user}
-              task={
-                task as {
-                  _id: string;
-                  title: string;
-                  status: string;
-                  description: string;
-                  createdBy: string;
-                  creditCost: number;
-                  files: string[];
-                  createdAt: string;
-                  updatedAt: string;
-                  __v: number;
-                  assignedTo?:
-                    | string
-                    | {
-                        _id: string;
-                        email: string;
-                        firstName?: string;
-                        lastName?: string;
-                      };
-                }
-              }
+              task={task}
               messages={messages}
               onMessagesUpdate={setMessages}
               assignee={true}

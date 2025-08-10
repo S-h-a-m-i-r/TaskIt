@@ -1,3 +1,11 @@
+export interface TaskFile {
+	filename: string;
+	fileSize: number;
+	fileType: string;
+	fileKey: string;
+	uploadedAt: string;
+}
+
 export interface Task {
 	_id: string;
 	title: string;
@@ -12,7 +20,7 @@ export interface Task {
 	plan?: string;
 	credits?: number;
 	creditCost?: number;
-	files?: string[];
+	files?: TaskFile[];
 	updatedAt?: string;
 	__v?: number;
 	messages?: Array<{
@@ -32,6 +40,7 @@ export interface Message {
 export interface CreateTaskPayload {
 	title: string;
 	description: string;
+	files?: File[];
 }
 
 export interface TaskResponse {
