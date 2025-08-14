@@ -3,6 +3,7 @@ export { default as ButtonComponent } from './ButtonComponent';
 export { default as InputField } from './InputField';
 export { default as ListItem } from './ListItem';
 export { default as Loader } from './Loader';
+export { default as LoadingButton } from './LoadingButton';
 export { default as ProfileButton } from './ProfileButton';
 export { default as Sidebar } from './Sidebar';
 export { default as Tabs } from './Tabs';

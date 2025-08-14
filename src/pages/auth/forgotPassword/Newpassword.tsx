@@ -23,7 +23,7 @@ const Newpassword: React.FC = () => {
 	} | null>(null);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [searchParams] = useSearchParams();
-	const token = searchParams.get('id');
+	const token = searchParams.get('token');
 
 	const {
 		register,
@@ -177,13 +177,13 @@ const Newpassword: React.FC = () => {
 					</div>
 				</div>
 
-				<button
+				{!isSuccess && <button
 					type="submit"
 					disabled={isLoading}
 					className="w-full bg-primary-50 text-white py-2 px-4 mt-5 rounded-full hover:bg-primary-200 disabled:opacity-50 disabled:cursor-not-allowed"
 				>
 					{isLoading ? 'Updating...' : 'Update Password'}
-				</button>
+				</button>}
 				{isSuccess && (
 					<div className="flex w-full items-center gap-2 text-left">
 						<img src={tickMark} alt="Success" />
@@ -196,7 +196,7 @@ const Newpassword: React.FC = () => {
 					<button
 						type="button"
 						onClick={handleSignIn}
-						className="w-full bg-green-600 text-white py-2 px-4 mt-3 rounded-full hover:bg-green-700"
+						className="w-full bg-primary-50 text-white py-2 px-4 mt-3 rounded-full hover:bg-primary-50/90"
 					>
 						Sign In
 					</button>

@@ -5,6 +5,7 @@ import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import "./custom-font.css";
 import { useNavigate } from "react-router-dom";
 import InputField from "../../components/generalComponents/InputField";
+import LoadingButton from "../../components/generalComponents/LoadingButton";
 import { message } from "antd";
 import useAuthStore from "../../stores/authStore";
 
@@ -35,6 +36,7 @@ const Login = () => {
 		formState: { errors },
 	} = useForm<FormData>();
 	const [showPassword, setShowPassword] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const navigate = useNavigate();
 	const { login } = useAuthStore() as unknown as AuthStore;
 
@@ -43,7 +45,12 @@ const Login = () => {
 	};
 
 	const onSubmit = async (data: FormData) => {
+		// Prevent multiple submissions
+		if (isLoading) return;
+		
 		try {
+			setIsLoading(true);
+			
 			const res = await login(data);
 
 			message.success('Logged in successfully');
@@ -55,6 +62,8 @@ const Login = () => {
 		} catch (err) {
 			const error = err as Error;
 			message.error(error.message || 'Login failed');
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -127,12 +136,18 @@ const Login = () => {
 					</div>
 				</div>
 			</div>
-			<button
-				type="submit"
-				className="bg-primary-50 w-full max-w-[886px] text-white py-2 px-4 mt rounded-full hover:bg-primary-200 flex justify-center self-center"
-			>
-				Sign in
-			</button>
+			
+			{/* Using the reusable LoadingButton component */}
+			<div className="flex justify-center">
+				<LoadingButton
+					type="submit"
+					loading={isLoading}
+					loadingText="Signing in..."
+					className="bg-primary-50 w-full max-w-[886px] text-white py-2 px-4 mt rounded-full hover:bg-primary-200"
+				>
+					Sign in
+				</LoadingButton>
+			</div>
 		</form>
 	);
 };

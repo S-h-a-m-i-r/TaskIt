@@ -100,7 +100,7 @@ export const resetPassword = (
 
 	return request<ResetPasswordResponse>({
 		method: 'post',
-		url: `/auth/reset-password?id=${token}`,
+		url: `/auth/reset-password?token=${token}`,
 		data: transformedData as unknown as Record<string, unknown>,
 	});
 };
