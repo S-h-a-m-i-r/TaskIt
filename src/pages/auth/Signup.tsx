@@ -124,21 +124,13 @@ const Signup = () => {
 						maskChar="_"
 						value={userDetails.phone || ''}
 						onChange={handlePhoneChange}
-					>
-						{(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-							<input
-								{...inputProps}
-								id="phone"
-								type="tel"
-								className={`w-full bg-white rounded-md border p-2 bg-transparent h-11 border-gray-200 ${
-									fieldError
-										? 'text-red-500 focus:text-red-500 border-red-500'
-										: 'text-black focus:text-black focus:border-transparent'
-								} border border-gray-300 rounded-md p-2 text-black focus:text-black`}
-								placeholder="(555) 123-4567"
-							/>
-						)}
-					</InputMask>
+						className={`w-full bg-white rounded-md border p-2 bg-transparent h-11 border-gray-200 ${
+							fieldError
+								? 'text-red-500 focus:text-red-500 border-red-500'
+								: 'text-black focus:text-black focus:border-transparent'
+						} border border-gray-300 rounded-md p-2 text-black focus:text-black`}
+						placeholder="(555) 123-4567"
+					/>
 					{errorMessage && (
 						<p className="text-red-500 text-sm mt-1">{errorMessage}</p>
 					)}
