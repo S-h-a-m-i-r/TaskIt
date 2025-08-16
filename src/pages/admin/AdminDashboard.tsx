@@ -3,8 +3,6 @@ import ButtonComponent from "../../components/generalComponents/ButtonComponent"
 import {
 	customerHeader,
 	tasksHeader,
-	teamHeader,
-	teamTasksdetails,
 } from '../../datadump';
 import TaskTable from './TaskTable';
 import { adminTaskList as customerManagement } from '../../datadump';
@@ -14,6 +12,7 @@ import CountUp from 'react-countup';
 import { useEffect, useMemo } from 'react';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
+import useUserStore from "../../stores/userStore";
 interface Task {
 	_id: string;
 	title: string;
@@ -34,6 +33,8 @@ const AdminDashboard = () => {
 	// const [teamMembers, setTeamMembers] = useState<User[]>([]);
 	const { user } = useAuthStore();
 	const { tasks: allTasks } = useTaskStore();
+	const { teamMembers, getAllTeamMembers } = useUserStore();
+
 	const navigate = useNavigate();
 	const handleAddCredit = () => {
 		navigate('/credits');
@@ -119,7 +120,31 @@ const AdminDashboard = () => {
       actions: true, // Enable action buttons
     }));
 	};
+	
 
+	useEffect(() => {
+		getAllTeamMembers();
+	}, [getAllTeamMembers]);
+
+	const teamMembersTableData = teamMembers.map((member) => ({
+		_id: member._id,
+		teamManagementName: `${member.firstName} ${member.lastName}`,
+		teamManagementEmail: member.email,
+		teamManagementRole: member.role,
+		teamManagementTeamMemberCount: member.userName,
+		teamManagementActions: true
+	}));
+
+	const teamManagementHeader = [
+		'Team Member Name',
+		'Team Member Email', 
+		'Team Member Role',
+		'Team Member Username',
+		'Team Member Actions',
+	];
+	const handleViewTeam = () => {
+		navigate('/admin/teamManagement');
+	}
 	return (
 		<>
 			<div className="mt-10 flex w-full justify-between">
@@ -212,9 +237,10 @@ const AdminDashboard = () => {
 								<ButtonComponent
 									title={'View'}
 									className=" bg-primary-50 w-full text-white py-2 px-4 mt rounded-full hover:bg-primary-200 flex justify-center self-center max-w-[109px]"
+									onClick={ handleViewTeam}
 								/>
 							</div>
-							<TaskTable tasks={teamTasksdetails} tasksHeader={teamHeader} />
+							<TaskTable tasks={teamMembersTableData} tasksHeader={teamManagementHeader} />
 						</div>
 					</div>
 				</div>
