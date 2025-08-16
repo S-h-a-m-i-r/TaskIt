@@ -141,6 +141,7 @@ export const router = createBrowserRouter([
 					{ path: 'addCredits', element: <AddCreditsToUsers /> },
 					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
 					{ path: 'addTeam', element: <AddTeamPage /> },
+					{ path: 'addTeam/:id', element: <AddTeamPage /> },
 				],
 			},
 		],
@@ -160,6 +161,21 @@ export const router = createBrowserRouter([
 					{ path: 'invoices', element: <ManagerInvoices /> },
 					{ path: 'addCredits', element: <AddCreditsToUsers /> },
 					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
+				],
+			},
+		],
+	},
+	{
+		path: 'basic',
+		element: <RoleProtectedRoute allowedRoles={['MANAGER', 'ADMIN', 'BASIC']} />,
+		children: [
+			{
+				path: '',
+				element: <ManagerLayout />,
+				children: [
+					{ index: true, element: <ManagerDashboard /> },
+					{ path: 'tasks', element: <ManagerTasks /> },
+					{ path: 'task/:id', element: <AdminTaskDetails /> },
 				],
 			},
 		],

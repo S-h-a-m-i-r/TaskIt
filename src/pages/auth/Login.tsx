@@ -58,6 +58,7 @@ const Login = () => {
 			const role = res.user.role;
 			if (role === 'MANAGER') navigate('/manager');
 			else if (role === 'ADMIN') navigate('/admin');
+			else if (role === 'BASIC') navigate('/basic');
 			else navigate('/');
 		} catch (err) {
 			const error = err as Error;

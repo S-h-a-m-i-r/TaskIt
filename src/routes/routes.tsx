@@ -76,3 +76,16 @@ export const ManagerAdminRoutes = [
 		route: "/manager/invoices",
 	},
 ];
+
+export const BasicAdminRoutes = [
+	{
+		label: "Dashboard",
+		Icon: DashboardSvgIcon  ,
+		route: "/basic",
+	},
+	{
+		label: "Tasks",
+		Icon: TasksSvgIcon ,
+		route: "/basic/tasks",
+	}
+];

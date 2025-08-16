@@ -88,7 +88,7 @@ const AdminTasks = () => {
 	}, [allTasks, activeTab, searchQuery]);
 	return (
 		<>
-			<div className="mt-10 w-full flex justify-between items-center mb-4">
+			<div className="p-10 w-full flex justify-between items-center mb-4">
 				<h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
 				<div className="flex gap-2 items-center">
 					<ProfileDropdown userName={user?.userName} />

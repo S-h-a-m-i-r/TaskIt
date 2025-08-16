@@ -141,7 +141,7 @@ const ManagerDashboard = () => {
 						<ButtonComponent
 							title={'View'}
 							className=" bg-primary-50 w-full text-white py-2 px-4 mt rounded-full hover:bg-primary-200 flex justify-center self-center max-w-[109px]"
-							onClick={() => navigate('/manager/tasks')}
+							onClick={() => navigate(`/${user?.role.toLowerCase()}/tasks`)}
 						/>
 					</div>
 					<TaskTable
@@ -166,6 +166,7 @@ const ManagerDashboard = () => {
 								manager={false}
 							/>
 						</div>
+						{user?.role === 'MANAGER' && (
 						<div>
 							<div className="flex items-center justify-between my-5">
 								<h2 className="text-[22px] font-bold text-primary-100 text-left">
@@ -182,6 +183,7 @@ const ManagerDashboard = () => {
 								manager={true}
 							/>
 						</div>
+						)}
 					</div>
 				</div>
 			</div>

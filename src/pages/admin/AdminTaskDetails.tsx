@@ -50,16 +50,19 @@ const AdminTaskDetails: React.FC = () => {
     if (
       user?.role !== "ADMIN" &&
       user?.role !== "MANAGER" &&
-      user?.role !== "CUSTOMER"
+      user?.role !== "BASIC"
     ) {
       message.error(
-        "Access denied. Admin, Manager, or Customer privileges required."
+        "Access denied. Admin, Manager, or basic privileges required."
       );
       // Redirect based on user role
       if (user?.role === "ADMIN") {
         navigate("/admin");
       } else if (user?.role === "MANAGER") {
         navigate("/manager");
+      }
+        else if (user?.role === "BASIC") {
+          navigate("/basic");
       } else {
         navigate("/");
       }
@@ -67,13 +70,7 @@ const AdminTaskDetails: React.FC = () => {
   }, [user, navigate]);
 
   const handleGoBack = () => {
-    if (user?.role === "ADMIN") {
-      navigate("/admin/tasks");
-    } else if (user?.role === "MANAGER") {
-      navigate("/manager/tasks");
-    } else {
-      navigate("/tasks");
-    }
+    navigate(-1);
   };
   const handleStatusToggle = useCallback(
     async (checked: boolean) => {
@@ -140,7 +137,7 @@ const AdminTaskDetails: React.FC = () => {
       taskId &&
       (user?.role === "ADMIN" ||
         user?.role === "MANAGER" ||
-        user?.role === "CUSTOMER")
+        user?.role === "BASIC")
     ) {
       fetchTaskDetails();
     }

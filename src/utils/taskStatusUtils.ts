@@ -98,7 +98,7 @@ export function getTaskStatusBadgeClasses(
   additionalClasses: string = ''
 ): string {
   const colors = getTaskStatusColors(status);
-  const baseClasses = 'px-3 py-1 rounded-full text-sm font-medium';
+  const baseClasses = ' rounded-full text-sm font-medium text-left';
   return `${baseClasses} ${colors.background} ${colors.text} ${additionalClasses}`.trim();
 }
 

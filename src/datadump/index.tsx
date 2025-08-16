@@ -810,7 +810,7 @@ export const teamManangementHeader = [
 	'Team Member Name',
 	'Team Member Email',
 	'Team Member Role',
-	'Team memeber Count',
+	'Team memeber User Name',
 	'Team Member Actions',
 ];
 
