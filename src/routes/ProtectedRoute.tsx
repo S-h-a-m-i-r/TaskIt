@@ -14,7 +14,10 @@ const role = user?.role || null;
   const [redirectTo, setRedirectTo] = useState<null | string>(null);
 
   useLayoutEffect(() => {
-    if (!token || !allowedRoles.includes(role || "")) {
+    if (!token) {
+      setRedirectTo("/login");
+    }
+    else if (!allowedRoles.includes(role || "")) {
       notification.error({
         message: "Unauthorized",
         description: "You are unathorized to access this page",
