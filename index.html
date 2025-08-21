@@ -3,9 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/main.tsx" as="script" type="module" />
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" as="style" />
+    
+    <!-- DNS prefetch for external domains -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    
+    <!-- Font loading with display=swap for better performance -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Task It</title>
+    
+    <!-- Theme script to prevent FOUC -->
     <script>
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
       if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -14,9 +27,34 @@
         document.documentElement.classList.remove('dark')
       }
     </script>
+    
+    <!-- Performance optimization: preload critical CSS -->
+    <style>
+      /* Critical CSS for initial render */
+      body { margin: 0; font-family: 'DM Sans', sans-serif; }
+      #root { min-height: 100vh; background-color: #F3F4F8; }
+      .loading-spinner { 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        background-color: #F3F4F8; 
+      }
+    </style>
   </head>
   <body>
-    <div id="root" class="bg-[#F3F4F8]"></div>
+    <div id="root" class="bg-[#F3F4F8]">
+      <!-- Loading fallback -->
+      <div class="loading-spinner">
+        <div style="width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top: 4px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
   </body>
 </html>
