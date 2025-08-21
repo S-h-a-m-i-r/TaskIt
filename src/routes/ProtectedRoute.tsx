@@ -1,5 +1,4 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useLayoutEffect, useState } from "react";
 import { notification } from "antd";
 import useAuthStore from "../stores/authStore";
 
@@ -8,27 +7,25 @@ interface RoleProtectedRouteProps {
 }
 
 const RoleProtectedRoute = ({ allowedRoles }: RoleProtectedRouteProps) => {
- const {token, user} = useAuthStore()
+  const { token, user } = useAuthStore();
   const location = useLocation();
-const role = user?.role || null; 
-  const [redirectTo, setRedirectTo] = useState<null | string>(null);
+  const role = user?.role || null;
 
-  useLayoutEffect(() => {
-    if (!token) {
-      setRedirectTo("/login");
-    }
-    else if (!allowedRoles.includes(role || "")) {
-      notification.error({
-        message: "Unauthorized",
-        description: "You are unathorized to access this page",
-      });
-      localStorage.removeItem('token')
-      localStorage.removeItem('role')
-      setRedirectTo("/login");
-    } 
-  }, [token, role, allowedRoles, location.pathname]);
+  
+  if (!token) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-  if (redirectTo) return <Navigate to={redirectTo} replace />;
+  
+  if (!allowedRoles.includes(role || "")) {
+    notification.error({
+      message: "Unauthorized",
+      description: "You are unauthorized to access this page",
+    });
+    return <Navigate to="/login" replace />;
+  }
+
+  
   return <Outlet />;
 };
 
