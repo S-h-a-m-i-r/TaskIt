@@ -1,10 +1,9 @@
-import { createContext, useContext, useEffect, useState, useMemo, useCallback } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from 'socket.io-client';
 
 // Define types for the context
 interface SocketContextType {
 	socket: Socket | null;
-	isConnected: boolean;
 }
 
 // 1. Create the context
@@ -18,62 +17,35 @@ interface SocketProviderProps {
 
 export const SocketProvider = ({ children, token }: SocketProviderProps) => {
 	const [socket, setSocket] = useState<Socket | null>(null);
-	const [isConnected, setIsConnected] = useState(false);
 
-	const connectSocket = useCallback(() => {
+	useEffect(() => {
+		console.log('Initializing socket connection...');
 		if (!token) {
 			console.log('No token provided, skipping socket connection');
 			return;
 		}
-
-		console.log('Initializing socket connection...');
 		const backendUrl = import.meta.env.VITE_BACKEND_BASE_URL;
 		const newSocket = io(backendUrl, {
 			auth: { token },
-			transports: ['websocket', 'polling'], // Prefer WebSocket for better performance
-			timeout: 20000,
-			forceNew: true
 		});
-
 		newSocket.on('connect', () => {
 			console.log('Socket connected');
-			setIsConnected(true);
-		});
-
-		newSocket.on('disconnect', () => {
-			console.log('Socket disconnected');
-			setIsConnected(false);
 		});
 
 		newSocket.on('error', (error) => {
 			console.error('Socket error:', error);
-			setIsConnected(false);
 		});
 
 		setSocket(newSocket);
 
-		return newSocket;
+		return () => {
+			newSocket.disconnect();
+			console.log('Socket disconnected');
+		};
 	}, [token]);
 
-	useEffect(() => {
-		const newSocket = connectSocket();
-
-		return () => {
-			if (newSocket) {
-				newSocket.disconnect();
-				console.log('Socket disconnected');
-			}
-		};
-	}, [connectSocket]);
-
-	// Memoize the context value to prevent unnecessary re-renders
-	const contextValue = useMemo(() => ({
-		socket,
-		isConnected
-	}), [socket, isConnected]);
-
 	return (
-		<SocketContext.Provider value={contextValue}>
+		<SocketContext.Provider value={{ socket }}>
 			{children}
 		</SocketContext.Provider>
 	);
@@ -86,13 +58,4 @@ export const useSocket = (): Socket | null => {
 		throw new Error('useSocket must be used within a SocketProvider');
 	}
 	return context.socket;
-};
-
-// 4. Custom hook to check connection status
-export const useSocketConnection = (): boolean => {
-	const context = useContext(SocketContext);
-	if (context === null) {
-		throw new Error('useSocketConnection must be used within a SocketProvider');
-	}
-	return context.isConnected;
 };

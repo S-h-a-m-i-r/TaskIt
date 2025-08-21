@@ -1,119 +1,82 @@
 import { createBrowserRouter } from "react-router-dom";
-import { lazy, Suspense } from "react";
+
 import Layout from "../components/layout/Layout";
+
+import { MainPage, CreditsPage, ProfilePage } from "../pages/user";
+
+import DashboardLayout from "../pages/user/Layout";
+
+import Login from "../pages/auth/AuthDesign";
+
+import Signup from "../pages/auth/AuthDesign";
+
+import ForgotPassword from "../pages/auth/forgotPassword";
+
+import Newpassword from "../pages/auth/forgotPassword/Newpassword";
+
+import TasklistPage from "../pages/user/TasklistPage";
+
+import InprogressTasklist from "../pages/user/InprogressTasks";
+
+import SubmittedTasklist from "../pages/user/SubmittedTasks";
+
+import ClosedTasklist from "../pages/user/ClosedTasks";
+
+import RecurringTasklist from "../pages/user/RecurringTasks";
+
+import TaskDetailsPage from "../pages/user/TaskDetailsPage";
+
+import NotificationPage from "../pages/user/NotificationPage";
+
+import CreateTask from "../pages/user/CreateTask";
+
+import Plan from "../pages/auth/PricingPlan";
+
+import CreditCardDetails from "../pages/auth/CreditCardDetails";
+import CreatePassword from "../pages/auth/CreatePassword";
+import AdminLayout from "../admin/AdminLayout";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import Tasks from "../pages/admin/Tasks";
+import AdminTaskDetails from '../pages/admin/AdminTaskDetails';
+import Settings from '../pages/admin/Settings';
+import Teammanagement from '../pages/admin/Teammanagement';
+import Customers from '../pages/admin/Customers';
+import Invoices from '../pages/admin/Invoices';
+import Credits from '../pages/admin/Credits';
+import ManagerCredits from '../pages/manager/Credits';
+import ManagerTasks from '../pages/manager/Tasks';
+import ManagerInvoices from '../pages/manager/Invoices';
+import {
+	AddCreditsToUsers,
+	RemoveCreditsToUsers,
+} from '../components/generalComponents/addRemoveCreditsToUsers';
+import AddTeamPage from '../pages/AddTeam';
+import ManagerLayout from '../pages/manager/ManagerLayout';
+import ManagerDashboard from '../pages/manager/ManagerDashboard';
 import RoleProtectedRoute from './ProtectedRoute';
-import LoadingDots from '../components/generalComponents/LoadingDots';
-
-// Lazy load all pages
-const MainPage = lazy(() => import("../pages/user").then(module => ({ default: module.MainPage })));
-const CreditsPage = lazy(() => import("../pages/user").then(module => ({ default: module.CreditsPage })));
-const ProfilePage = lazy(() => import("../pages/user").then(module => ({ default: module.ProfilePage })));
-const DashboardLayout = lazy(() => import("../pages/user/Layout"));
-const Login = lazy(() => import("../pages/auth/AuthDesign"));
-const Signup = lazy(() => import("../pages/auth/AuthDesign"));
-const ForgotPassword = lazy(() => import("../pages/auth/forgotPassword"));
-const Newpassword = lazy(() => import("../pages/auth/forgotPassword/Newpassword"));
-const TasklistPage = lazy(() => import("../pages/user/TasklistPage"));
-const InprogressTasklist = lazy(() => import("../pages/user/InprogressTasks"));
-const SubmittedTasklist = lazy(() => import("../pages/user/SubmittedTasks"));
-const ClosedTasklist = lazy(() => import("../pages/user/ClosedTasks"));
-const RecurringTasklist = lazy(() => import("../pages/user/RecurringTasks"));
-const TaskDetailsPage = lazy(() => import("../pages/user/TaskDetailsPage"));
-const NotificationPage = lazy(() => import("../pages/user/NotificationPage"));
-const CreateTask = lazy(() => import("../pages/user/CreateTask"));
-const Plan = lazy(() => import("../pages/auth/PricingPlan"));
-const CreditCardDetails = lazy(() => import("../pages/auth/CreditCardDetails"));
-const CreatePassword = lazy(() => import("../pages/auth/CreatePassword"));
-const AdminLayout = lazy(() => import("../admin/AdminLayout"));
-const AdminDashboard = lazy(() => import("../pages/admin/AdminDashboard"));
-const Tasks = lazy(() => import("../pages/admin/Tasks"));
-const AdminTaskDetails = lazy(() => import('../pages/admin/AdminTaskDetails'));
-const Settings = lazy(() => import('../pages/admin/Settings'));
-const Teammanagement = lazy(() => import('../pages/admin/Teammanagement'));
-const Customers = lazy(() => import('../pages/admin/Customers'));
-const Invoices = lazy(() => import('../pages/admin/Invoices'));
-const Credits = lazy(() => import('../pages/admin/Credits'));
-const ManagerCredits = lazy(() => import('../pages/manager/Credits'));
-const ManagerTasks = lazy(() => import('../pages/manager/Tasks'));
-const ManagerInvoices = lazy(() => import('../pages/manager/Invoices'));
-const AddCreditsToUsers = lazy(() => import('../components/generalComponents/addRemoveCreditsToUsers').then(module => ({ default: module.AddCreditsToUsers })));
-const RemoveCreditsToUsers = lazy(() => import('../components/generalComponents/addRemoveCreditsToUsers').then(module => ({ default: module.RemoveCreditsToUsers })));
-const AddTeamPage = lazy(() => import('../pages/AddTeam'));
-const ManagerLayout = lazy(() => import('../pages/manager/ManagerLayout'));
-const ManagerDashboard = lazy(() => import('../pages/manager/ManagerDashboard'));
-const AboutUsPage = lazy(() => import('../pages/user/aboutUs'));
-const ContactUsPage = lazy(() => import('../pages/user/contactUs'));
-const ConditionAndPrivacyPolicyPage = lazy(() => import('../pages/ConditionAndPrivacyPage'));
-
-// Loading component for Suspense
-const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <LoadingDots />
-  </div>
-);
+import AboutUsPage from '../pages/user/aboutUs';
+import ContactUsPage from '../pages/user/contactUs';
+import ConditionAndPrivacyPolicyPage from '../pages/ConditionAndPrivacyPage';
 
 export const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <Layout />,
 		children: [
-			{ 
-				path: 'login', 
-				element: (
-					<Suspense fallback={<PageLoader />}>
-						<Login />
-					</Suspense>
-				) 
-			},
+			{ path: 'login', element: <Login /> },
 			{
 				path: 'signup',
-				element: (
-					<Suspense fallback={<PageLoader />}>
-						<Signup />
-					</Suspense>
-				),
+				element: <Signup />,
 				children: [
-					{ 
-						path: 'plan', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Plan />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'creditCardDetails', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<CreditCardDetails />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'createPassword', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<CreatePassword />
-							</Suspense>
-						) 
-					},
+					{ path: 'plan', element: <Plan /> },
+					{ path: 'creditCardDetails', element: <CreditCardDetails /> },
+					{ path: 'createPassword', element: <CreatePassword /> },
 				],
 			},
 			{
 				path: 'forgot-password',
-				element: (
-					<Suspense fallback={<PageLoader />}>
-						<ForgotPassword />
-					</Suspense>
-				),
-				children: [{ 
-					path: 'new-password', 
-					element: (
-						<Suspense fallback={<PageLoader />}>
-							<Newpassword />
-						</Suspense>
-					) 
-				}],
+				element: <ForgotPassword />,
+				children: [{ path: 'new-password', element: <Newpassword /> }],
 			},
 			{
 				path: '',
@@ -125,147 +88,33 @@ export const router = createBrowserRouter([
 				children: [
 					{
 						path: '',
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<DashboardLayout />
-							</Suspense>
-						),
+						element: <DashboardLayout />,
 						children: [
-							{ 
-								index: true, 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<MainPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'credits', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<CreditsPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'profile', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ProfilePage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'tasks', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<TasklistPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'inProgress', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<InprogressTasklist />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'submitted', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<SubmittedTasklist />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'closed', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ClosedTasklist />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'recurring', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<RecurringTasklist />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'task/:id', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<TaskDetailsPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'admin-task/:id', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<AdminTaskDetails />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'notification', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<NotificationPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'createTask', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<CreateTask />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'AboutUs', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<AboutUsPage />
-									</Suspense>
-								) 
-							},
-							{ 
-								path: 'ContactUs', 
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ContactUsPage />
-									</Suspense>
-								) 
-							},
+							{ index: true, element: <MainPage /> },
+							{ path: 'credits', element: <CreditsPage /> },
+							{ path: 'profile', element: <ProfilePage /> },
+							{ path: 'tasks', element: <TasklistPage /> },
+							{ path: 'inProgress', element: <InprogressTasklist /> },
+							{ path: 'submitted', element: <SubmittedTasklist /> },
+							{ path: 'closed', element: <ClosedTasklist /> },
+							{ path: 'recurring', element: <RecurringTasklist /> },
+							{ path: 'task/:id', element: <TaskDetailsPage /> },
+							{ path: 'admin-task/:id', element: <AdminTaskDetails /> },
+							{ path: 'notification', element: <NotificationPage /> },
+							{ path: 'createTask', element: <CreateTask /> },
+							{ path: 'AboutUs', element: <AboutUsPage /> },
+							{ path: 'ContactUs', element: <ContactUsPage /> },
 							{
 								path: 'terms',
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ConditionAndPrivacyPolicyPage />
-									</Suspense>
-								),
+								element: <ConditionAndPrivacyPolicyPage />,
 							},
 							{
 								path: 'privacy',
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ConditionAndPrivacyPolicyPage />
-									</Suspense>
-								),
+								element: <ConditionAndPrivacyPolicyPage />,
 							},
 							{
 								path: 'termsAndConditions',
-								element: (
-									<Suspense fallback={<PageLoader />}>
-										<ConditionAndPrivacyPolicyPage />
-									</Suspense>
-								),
+								element: <ConditionAndPrivacyPolicyPage />,
 							},
 						],
 					},
@@ -279,108 +128,20 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				path: '',
-				element: (
-					<Suspense fallback={<PageLoader />}>
-						<AdminLayout />
-					</Suspense>
-				),
+				element: <AdminLayout />,
 				children: [
-					{ 
-						index: true, 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AdminDashboard />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'credits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Credits />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'tasks', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Tasks />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'task/:id', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AdminTaskDetails />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'settings', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Settings />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'teamManagement', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Teammanagement />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'customers', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Customers />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'invoices', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<Invoices />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'addCredits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AddCreditsToUsers />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'removeCredits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<RemoveCreditsToUsers />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'addTeam', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AddTeamPage />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'addTeam/:id', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AddTeamPage />
-							</Suspense>
-						) 
-					},
+					{ index: true, element: <AdminDashboard /> },
+					{ path: 'credits', element: <Credits /> },
+					{ path: 'tasks', element: <Tasks /> },
+					{ path: 'task/:id', element: <AdminTaskDetails /> },
+					{ path: 'settings', element: <Settings /> },
+					{ path: 'teamManagement', element: <Teammanagement /> },
+					{ path: 'customers', element: <Customers /> },
+					{ path: 'invoices', element: <Invoices /> },
+					{ path: 'addCredits', element: <AddCreditsToUsers /> },
+					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
+					{ path: 'addTeam', element: <AddTeamPage /> },
+					{ path: 'addTeam/:id', element: <AddTeamPage /> },
 				],
 			},
 		],
@@ -391,68 +152,15 @@ export const router = createBrowserRouter([
 		children: [
 			{
 				path: '',
-				element: (
-					<Suspense fallback={<PageLoader />}>
-						<ManagerLayout />
-					</Suspense>
-				),
+				element: <ManagerLayout />,
 				children: [
-					{ 
-						index: true, 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<ManagerDashboard />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'credits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<ManagerCredits />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'tasks', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<ManagerTasks />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'task/:id', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AdminTaskDetails />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'invoices', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<ManagerInvoices />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'addCredits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<AddCreditsToUsers />
-							</Suspense>
-						) 
-					},
-					{ 
-						path: 'removeCredits', 
-						element: (
-							<Suspense fallback={<PageLoader />}>
-								<RemoveCreditsToUsers />
-							</Suspense>
-						) 
-					},
+					{ index: true, element: <ManagerDashboard /> },
+					{ path: 'credits', element: <ManagerCredits /> },
+					{ path: 'tasks', element: <ManagerTasks /> },
+					{ path: 'task/:id', element: <AdminTaskDetails /> },
+					{ path: 'invoices', element: <ManagerInvoices /> },
+					{ path: 'addCredits', element: <AddCreditsToUsers /> },
+					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
 				],
 			},
 		],
