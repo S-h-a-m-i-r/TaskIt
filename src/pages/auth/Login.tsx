@@ -121,7 +121,7 @@ const Login = () => {
 							}}
 						/>
 						<div
-							className="absolute top-8 right-0 pr-3 flex items-center cursor-pointer"
+							className="absolute top-9 right-2 pr-3 flex items-center cursor-pointer"
 							onClick={togglePasswordVisibility}
 						>
 							{showPassword ? <IoEyeOutline /> : <IoEyeOffOutline />}

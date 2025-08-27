@@ -314,6 +314,7 @@ export const tasksHeader = [
 	'Status',
 	'Assigned To',
 	'Due Date',
+	'Actions',
 ];
 
 export const CardsData = [

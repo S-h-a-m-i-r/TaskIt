@@ -1,6 +1,6 @@
 // ...existing imports...
-import { Select, message, Modal, Switch } from "antd";
-import { useState, useEffect, useCallback } from "react";
+import { Select, message, Modal } from "antd";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ButtonComponent from "../../components/generalComponents/ButtonComponent";
 import { ChatComponent } from "../../components/generalComponents";
@@ -10,18 +10,26 @@ import useAuthStore from "../../stores/authStore";
 import useTaskStore from "../../stores/taskStore";
 import { getTaskStatusColors } from "../../utils/taskStatusUtils";
 import useUserStore from "../../stores/userStore";
+// Add these imports to your existing imports
+import FileUpload from "../../components/generalComponents/FileUpload";
+import UploadProgress from "../../components/generalComponents/UploadProgress";
+import { useFileUpload } from "../../hooks/useFileUpload";
+import { MAX_FILE_SIZE, MAX_FILES_COUNT } from "../../utils/fileUtils";
 import { updateTaskStatusService } from "../../services/taskService";
 
-
-
-import { Task } from '../../types/task';
+import { Task } from "../../types/task";
+import TaskTimeline from "../../components/generalComponents/TaskTimeline";
+import { User } from "../../types";
 
 const AdminTaskDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id: taskId } = useParams<{ id: string }>();
-  const { user } = useAuthStore();
+  const { user }: { user: User | null } = useAuthStore();
   const { viewTask, assignTask, deleteTask, reassignTask } = useTaskStore();
   const { users, loading: usersLoading, getUsersByRole } = useUserStore();
+
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const [task, setTask] = useState<Task | null>(null);
   const [messages, setMessages] = useState<
@@ -39,10 +47,11 @@ const AdminTaskDetails: React.FC = () => {
   const [isAssignModalOpen, setIsAssignModalOpen] = useState<boolean>(false);
   const [isReassignModalOpen, setIsReassignModalOpen] =
     useState<boolean>(false);
-  const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
-  const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
-    null
-  );
+  // const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
+  // const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
+  //   null
+  // );
+  const { uploadFiles, attachFilesToTask, uploading, progress, error, clearError } = useFileUpload();
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   // Check if user has access (admin, manager, or customer)
@@ -60,9 +69,8 @@ const AdminTaskDetails: React.FC = () => {
         navigate("/admin");
       } else if (user?.role === "MANAGER") {
         navigate("/manager");
-      }
-        else if (user?.role === "BASIC") {
-          navigate("/basic");
+      } else if (user?.role === "BASIC") {
+        navigate("/basic");
       } else {
         navigate("/");
       }
@@ -72,44 +80,44 @@ const AdminTaskDetails: React.FC = () => {
   const handleGoBack = () => {
     navigate(-1);
   };
-  const handleStatusToggle = useCallback(
-    async (checked: boolean) => {
-      if (!task) return;
-      if (debounceTimer) {
-        clearTimeout(debounceTimer);
-      }
-      setIsUpdatingStatus(true);
-      const timer = setTimeout(async () => {
-        try {
-          const newStatus = checked ? "Completed" : "InProgress";
+  // const handleStatusToggle = useCallback(
+  //   async (checked: boolean) => {
+  //     if (!task) return;
+  //     if (debounceTimer) {
+  //       clearTimeout(debounceTimer);
+  //     }
+  //     setIsUpdatingStatus(true);
+  //     const timer = setTimeout(async () => {
+  //       try {
+  //         const newStatus = checked ? "Completed" : "InProgress";
 
-          const response = await updateTaskStatusService(task._id, newStatus);
+  //         const response = await updateTaskStatusService(task._id, newStatus);
 
-          if (response?.success) {
-            message.success(`Task marked as ${newStatus}!`);
-            // Refresh task details
-            const taskResponse = await viewTask(taskId!);
-            if (taskResponse?.success) {
-              setTask(taskResponse?.data?.task);
-              if (taskResponse?.data?.messages) {
-                setMessages(taskResponse.data.messages);
-              }
-            }
-          } else {
-            message.error(response?.message || "Failed to update task status");
-          }
-        } catch (error) {
-          console.error("Error updating task status:", error);
-          message.error("Failed to update task status. Please try again.");
-        } finally {
-          setIsUpdatingStatus(false);
-        }
-      }, 500); // 500ms debounce delay
+  //         if (response?.success) {
+  //           message.success(`Task marked as ${newStatus}!`);
+  //           // Refresh task details
+  //           const taskResponse = await viewTask(taskId!);
+  //           if (taskResponse?.success) {
+  //             setTask(taskResponse?.data?.task);
+  //             if (taskResponse?.data?.messages) {
+  //               setMessages(taskResponse.data.messages);
+  //             }
+  //           }
+  //         } else {
+  //           message.error(response?.message || "Failed to update task status");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error updating task status:", error);
+  //         message.error("Failed to update task status. Please try again.");
+  //       } finally {
+  //         setIsUpdatingStatus(false);
+  //       }
+  //     }, 500); // 500ms debounce delay
 
-      setDebounceTimer(timer);
-    },
-    [task, taskId, viewTask, debounceTimer]
-  );
+  //     setDebounceTimer(timer);
+  //   },
+  //   [task, taskId, viewTask, debounceTimer]
+  // );
   // Fetch task details and messages
   useEffect(() => {
     const fetchTaskDetails = async () => {
@@ -125,7 +133,7 @@ const AdminTaskDetails: React.FC = () => {
         } else {
           message.error("Failed to fetch task details");
         }
-      } catch (error) {
+      } catch {
         console.error("Error fetching task details:", error);
         message.error("Error loading task details");
       } finally {
@@ -200,10 +208,15 @@ const AdminTaskDetails: React.FC = () => {
 
   const handleDeleteTask = async () => {
     if (!task) return;
-	if( typeof task.assignedTo === 'object' && task.assignedTo && (task.assignedTo).role === "ADMIN" && user?.role !== "ADMIN") {	
-		message.error("You do not have permission to delete this task.");
-		return;
-	}
+    if (
+      typeof task.assignedTo === "object" &&
+      task.assignedTo &&
+      task.assignedTo.role === "ADMIN" &&
+      user?.role !== "ADMIN"
+    ) {
+      message.error("You do not have permission to delete this task.");
+      return;
+    }
     try {
       setAssigning(true);
       const response = await deleteTask(task._id);
@@ -339,14 +352,14 @@ const AdminTaskDetails: React.FC = () => {
   };
 
   // Check if toggle should be shown
-  const shouldShowToggle = () => {
-    return task?.status === "InProgress" || task?.status === "Completed";
-  };
+  // const shouldShowToggle = () => {
+  //   return task?.status === "InProgress" || task?.status === "Completed";
+  // };
 
-  // Get toggle state
-  const getToggleState = () => {
-    return task?.status === "Completed";
-  };
+  // // Get toggle state
+  // const getToggleState = () => {
+  //   return task?.status === "Completed";
+  // };
 
   // Get customer information
   const getCustomerInfo = () => {
@@ -421,6 +434,9 @@ const AdminTaskDetails: React.FC = () => {
 
   const availableUsers = getAvailableUsers();
 
+  
+  
+console.log("Selected File:", isCompleteModalOpen);
   return (
     <div className="p-4 sm:p-6 lg:p-9 w-full">
       {/* Header */}
@@ -440,16 +456,43 @@ const AdminTaskDetails: React.FC = () => {
             Task Details
           </h1>
         </div>
-        <div
-          className={`px-4 py-2 rounded-full text-sm font-medium ${taskColor.background} ${taskColor.text} w-fit`}
-        >
-          {task.status}
+
+        <div className="flex gap-2 items-center">
+          {typeof task?.assignedTo === "object" &&
+            task?.assignedTo &&
+            task.assignedTo._id === user?._id && (
+              <ButtonComponent
+                title="Deliver Task"
+                onClick={() => setIsCompleteModalOpen(true)}
+                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors"
+              />
+            )}
+
+          {((typeof task?.assignedTo === "object" &&
+            task?.assignedTo &&
+            task.assignedTo._id === user?._id) ||
+            user?.role == "ADMIN") && (
+            <ButtonComponent
+              title="💬 Chat"
+              onClick={() => setIsChatOpen(true)}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            />
+          )}
+          <div
+            className={`flex gap-5 items-center px-4 py-2 rounded-full text-sm font-medium ${taskColor.background} ${taskColor.text} w-fit`}
+          >
+            {task.status}
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-4">
+      <div className=" w-full flex flex-col items-start gap-4 mb-4">
         {/* Task Status Toggle */}
-        {shouldShowToggle() && (
+        <div className="w-full max-w-3xl">
+          <TaskTimeline task={task} />
+        </div>
+
+        {/* {shouldShowToggle() && (
           <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 border border-gray-200 shadow-sm">
             <span className="text-sm font-medium text-gray-700">
               Mark as Complete
@@ -466,21 +509,8 @@ const AdminTaskDetails: React.FC = () => {
               }}
             />
           </div>
-        )}
+        )} */}
         {/* Status Badge */}
-        <div
-          className={`px-4 py-2 rounded-full text-sm font-medium ${taskColor.background} ${taskColor.text} w-fit`}
-        >
-          {task.status}
-        </div>
-        {/* Chat Button */}
-        {typeof task?.assignedTo === 'object' && task?.assignedTo && (task.assignedTo)._id === user?._id && 
-		<ButtonComponent
-          title="💬 Chat"
-          onClick={() => setIsChatOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
-        />
-	}
       </div>
 
       {/* Customer Information Section */}
@@ -826,11 +856,11 @@ const AdminTaskDetails: React.FC = () => {
                         </p>
                       </div>
                     )}
-                    <ButtonComponent
+                    {/* <ButtonComponent
                       title="Delete Task"
                       onClick={() => setIsDeleteModalOpen(true)}
                       className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600"
-                    />
+                    /> */}
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -1172,6 +1202,7 @@ const AdminTaskDetails: React.FC = () => {
           disabled: assigning || !selectedUserId || !canReassignTask(),
         }}
       >
+       
         <div className="py-4">
           {!canReassignTask() && (
             <div className="bg-red-50 rounded-md p-3 border border-red-200 mb-4">
@@ -1217,6 +1248,109 @@ const AdminTaskDetails: React.FC = () => {
           </p>
         </div>
       </Modal>
+      
+<Modal
+  open={isCompleteModalOpen}
+  closable={true}
+  cancelText="Cancel"
+  okText={loading || uploading ? "Completing..." : "Complete Task"}
+  onCancel={() => {
+    setIsCompleteModalOpen(false);
+    setSelectedFiles([]);
+    clearError();
+  }}
+  onOk={async () => {
+    if (!task) return;
+    setLoading(true);
+    try {
+      // First, update the task status to "Completed"
+      await updateTaskStatusService(task._id, "Completed");
+      
+      // If there are files, upload and attach them
+      if (selectedFiles.length > 0) {
+        try {
+          // Upload files to S3
+          const uploadedFiles = await uploadFiles(selectedFiles);
+          
+          // Attach files to the task
+          const attached = await attachFilesToTask(task._id, uploadedFiles);
+          
+          if (attached) {
+            message.success("Task completed successfully with files!");
+          } else {
+            message.warning("Task completed but file attachment failed.");
+          }
+        } catch (fileError) {
+          message.warning("Task completed but file upload failed.");
+          console.error("File upload error:", fileError);
+        }
+      } else {
+        message.success("Task marked as completed!");
+      }
+      
+      setIsCompleteModalOpen(false);
+      setSelectedFiles([]);
+      
+      // Refresh task details
+      const taskResponse = await viewTask(task._id);
+      if (taskResponse?.success) setTask(taskResponse.data.task);
+      else message.error("Failed to refresh task details.");
+    } catch {
+      message.error("Failed to complete task.");
+    } finally {
+      setLoading(false);
+    }
+  }}
+  centered={true}
+  title="Complete Task"
+  okButtonProps={{
+    disabled: loading || uploading,
+    style: {
+      backgroundColor: "#22c55e",
+      borderColor: "#22c55e",
+      color: "#fff",
+    },
+  }}
+>
+  <div className="space-y-4">
+    <p className="text-gray-700 mb-4">
+      Upload files (optional) to attach as proof of completion.
+    </p>
+    
+    {/* File Upload Component */}
+    <div className="border border-gray-200 rounded-lg p-4">
+      <FileUpload
+        files={selectedFiles}
+        onFilesChange={(files) => {
+          setSelectedFiles(files);
+          clearError();
+        }}
+        maxSize={MAX_FILE_SIZE}
+        maxFiles={MAX_FILES_COUNT}
+        acceptedTypes={['*/*']}
+      />
+    </div>
+    
+    {/* Upload Progress */}
+    {uploading && (
+      <UploadProgress progress={progress} className="mt-4" />
+    )}
+    
+    {/* Error Display */}
+    {error && (
+      <div className="text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200">
+        {error}
+      </div>
+    )}
+    
+    {/* File Count Info */}
+    {selectedFiles.length > 0 && (
+      <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-200 ">
+        {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} selected
+      </div>
+    )}
+  </div>
+</Modal>
 
       {/* Sliding Chat Panel */}
       {/* Overlay */}

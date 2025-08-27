@@ -41,21 +41,21 @@ const TaskFiles: React.FC<TaskFilesProps> = ({
 		return <File className="w-5 h-5 text-gray-500" />;
 	};
 
-	const formatFileSize = (bytes: number) => {
-		if (bytes === 0) return '0 Bytes';
-		const k = 1024;
-		const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-		const i = Math.floor(Math.log(bytes) / Math.log(k));
-		return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-	};
+	// const formatFileSize = (bytes: number) => {
+	// 	if (bytes === 0) return '0 Bytes';
+	// 	const k = 1024;
+	// 	const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+	// 	const i = Math.floor(Math.log(bytes) / Math.log(k));
+	// 	return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+	// };
 
-	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		});
-	};
+	// const formatDate = (dateString: string) => {
+	// 	return new Date(dateString).toLocaleDateString('en-US', {
+	// 		year: 'numeric',
+	// 		month: 'short',
+	// 		day: 'numeric',
+	// 	});
+	// };
 
 	const handleDownload = async (file: TaskFile) => {
 		try {
@@ -232,8 +232,8 @@ const TaskFiles: React.FC<TaskFilesProps> = ({
 										{file.filename}
 									</p>
 									<div className="flex items-center gap-4 text-xs text-gray-500">
-										<span>{formatFileSize(file.fileSize)}</span>
-										<span>{formatDate(file.uploadedAt)}</span>
+										{/* <span>{formatFileSize(file.fileSize)}</span> */}
+										{/* <span>{formatDate(file.uploadedAt)}</span> */}
 									</div>
 								</div>
 							</div>

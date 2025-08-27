@@ -7,6 +7,8 @@ export interface User {
 	lastName: string;
 	role: string;
 	userName: string;
+	profileImage?: string;
+	credits: number;
 }
 
 export interface LoginCredentials {
