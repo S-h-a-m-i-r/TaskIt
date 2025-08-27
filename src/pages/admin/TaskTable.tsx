@@ -103,7 +103,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
   };
 
   const handleOpenTask = (task: Task, role: string) => {
-    navigate(`/${role.toLowerCase()}/task/${task.id}`);
+    navigate(`/${role.toLowerCase()}/task/${task?.id}`);
   };
 
   const handleEditTeamMember = (task: Task) => {

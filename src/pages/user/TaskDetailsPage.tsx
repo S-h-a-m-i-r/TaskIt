@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from "react-router-dom";
 import backIcon from "../../assets/icons/ArrowLeft_icon.svg";
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState,  } from 'react';
+import { message } from 'antd';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
 import { getTaskStatusColors } from '../../utils/taskStatusUtils';
-import { Switch, message } from 'antd';
 import { updateTaskStatusService } from '../../services/taskService';
 
 import { ChatComponent } from '../../components/generalComponents';
 import LoadingDots from '../../components/generalComponents/LoadingDots';
 import TaskFiles from '../../components/generalComponents/TaskFiles';
+import ButtonComponent from '../../components/generalComponents/ButtonComponent';
 import { TaskFile } from '../../types/task';
+import TaskTimeline from "../../components/generalComponents/TaskTimeline";
 
 interface Message {
 	senderId: {
@@ -55,6 +57,12 @@ interface TaskStore {
 interface AuthStore {
 	user: {
 		_id: string;
+		email: string;
+		firstName: string;
+		lastName: string;
+		role: string;
+		userName: string;
+		credits: number;
 	} | null;
 }
 
@@ -71,60 +79,61 @@ const TaskDetailsPage = () => {
 	const [task, setTask] = useState<Task | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
-	const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+	// const [isUpdatingStatus, setIsUpdatingStatus] = useState<boolean>(false);
+	// const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
 
 	// Debounced task status toggle for customer
-	const handleStatusToggle = useCallback(async (checked: boolean) => {
-		if (!task) return;
-		if (debounceTimer) {
-			clearTimeout(debounceTimer);
-		}
-		setIsUpdatingStatus(true);
-		const timer = setTimeout(async () => {
-			try {
-				const newStatus = checked ? 'Closed' : 'Completed';
+	// const handleStatusToggle = useCallback(async (checked: boolean) => {
+	// 	if (!task) return;
+	// 	if (debounceTimer) {
+	// 		clearTimeout(debounceTimer);
+	// 	}
+	// 	// setIsUpdatingStatus(true);
+	// 	const timer = setTimeout(async () => {
+	// 		try {
+	// 			const newStatus = checked ? 'Closed' : 'Completed';
 				
-				const response = await updateTaskStatusService(task._id, newStatus);
+	// 			const response = await updateTaskStatusService(task._id, newStatus);
 				
-				if (response?.success) {
-					message.success(`Task ${checked ? 'closed' : 'reopened'} successfully!`);
-					// Refresh task details
-					const taskResponse = await viewTask(taskId!);
-					if (taskResponse?.success) {
-						setTask(taskResponse?.data?.task);
-					}
-				} else {
-					message.error(response?.message || 'Failed to update task status');
-				}
-			} catch (error) {
-				console.error('Error updating task status:', error);
-				message.error('Failed to update task status. Please try again.');
-			} finally {
-				setIsUpdatingStatus(false);
-			}
-		}, 500);
+	// 			if (response?.success) {
+	// 				message.success(`Task ${checked ? 'closed' : 'reopened'} successfully!`);
+	// 				// Refresh task details
+	// 				const taskResponse = await viewTask(taskId!);
+	// 				if (taskResponse?.success) {
+	// 					setTask(taskResponse?.data?.task);
+	// 				}
+	// 			} else {
+	// 				message.error(response?.message || 'Failed to update task status');
+	// 			}
+	// 		} catch (error) {
+	// 			console.error('Error updating task status:', error);
+	// 			message.error('Failed to update task status. Please try again.');
+	// 		} finally {
+	// 			setIsUpdatingStatus(false);
+	// 		}
+	// 	}, 500);
 
-		setDebounceTimer(timer);
-	}, [task, taskId, viewTask, debounceTimer]);
+	// 	setDebounceTimer(timer);
+	// }, [task, taskId, viewTask, debounceTimer]);
 
 	// Cleanup timer on unmount
-	useEffect(() => {
-		return () => {
-			if (debounceTimer) {
-				clearTimeout(debounceTimer);
-			}
-		};
-	}, [debounceTimer]);
+	// useEffect(() => {
+	// 	return () => {
+	// 		if (debounceTimer) {
+	// 			clearTimeout(debounceTimer);
+	// 		}
+	// 	};
+	// }, [debounceTimer]);
 
 	// Check if toggle should be shown (only for completed tasks)
-	const shouldShowToggle = () => {
-		return task?.status === 'Completed' || task?.status === 'Closed';
-	};
+	// const shouldShowToggle = () => {
+	// 	return task?.status === 'Completed' || task?.status === 'Closed';
+	// };
 
-	// Get toggle state (checked when task is closed)
-	const getToggleState = () => {
-		return task?.status === 'Closed';
-	};
+	// // Get toggle state (checked when task is closed)
+	// const getToggleState = () => {
+	// 	return task?.status === 'Closed';
+	// };
 
 	// Handle file removal - only update local state since useFileUpload.removeFile handles backend
 	const handleRemoveFile = async (fileKey: string) => {
@@ -151,6 +160,61 @@ const TaskDetailsPage = () => {
 			}))
 		];
 		setTask(prev => prev ? { ...prev, files: updatedFiles } : null);
+	};	
+
+	// Check if task is completed and user is creator
+	const shouldShowActionButtons = () => {
+		return task?.status == 'Completed';
+	};
+
+	// Handle Complete action
+	const handleComplete = async () => {
+		if (!task) return;
+		
+		setIsUpdatingStatus(true);
+		try {
+			const response = await updateTaskStatusService(task._id, 'Closed');
+			if (response.success) {
+				message.success('Task completed successfully!');
+				// Refresh task details
+				const taskResponse = await viewTask(taskId!);
+				if (taskResponse?.success) {
+					setTask(taskResponse?.data?.task);
+				}
+			} else {
+				message.error(response.message || 'Failed to complete task');
+			}
+		} catch (error) {
+			console.error('Error completing task:', error);
+			message.error('Failed to complete task. Please try again.');
+		} finally {
+			setIsUpdatingStatus(false);
+		}
+	};
+
+	// Handle Reject action
+	const handleReject = async () => {
+		if (!task) return;
+		
+		setIsUpdatingStatus(true);
+		try {
+			const response = await updateTaskStatusService(task._id, 'InProgress');
+			if (response.success) {
+				message.success('Task rejected successfully!');
+				// Refresh task details
+				const taskResponse = await viewTask(taskId!);
+				if (taskResponse?.success) {
+					setTask(taskResponse?.data?.task);
+				}
+			} else {
+				message.error(response.message || 'Failed to reject task');
+			}
+		} catch (error) {
+			console.error('Error rejecting task:', error);
+			message.error('Failed to reject task. Please try again.');
+		} finally {
+			setIsUpdatingStatus(false);
+		}
 	};
 
 	useEffect(() => {
@@ -184,7 +248,7 @@ const TaskDetailsPage = () => {
 			) : (
 				<>
 					<div className="flex items-center justify-between">
-						<div>
+						<div className="w-full max-w-3xl flex flex-col gap-6">
 						<div className="flex items-center gap-3">
 							<div
 								className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
@@ -198,37 +262,24 @@ const TaskDetailsPage = () => {
 								<span className="text-[#3B82F6]"> {task?.status}</span>
 							</span>
 						</div>
-				{shouldShowToggle() && (
-					 <div className="flex justify-between items-center min-w-[180px] max-w-[220px] gap-4 rounded-xl px-4 py-3 border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200 bg-white">
-					 <div className="flex items-center gap-2">
-					   <div
-						 className={`w-2 h-2 rounded-full transition-colors duration-200 ${
-						   task?.status === 'Completed' ? "bg-green-500" : "bg-orange-400"
-						 }`}
-					   />
-					   <span
-						 className={`text-sm font-medium transition-colors duration-200 ${
-						   task?.status === 'Completed' ? "text-green-700" : "text-gray-700"
-						 }`}
-					   >
-						 {task?.status === 'Completed' ? "Task Complete" : "Close Task"}
-					   </span>
-					 </div>
-			   
-					 <Switch
-					   checked={getToggleState()}
-					   onChange={handleStatusToggle}
-					   loading={isUpdatingStatus}
-					   checkedChildren="✓"
-					   unCheckedChildren="○"
-					   size="default"
-					   style={{
-						 backgroundColor: getToggleState() ? "#10B981" : "#D1D5DB",
-					   }}
-					   className="flex-shrink-0"
-					 />
-				   </div>
-				)}
+						
+						{task && <TaskTimeline task={task} />}
+						
+						{/* Action buttons for task creator when task is completed */}
+						{shouldShowActionButtons() && (
+							<div className="flex gap-4 mt-6">
+								<ButtonComponent
+									title={isUpdatingStatus ? 'Processing...' : 'Complete'}
+									onClick={handleComplete}
+									className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+								/>
+								<ButtonComponent
+									title={isUpdatingStatus ? 'Processing...' : 'Reject'}
+									onClick={handleReject}
+									className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+								/>
+							</div>
+						)}
 				</div>
 				
 				{/* Task Status Toggle for Customer */}
@@ -242,39 +293,14 @@ const TaskDetailsPage = () => {
 						{task?.createdAt ? new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
 					</h2>
 					<div className="w-full max-w-570px text-left flex flex-col gap-6 ">
-						<h2 className="font-semibold text-xl"> Task Details </h2>
-						<p> {task?.description}</p>
+						<h2 className="font-semibold text-xl"> Task Details: </h2>
+						<p className="bg-gray-50 rounded-lg p-4 border border-gray-200 break-all">
+  {task?.description}
+</p>
+
 
 						{/* Assignment Status */}
-						<div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-							<h3 className="font-semibold text-lg mb-2">Assignment Status</h3>
-							{task?.assignedTo ? (
-								<div className="flex items-center gap-2">
-									<div className="w-3 h-3 bg-green-500 rounded-full"></div>
-									<span className="text-green-700 font-medium">Assigned</span>
-									<span className="text-gray-600 text-sm">
-										{typeof task.assignedTo === 'object' &&
-										task.assignedTo?.email
-											? `${task.assignedTo?.firstName || ''} ${
-													task.assignedTo?.lastName || ''
-											  }`.trim() || task.assignedTo?.email
-											: typeof task.assignedTo === 'string'
-											? task.assignedTo
-											: 'Unknown User'}
-									</span>
-								</div>
-							) : (
-								<div className="flex items-center gap-2">
-									<div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-									<span className="text-yellow-700 font-medium">
-										Not Assigned
-									</span>
-									<span className="text-gray-600 text-sm">
-										Waiting for assignment
-									</span>
-								</div>
-							)}
-						</div>
+					
 						<div className="bg-gray-100 w-full border border-1"></div>
 						<div>
 							<h2 className="mb-6"> Attachments</h2>

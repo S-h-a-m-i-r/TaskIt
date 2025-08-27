@@ -131,8 +131,8 @@ const CreateTask = () => {
 						name="title"
 						value={formData.title}
 						onChange={(e) => handleInputChange('title', e.target.value)}
-						placeholder="write here"
-						className="w-full px-2 py-4 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:none"
+						placeholder="e.g. Fix login bug"
+						className="w-full px-2 py-4 border bg-white border-gray-200 rounded-md focus:outline-none focus:none"
 					/>
 				</div>
 				<div className="mb-4 w-full flex-1">
@@ -147,9 +147,9 @@ const CreateTask = () => {
 						name="description"
 						value={formData.description}
 						onChange={(e) => handleInputChange('description', e.target.value)}
-						placeholder="write here"
+						placeholder="e.g. The login form fails when using special characters..."
 						rows={10}
-						className="w-full px-2 py-4 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:none"
+						className="w-full px-2 py-4 border bg-white border-gray-200 rounded-md focus:outline-none focus:none"
 					/>
 				</div>
 				<div className="w-full flex max-md:flex-col max-md:gap-5 justify-between">

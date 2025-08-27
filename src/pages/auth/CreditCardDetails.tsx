@@ -72,7 +72,7 @@ const CreditCardDetails = () => {
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						Card Number
 					</label>
-					<div className="border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
+					<div className=" bg-white border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
 						<CardNumberElement
 							options={{
 								style: {
@@ -97,7 +97,7 @@ const CreditCardDetails = () => {
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						Expiry Date
 					</label>
-					<div className="border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
+					<div className=" bg-white border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
 						<CardExpiryElement
 							options={{
 								style: {
@@ -118,7 +118,7 @@ const CreditCardDetails = () => {
 					<label className="block text-sm font-medium text-gray-700 mb-2">
 						CVC
 					</label>
-					<div className="border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
+					<div className=" bg-white border border-gray-300 rounded-md p-3 focus-within:border-primary-200">
 						<CardCvcElement
 							options={{
 								style: {

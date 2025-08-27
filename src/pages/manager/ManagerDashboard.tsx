@@ -84,6 +84,7 @@ const ManagerDashboard = () => {
 
 	const transformTasksForTable = (tasks: Task[]) => {
 		return tasks.map((task) => ({
+			id: task._id,
 			customerName: typeof task.createdBy === 'object' && task.createdBy ? (task.createdBy).userName : 'Unknown User',
 			title: task.title,
 			status: task.status,
@@ -98,7 +99,7 @@ const ManagerDashboard = () => {
 			dueDate: task.createdAt
 				? new Date(task.createdAt).toLocaleDateString()
 				: 'No due date',
-			actions: true, // Enable action buttons
+			actions: true, 
 		}));
 	};
 
@@ -107,7 +108,7 @@ const ManagerDashboard = () => {
 			<div className="flex w-full justify-between">
 				<h1 className="font-bold text-[32px] text-primary-100 text-left">
 					{' '}
-					Dashboard{' '}
+					{(user?.role || '').charAt(0).toUpperCase() + (user?.role || '').slice(1).toLowerCase()} Dashboard
 				</h1>
 				<ProfileDropdown userName={user?.userName || ''} />
 			</div>

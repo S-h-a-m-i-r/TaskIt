@@ -144,7 +144,7 @@ const Newpassword: React.FC = () => {
 							}}
 						/>
 						<div
-							className="absolute top-9 right-0 pr-3 flex items-center cursor-pointer"
+							className="absolute top-9 right-2 pr-3 flex items-center cursor-pointer"
 							onClick={() => togglePasswordVisibility('password')}
 						>
 							{showPasswords.password ? <IoEyeOutline /> : <IoEyeOffOutline />}
@@ -165,7 +165,7 @@ const Newpassword: React.FC = () => {
 							}}
 						/>
 						<div
-							className="absolute top-9 right-0 pr-3 flex items-center cursor-pointer"
+							className="absolute top-9 right-2 pr-3 flex items-center cursor-pointer"
 							onClick={() => togglePasswordVisibility('confirm_password')}
 						>
 							{showPasswords.confirm_password ? (

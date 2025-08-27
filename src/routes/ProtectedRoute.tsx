@@ -1,6 +1,7 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { notification } from "antd";
 import useAuthStore from "../stores/authStore";
+import LandingPage from "../pages/LandingPage";
 
 interface RoleProtectedRouteProps {
   allowedRoles: string[];
@@ -8,12 +9,11 @@ interface RoleProtectedRouteProps {
 
 const RoleProtectedRoute = ({ allowedRoles }: RoleProtectedRouteProps) => {
   const { token, user } = useAuthStore();
-  const location = useLocation();
   const role = user?.role || null;
 
   
   if (!token) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <LandingPage />;;
   }
 
   
