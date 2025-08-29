@@ -80,20 +80,27 @@ const AdminDashboard = () => {
 
 	const dashboardCards = [
 		{
-			title: 'Tasks In Progress',
-			value: getTasksByStatus.inProgress.toString(),
-		},
-		{
 			title: 'Tasks Submitted',
 			value: getTasksByStatus.submitted.toString(),
+			bgColor: "bg-[#EEF6FF]"
+
 		},
+		{
+			title: 'Tasks In Progress',
+			value: getTasksByStatus.inProgress.toString(),
+			bgColor: "bg-[#FEFBEB]"
+
+		},
+		
 		{
 			title: 'Tasks Completed',
 			value: getTasksByStatus.completed.toString(),
+			bgColor: "bg-[#EFFDF4]"
 		},
 		{
 			title: 'Tasks Closed',
 			value: getTasksByStatus.closed.toString(),
+			bgColor: "bg-[#FEF1F2]"
 		},
 	];
 
@@ -159,7 +166,7 @@ const AdminDashboard = () => {
 					{dashboardCards.map((card, index) => (
 						<div
 							key={index}
-							className="bg-transparent border border-slate-300 rounded-xl p-6 min-h-[136px] hover:shadow-sm transition-shadow"
+							className={`${card.bgColor} border border-slate-300/50 rounded-xl p-6 min-h-[136px] hover:shadow-sm transition-shadow`}
 						>
 							<div className="space-y-2 flex flex-col justify-center h-full">
 								<h3 className="text-[16px] text-left font-medium text-gray-600 leading-tight">

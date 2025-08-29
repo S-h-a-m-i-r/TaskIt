@@ -176,7 +176,7 @@ const AdminTaskDetails: React.FC = () => {
     }
   }, [user, getUsersByRole]);
 
-  const handleAssignTask = async () => {
+  const handleAssignTask = async (selectedUserId?: string) => {
     if (!selectedUserId || !task) return;
 
     try {
@@ -243,7 +243,7 @@ const AdminTaskDetails: React.FC = () => {
     }
   };
 
-  const handleReassignTask = async () => {
+  const handleReassignTask = async (selectedUserId?: string) => {
     if (!selectedUserId || !task) return;
 
     // Check if user has permission to reassign this task
@@ -394,22 +394,12 @@ const AdminTaskDetails: React.FC = () => {
   const getAvailableUsers = () => {
     if (!users || !user) return [];
 
-    const filteredUsers = [...users];
+    let filteredUsers = [...users];
+    filteredUsers = filteredUsers.filter((u: { _id: string }) => u._id !== user._id);
 
-    // Add current user to the list if they're not already included
-    const currentUserInList = users.find(
-      (u: { _id: string }) => u._id === user._id
-    );
-    if (!currentUserInList && user._id) {
-      filteredUsers.push({
-        _id: user._id,
-        firstName: user.firstName || user.userName || "Current",
-        lastName: user.lastName || "User",
-        email: user.email || "",
-        role: user.role || "BASIC",
-        userName: user.userName || user.email || "",
-      });
-    }
+    
+    
+    
 
     // Apply role-based filtering
     if (user.role === "ADMIN") {
@@ -471,7 +461,7 @@ console.log("Selected File:", isCompleteModalOpen);
           {((typeof task?.assignedTo === "object" &&
             task?.assignedTo &&
             task.assignedTo._id === user?._id) ||
-            user?.role == "ADMIN") && (
+            (user?.role == "ADMIN" || user?.role === "MANAGER") ) && (
             <ButtonComponent
               title="💬 Chat"
               onClick={() => setIsChatOpen(true)}
@@ -488,7 +478,7 @@ console.log("Selected File:", isCompleteModalOpen);
 
       <div className=" w-full flex flex-col items-start gap-4 mb-4">
         {/* Task Status Toggle */}
-        <div className="w-full max-w-3xl">
+        <div className="w-full max-w-4xl">
           <TaskTimeline task={task} />
         </div>
 
@@ -839,11 +829,18 @@ console.log("Selected File:", isCompleteModalOpen);
                 {!isReassigning ? (
                   <div className="space-y-2">
                     {canReassignTask() ? (
+                      <>
                       <ButtonComponent
                         title="Reassign Task"
                         onClick={() => setIsReassigning(true)}
                         className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
                       />
+                      <ButtonComponent
+                    title="Assign to yourself"
+                    onClick={() => handleReassignTask(user?._id)}
+                    className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
+                  />
+                  </>
                     ) : (
                       <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
                         <p className="text-orange-800 font-medium">
@@ -984,6 +981,11 @@ console.log("Selected File:", isCompleteModalOpen);
                     }`}
                   />
                 </div>
+                <ButtonComponent
+                    title="Assign to yourself"
+                    onClick={() => handleAssignTask(user?._id)}
+                    className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
+                  />
               </div>
             )}
           </div>
@@ -1099,7 +1101,7 @@ console.log("Selected File:", isCompleteModalOpen);
         cancelText="Cancel"
         okText={assigning ? "Assigning..." : "Assign Task"}
         onCancel={() => setIsAssignModalOpen(false)}
-        onOk={handleAssignTask}
+        onOk={() => handleAssignTask(selectedUserId)}
         centered={true}
         title={
           <div className="flex items-center gap-3">
@@ -1169,7 +1171,7 @@ console.log("Selected File:", isCompleteModalOpen);
         cancelText="Cancel"
         okText={assigning ? "Reassigning..." : "Reassign Task"}
         onCancel={() => setIsReassignModalOpen(false)}
-        onOk={handleReassignTask}
+        onOk={() => handleReassignTask(selectedUserId)}
         centered={true}
         title={
           <div className="flex items-center gap-3">
@@ -1314,7 +1316,7 @@ console.log("Selected File:", isCompleteModalOpen);
 >
   <div className="space-y-4">
     <p className="text-gray-700 mb-4">
-      Upload files (optional) to attach as proof of completion.
+    Upload one or more files (optional) that will assist with the fulfilment of the task.
     </p>
     
     {/* File Upload Component */}

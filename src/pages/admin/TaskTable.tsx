@@ -160,7 +160,9 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
                   task?.status || task?.taskStatus || "Unknown"
                 )}
               >
-                {task.status || task?.taskStatus || "Unknown"}
+                 {(task.status || task?.taskStatus || "Unknown") === "InProgress" 
+        ? "In Progress" 
+        : (task.status || task?.taskStatus || "Unknown")}
               </span>
             ) : (
               "-"
@@ -395,7 +397,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
               <ButtonComponent
                 title="Edit"
                 onClick={() => handleEditTeamMember(task)}
-                className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
+                className="text-white bg-primary-50 text-[14px] font-bold hover:bg-primary-200 px-3 py-2 rounded-full w-[100px]"
               />
             ) : (
               "-"

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Triangle } from 'react-loader-spinner';
+import { Watch } from 'react-loader-spinner';
 
 interface LoadingDotsProps {
 	text?: string;
@@ -14,11 +14,11 @@ const LoadingDots: React.FC<LoadingDotsProps> = ({
 	return (
 		<div className={`flex items-center gap-2 text-lg font-medium text-gray-700 ${className}`}>
 			{/* Loading spinner */}
-			<Triangle
+			<Watch
 				height="60"
 				width="60"
 				color="#0C1421"
-				ariaLabel="triangle-loading"
+				ariaLabel="clock-loading"
 				wrapperStyle={{}}
 				wrapperClass=""
 				visible={true}
