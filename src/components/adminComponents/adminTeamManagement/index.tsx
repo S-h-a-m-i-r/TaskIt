@@ -42,7 +42,7 @@ const AdminTeamManagement = () => {
 					<Link to="/admin/addTeam">
 						<ButtonComponent
 							title="Add Team Member"
-							className="bg-[#EBEDF2] text-black px-2 py-2 rounded-md hover:bg-[#EBEDF2] transition-all w-[200px] h-[48px]"
+							className="bg-primary-50 text-white px-2 py-2 rounded-md hover:bg-primary-200 transition-all w-[200px] h-[48px]"
 						/>
 					</Link>
 					<ProfileDropdown userName={user?.userName || ''} />

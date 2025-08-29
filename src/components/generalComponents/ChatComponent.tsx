@@ -99,9 +99,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 	};
 
 	const isTaskAssigned = task?.assignedTo;
-	const isUserAdmin = user && (user?.role === 'ADMIN');
-
-
+	const isUserAdminOrManager = user && (user?.role === 'ADMIN' || user?.role === "MANAGER");
 		return (
       <div
         className={`bg-white h-full flex flex-col justify-between ${className}`}
@@ -200,7 +198,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
                         }`}
                       >
                         {/* Message Text */}
-                        <div className="break-words whitespace-pre-wrap">
+                        <div className=" text-leftbreak-words whitespace-pre-wrap">
                           {message.content}
                         </div>
 
@@ -236,12 +234,12 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
         </div>
 
         {/* Message Input */}
-        {!isTaskAssigned ? (
+        {((!isTaskAssigned) || (isUserAdminOrManager && typeof task.assignedTo === 'object' && task.assignedTo?._id !== user?._id))? (
           <div className="flex items-center bg-gray-50 px-4 py-3 border-t border-gray-200">
             <input
               type="text"
-              placeholder="Task is not assigned yet"
-              className="flex-grow outline-none px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500 cursor-not-allowed"
+              placeholder="Unable to send message"
+              className="flex-grow outline-none px-3 py-2 border border-gray-300 rounded-lg bg-gray-200 text-gray-500 cursor-not-allowed"
               disabled
               readOnly
             />
@@ -252,8 +250,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
               <img src={sendIcon} className="w-4 h-4 opacity-50" alt="Send" />
             </button>
           </div>
-        ) : (isUserAdmin &&  !isTaskAssigned) ? (
-         ''
         ) : (
           <div className="flex items-center bg-white px-4 py-3 border-t border-gray-200">
             <input
