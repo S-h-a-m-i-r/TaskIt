@@ -7,17 +7,22 @@ import FileUpload from '../../components/generalComponents/FileUpload';
 import UploadProgress from '../../components/generalComponents/UploadProgress';
 import useTaskStore from '../../stores/taskStore';
 import { useFileUpload } from '../../hooks/useFileUpload';
-import { message } from 'antd';
+import { DatePicker, message, Radio, RadioChangeEvent, Select, Tooltip } from 'antd';
 import { MAX_FILE_SIZE, MAX_FILES_COUNT } from '../../utils/fileUtils';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 // Define types for the component
 interface TaskFormData {
 	title: string;
 	description: string;
+	isRecurring: boolean,
+	recurrencePattern?: 'Daily' | 'Weekly' | 'Monthly';
+	recurrenceEndDate?: Date | null,
+	dueDate?: Date | null,
 }
 
 interface TaskStore {
-	createTask: (payload: { title: string; description: string }) => Promise<{
+	createTask: (payload: { title: string; description: string; isRecurring: boolean; recurrencePattern?: 'Daily' | 'Weekly' | 'Monthly'; recurrenceEndDate?: Date | null }) => Promise<{
 		success: boolean;
 		task: Task;
 		message?: string;
@@ -36,6 +41,10 @@ const CreateTask = () => {
 	const [formData, setFormData] = useState<TaskFormData>({
 		title: '',
 		description: '',
+		isRecurring: false,
+		recurrencePattern: undefined,
+		recurrenceEndDate: null,
+		dueDate: null,
 	});
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [loading, setLoading] = useState(false);
@@ -56,11 +65,47 @@ const CreateTask = () => {
 		clearError(); // Clear any previous errors when files change
 	};
 
+	const handleRecurringChange = (e: RadioChangeEvent) => {
+		const isRecurring = e.target.value === 'yes';
+		setFormData((prev) => ({
+		  ...prev,
+		  isRecurring,
+		  // Reset pattern and date if not recurring
+		  recurrencePattern: isRecurring ? prev.recurrencePattern : undefined,
+		  recurrenceEndDate: isRecurring ? prev.recurrenceEndDate : null,
+		}));
+	  };
+	  
+	  const handlePatternChange = (value: 'Daily' | 'Weekly' | 'Monthly') => {
+		setFormData((prev) => ({
+		  ...prev,
+		  recurrencePattern: value,
+		}));
+	  };
+	  
+	  const handleEndDateChange = (date: any, title:string) => {
+		setFormData((prev) => ({
+		  ...prev,
+		  [title]: date,
+		}));
+	  };
+
 	const handleSubmit = async () => {
 		if (!formData.title.trim() || !formData.description.trim()) {
 			message.error('Please fill in both title and description');
 			return;
 		}
+
+		if (formData.isRecurring) {
+			if (!formData.recurrencePattern) {
+			  message.error('Please select a recurrence pattern');
+			  return;
+			}
+			if (!formData.recurrenceEndDate) {
+			  message.error('Please select an end date for the recurring task');
+			  return;
+			}
+		  }
 
 		setLoading(true);
 		try {
@@ -68,6 +113,9 @@ const CreateTask = () => {
 			const result = await createTask({
 				title: formData.title,
 				description: formData.description,
+				isRecurring: formData.isRecurring,
+				recurrencePattern: formData.recurrencePattern,
+				recurrenceEndDate: formData.recurrenceEndDate,
 			});
 			if (result.success && result.task) {
 				// If there are files, upload and attach them
@@ -151,7 +199,104 @@ const CreateTask = () => {
 						rows={10}
 						className="w-full px-2 py-4 border bg-white border-gray-200 rounded-md focus:outline-none focus:none"
 					/>
+					{/* Recurring Task Section */}
+<div className="mb-8 mt-4 w-full">
+  <div className="flex items-center gap-2 mb-4">
+    <h2 className="text-2xl font-semibold text-left">Recurring Task</h2>
+    <Tooltip 
+      title="Recurring tasks automatically create new instances based on the schedule you set" 
+      placement="right"
+    >
+      <InfoCircleOutlined className="text-gray-500 cursor-help" />
+    </Tooltip>
+  </div>
+  
+  <div className="mb-6">
+    <label className="block text-left font-medium mb-2 text-gray-700">
+      Is this a recurring task?
+    </label>
+    <Radio.Group 
+      onChange={handleRecurringChange} 
+      value={formData.isRecurring ? 'yes' : 'no'}
+	  className='text-left flex justify-start'
+    >
+      <Radio value="no">No</Radio>
+      <Radio value="yes">Yes</Radio>
+    </Radio.Group>
+  </div>
+  
+  {formData.isRecurring && (
+    <div className="bg-gray-50 p-5 rounded-lg border border-gray-200 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end gap-6">
+        <div className="flex-1">
+          <label className="block text-left font-medium mb-2 text-gray-700">
+            Recurrence Pattern
+          </label>
+          <Select
+            placeholder="Select frequency"
+            className="w-full"
+            value={formData.recurrencePattern}
+            onChange={handlePatternChange}
+            options={[
+              { value: 'Daily', label: 'Daily' },
+              { value: 'Weekly', label: 'Weekly' },
+              { value: 'Monthly', label: 'Monthly' }
+            ]}
+          />
+        </div>
+        
+        <div className="flex-1">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 mb-2">
+              <label className="block text-left font-medium text-gray-700">
+                End Date
+              </label>
+              <Tooltip 
+                title="Tasks will be automatically created until this date" 
+                placement="top"
+              >
+                <InfoCircleOutlined className="text-gray-500 cursor-help" />
+              </Tooltip>
+            </div>
+            <DatePicker
+              className="w-full"
+              format="YYYY-MM-DD"
+              placeholder="Select end date"
+              value={formData.recurrenceEndDate}
+			  onChange={(date) => handleEndDateChange(date, "recurrenceEndDate")}
+              disabledDate={(current) => {
+				return current && current.toDate() < new Date(Date.now() - 24 * 60 * 60 * 1000);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div className="text-sm text-gray-600 bg-blue-50 p-3 rounded border border-blue-100">
+        <p className="font-medium text-blue-700 mb-1">How recurring tasks work:</p>
+        <p>This task will automatically create new instances on a {formData.recurrencePattern?.toLowerCase() || "[select pattern]"} basis until {formData.recurrenceEndDate ? 'the selected end date' : '[select end date]'}.</p>
+        <p className="mt-1">You'll be able to track all recurring instances from your dashboard.</p>
+      </div>
+    </div>
+  )}
+</div>
 				</div>
+				<div className='max-w-[200px]'>
+					<label className='text-left  flex justify-start font-semibold mb-2 text-2xl text-gray-700'>
+						Due Date
+					</label>
+				<DatePicker
+              className="w-full mb-2"
+              format="YYYY-MM-DD"
+              placeholder="Select end date"
+              value={formData.dueDate}
+              onChange={(date) => handleEndDateChange(date, 'dueDate')}
+              disabledDate={(current) => {
+                // Can't select days before today
+				return current && current.toDate() < new Date(Date.now() - 24 * 60 * 60 * 1000);
+              }}
+            />
+			</div>
 				<div className="w-full flex max-md:flex-col max-md:gap-5 justify-between">
 					<div className="flex flex-col gap-5 md:max-w-[415px] w-full">
 						<h2 className="text-2xl font-semibold text-left">Attachments</h2>

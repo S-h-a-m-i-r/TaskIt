@@ -14,7 +14,7 @@ interface InputChangeEvent {
 
 
 
-const taskListheaders = ['Customer Name', 'Task Title', 'Status', 'Date', 'Actions'];
+const taskListheaders = ['Customer Name', 'Task Title', 'Status', 'Date', 'isRecurring', 'Actions'];
 
 const AdminTasks = () => {
 	const [searchQuery, setSearchQuery] = useState('');
@@ -79,10 +79,11 @@ const AdminTasks = () => {
 				title: task.title,
 				status: task.status,
 				assignedTo: task.assignedTo,
-				dueDate: task.createdAt
-					? new Date(task.createdAt).toLocaleDateString()
-					: task.dueDate || 'No due date',
-				actions: true, // Enable action buttons
+				dueDate: task.dueDate
+					? new Date(task.dueDate).toLocaleDateString()
+					: task.dueDate ,
+				isRecurring: task?.isRecurring,
+				actions: true, 
 			};
 		});
 	}, [allTasks, activeTab, searchQuery]);
