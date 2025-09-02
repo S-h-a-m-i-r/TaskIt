@@ -11,7 +11,8 @@ interface Task {
 	description: string;
 	status: string;
 	createdAt?: string;
-	recurring?: boolean;
+	dueDate?:string;
+	isRecurring?: boolean;
 }
 
 interface TaskStore {
@@ -95,17 +96,30 @@ const AllUsersTasksList = () => {
 									</td>
 
 									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-										{task.createdAt
-											? new Date(task.createdAt).toLocaleDateString('en-US')
-											: 'N/A'}
-									</td>
+  {task.dueDate ? (
+    <span className={
+      new Date(task.dueDate) < new Date() 
+        ? "text-red-600 font-medium" 
+        : ""
+    }>
+      {new Date(task.dueDate).toLocaleDateString('en-US')}
+      {new Date(task.dueDate) < new Date() && 
+        <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+          Passed
+        </span>
+      }
+    </span>
+  ) : (
+    <span className="text-gray-500 text-lg flex justify-start pl-5" title="No due date">∞</span>
+  )}
+</td>
 
 									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
 										{task.status}
 									</td>
 
 									<td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
-										{task.recurring ? 'Yes' : 'No'}
+										{task.isRecurring ? 'Yes' : 'No'}
 									</td>
 								</tr>
 							);

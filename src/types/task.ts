@@ -22,6 +22,7 @@ export interface Task {
 	creditCost?: number;
 	files?: TaskFile[];
 	updatedAt?: string;
+	isRecurring?: boolean;
 	__v?: number;
 	messages?: Array<{
 		content: string;

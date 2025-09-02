@@ -26,6 +26,7 @@ interface Task {
 		| { _id: string; email: string; firstName?: string; lastName?: string; role?: string; userName?: string };
 	createdAt?: string;
 	dueDate?: string;
+	isRecurring?: boolean;
 }
 
 const AdminDashboard = () => {
@@ -121,9 +122,10 @@ const AdminDashboard = () => {
           : typeof task.assignedTo === "string"
           ? task.assignedTo
           : "Unassigned",
-      dueDate: task.createdAt
-        ? new Date(task.createdAt).toLocaleDateString()
-        : "No due date",
+		  dueDate: task.dueDate
+		  ? new Date(task.dueDate).toLocaleDateString()
+		  : task.dueDate ,
+		  isRecurring: task?.isRecurring,
       actions: true, // Enable action buttons
     }));
 	};

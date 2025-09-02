@@ -26,6 +26,7 @@ interface Task {
 		| string
 		| { _id: string; email: string; firstName?: string; lastName?: string };
 	createdAt?: string;
+	isRecurring?: boolean;
 	dueDate?: string;
 }
 
@@ -104,9 +105,10 @@ const ManagerDashboard = () => {
 					: typeof task.assignedTo === 'string'
 					? task.assignedTo
 					: 'Unassigned',
-			dueDate: task.createdAt
-				? new Date(task.createdAt).toLocaleDateString()
-				: 'No due date',
+					dueDate: task.dueDate
+					? new Date(task.dueDate).toLocaleDateString()
+					: task.dueDate ,
+					isRecurring: task?.isRecurring,
 			actions: true, 
 		}));
 	};

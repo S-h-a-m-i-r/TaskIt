@@ -81,6 +81,7 @@ interface Task {
   "Last Login"?: string;
   memberLastLogin?: string;
   "Team memeber Count"?: string | number;
+  isRecurring?: boolean;
 }
 
 type TaskTableProps = {
@@ -160,9 +161,9 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
                   task?.status || task?.taskStatus || "Unknown"
                 )}
               >
-                 {(task.status || task?.taskStatus || "Unknown") === "InProgress" 
-        ? "In Progress" 
-        : (task.status || task?.taskStatus || "Unknown")}
+                {(task.status || task?.taskStatus || "Unknown") === "InProgress"
+                  ? "In Progress"
+                  : task.status || task?.taskStatus || "Unknown"}
               </span>
             ) : (
               "-"
@@ -170,12 +171,50 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
           </td>
         );
 
-      case "date":
-      case "due date":
+      
       case "date_joined":
         return (
           <td className="px-6 py-4 text-sm text-gray-600 text-left">
-            {task.dueDate || task.Date || task.date_joined || "-"}
+            {task.Date || task.date_joined || "-"}
+          </td>
+        );
+        case "date":
+        case "due date":
+        return (
+          <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
+            {task.dueDate ? (
+              <span
+                className={
+                  // Check if due date is either passed or due tomorrow
+                  new Date(task.dueDate) <
+                  new Date(new Date().setHours(24, 0, 0, 0))
+                    ? "text-red-600 font-medium"
+                    : ""
+                }
+              >
+                {new Date(task.dueDate).toLocaleDateString("en-US")}
+                {
+                  // Show different badges based on how close the due date is
+                  new Date(task.dueDate) < new Date() ? (
+                    <span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+                      Passed
+                    </span>
+                  ) : new Date(task.dueDate) <
+                    new Date(new Date().setHours(24, 0, 0, 0)) ? (
+                    <span className="ml-2 text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">
+                      Due soon
+                    </span>
+                  ) : null
+                }
+              </span>
+            ) : (
+              <span
+                className="text-gray-500 text-lg flex justify-start pl-5"
+                title="No due date"
+              >
+                ∞
+              </span>
+            )}
           </td>
         );
 
@@ -188,7 +227,9 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
             {task?.memberLastLogin || task.customerLastLogin || "-"}
           </td>
         );
-
+        case "isrecurring":
+        case "isRecurring": 
+        return <td >{task.isRecurring ? "Yes" : "No"}</td>;
       case "assignedto":
       case "assigned to":
         return (
