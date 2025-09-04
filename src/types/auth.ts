@@ -1,5 +1,14 @@
 // Shared auth types to be used across the application
 
+type PaymentMethodType = {
+	cardLast4: 'string',
+	cardBrand: 'string',
+	cardExpMonth: 'number',
+	cardExpYear: 'number',
+	cardFunding: 'string',
+	paymentMethodId: 'string',
+}
+
 export interface User {
 	_id: string;
 	email: string;
@@ -9,6 +18,7 @@ export interface User {
 	userName: string;
 	profileImage?: string;
 	credits: number;
+	paymentMethod?: PaymentMethodType;
 }
 
 export interface LoginCredentials {

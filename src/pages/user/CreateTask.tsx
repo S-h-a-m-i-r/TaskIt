@@ -10,15 +10,15 @@ import { useFileUpload } from '../../hooks/useFileUpload';
 import { DatePicker, message, Radio, RadioChangeEvent, Select, Tooltip } from 'antd';
 import { MAX_FILE_SIZE, MAX_FILES_COUNT } from '../../utils/fileUtils';
 import { InfoCircleOutlined } from '@ant-design/icons';
-
+import dayjs from 'dayjs';
 // Define types for the component
 interface TaskFormData {
 	title: string;
 	description: string;
 	isRecurring: boolean,
 	recurrencePattern?: 'Daily' | 'Weekly' | 'Monthly';
-	recurrenceEndDate?: Date | null,
-	dueDate?: Date | null,
+	recurrenceEndDate?: unknown,
+	dueDate?: unknown,
 }
 
 interface TaskStore {
@@ -76,14 +76,23 @@ const CreateTask = () => {
 		}));
 	  };
 	  
-	  const handlePatternChange = (value: 'Daily' | 'Weekly' | 'Monthly') => {
+	  const handlePatternChange = (value: "Daily" | "Weekly" | "Monthly") => {
+		const defaultDueDate = calculateDefaultDueDate(value);
 		setFormData((prev) => ({
-		  ...prev,
-		  recurrencePattern: value,
-		}));
-	  };
+        ...prev,
+        recurrencePattern: value,
+		dueDate: defaultDueDate
+      }));
+	  if (defaultDueDate) {
+		message.info(
+		  `Due date automatically set to ${defaultDueDate}. ` +
+		  `You can adjust it, but it can't exceed the next occurrence date.`
+		);
+	  }
+
+    };
 	  
-	  const handleEndDateChange = (date: any, title:string) => {
+	  const handleEndDateChange = (date: unknown, title:string) => {
 		setFormData((prev) => ({
 		  ...prev,
 		  [title]: date,
@@ -106,6 +115,22 @@ const CreateTask = () => {
 			  return;
 			}
 		  }
+		  if (formData.isRecurring && formData.recurrencePattern) {
+			const maxDueDate = getMaxAllowedDueDate(formData.recurrencePattern);
+			
+			if (!formData.dueDate) {
+			  message.error('Please select a due date for the task');
+			  return;
+			}
+			
+			if (maxDueDate && formData.dueDate > maxDueDate) {
+			  message.error(
+				`Due date cannot exceed ${maxDueDate.toDate().toLocaleDateString()} ` +
+				`for ${formData.recurrencePattern.toLowerCase()} recurring tasks`
+			  );
+			  return;
+			}
+		  }
 
 		setLoading(true);
 		try {
@@ -115,7 +140,8 @@ const CreateTask = () => {
 				description: formData.description,
 				isRecurring: formData.isRecurring,
 				recurrencePattern: formData.recurrencePattern,
-				recurrenceEndDate: formData.recurrenceEndDate,
+				recurrenceEndDate: formData.recurrenceEndDate instanceof Date ? formData.recurrenceEndDate : null,
+				...(formData.dueDate && dayjs.isDayjs(formData.dueDate) ? { dueDate: formData.dueDate.toDate() } : {})
 			});
 			if (result.success && result.task) {
 				// If there are files, upload and attach them
@@ -152,6 +178,45 @@ const CreateTask = () => {
 			setLoading(false);
 		}
 	};
+
+	// Add these utility functions at the top of your file
+	const calculateDefaultDueDate = (recurrencePattern?: 'Daily' | 'Weekly' | 'Monthly') => {
+		if (!recurrencePattern) return null;
+		
+		const today = dayjs();
+		
+		switch (recurrencePattern) {
+		  case 'Daily':
+			  return today
+		  case 'Weekly':
+			return today.add(6, 'day')
+		  case 'Monthly':
+			return today.endOf('month');
+		  
+		  default:
+			return null;
+		}
+	  };
+  
+  const getMaxAllowedDueDate = (recurrencePattern?: 'Daily' | 'Weekly' | 'Monthly') => {
+	if (!recurrencePattern) return null;
+	
+	const today = dayjs();
+		
+		switch (recurrencePattern) {
+		  case 'Daily':
+			  return today
+		  
+		  case 'Weekly':
+			return today.add(6, 'day')
+		  
+		  case 'Monthly':
+			return today.endOf('month')
+		  
+		  default:
+			return null;
+		}
+  };
 
 	return (
 		<div className="p-9 w-full flex flex-col gap-10">
@@ -285,17 +350,30 @@ const CreateTask = () => {
 					<label className='text-left  flex justify-start font-semibold mb-2 text-2xl text-gray-700'>
 						Due Date
 					</label>
-				<DatePicker
-              className="w-full mb-2"
-              format="YYYY-MM-DD"
-              placeholder="Select end date"
-              value={formData.dueDate}
-              onChange={(date) => handleEndDateChange(date, 'dueDate')}
-              disabledDate={(current) => {
-                // Can't select days before today
-				return current && current.toDate() < new Date(Date.now() - 24 * 60 * 60 * 1000);
-              }}
-            />
+					<DatePicker
+  className="w-full mb-2"
+  format="YYYY-MM-DD"
+  placeholder="Select due date"
+  value={formData.dueDate}
+  onChange={(date) => handleEndDateChange(date, 'dueDate')}
+  disabledDate={(current) => {
+    if (!current) return false;
+    
+    // Can't select days before today
+    const isPastDate = current.isBefore(dayjs(), 'day');
+    
+    // For recurring tasks, can't select beyond max allowed date
+    let isBeyondMaxAllowed = false;
+    if (formData.isRecurring && formData.recurrencePattern) {
+      const maxDate = getMaxAllowedDueDate(formData.recurrencePattern);
+      if (maxDate) {
+        isBeyondMaxAllowed = current.isAfter(maxDate);
+      }
+    }
+    
+    return isPastDate || isBeyondMaxAllowed;
+  }}
+/>
 			</div>
 				<div className="w-full flex max-md:flex-col max-md:gap-5 justify-between">
 					<div className="flex flex-col gap-5 md:max-w-[415px] w-full">
