@@ -1,129 +1,392 @@
-import { SetStateAction, useState } from "react";
-import creditCard from "../../assets/icons/CreditCard_icon.svg";
-import banktransfer from "../../assets/icons/Bank_icon.svg";
-function PaymentForm() {
-	const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
+import { useState, useEffect } from 'react';
+import { Select, Form, Input, Button, message, Spin } from 'antd';
+import { CreditCard } from 'lucide-react';
+import useAuthStore from '../../stores/authStore';
+import stripeService, { StripeCard } from '../../services/stripeService';
+import { loadStripe } from '@stripe/stripe-js';
+import {  CardNumberElement,
+	CardExpiryElement,
+	CardCvcElement, Elements, useStripe, useElements, 
+	} from '@stripe/react-stripe-js';
 
-	const handlePaymentChange = (method: SetStateAction<string>) => {
-		setPaymentMethod(method);
-	};
+// Card brand icons
+import visaIcon from '../../assets/icons/visa.svg';
+import mastercardIcon from '../../assets/icons/mastercard.svg';
+import amexIcon from '../../assets/icons/amex.svg';
+import discoverIcon from '../../assets/icons/discover.svg';
 
-	const handleSubmit = (event: { preventDefault: () => void }) => {
-		event.preventDefault();
-		alert("Form submitted");
-	};
+const { Option } = Select;
 
-	return (
-		<form onSubmit={handleSubmit} className="w-full text-left max-w-[630px]">
-			<div className="mb-4 w-full flex-1">
-				<label htmlFor="billedTo" className="block mb-2 text-sm  font-medium text-gray-700">
-					Billed to
-				</label>
-				<input
-					type="text"
-					id="billedTo"
-					name="billedTo"
-					className="w-full p-2 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:none"
-				/>
-			</div>
+// Replace with your actual Stripe publishable key
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || 'pk_test_key');;
 
-			<div className="mb-4">
-				<label className=" block mb-2 text-sm font-medium text-gray-700">Payment Details</label>
-				<div className="flex gap-4">
-					<button
-						type="button"
-						onClick={() => handlePaymentChange("Bank Transfer")}
-						className={`flex flex-col justify-between py-3 px-4 text-left w-52 border rounded-md text-sm font-medium  text-gray-700
-              ${paymentMethod === "Bank Transfer" ? "bg-white border-white" : "bg-transparen"}`}
-					>
-						<img src={banktransfer} alt="bank transfer" className="h-5 w-5" />
-						Bank Transfer
-					</button>
-					<button
-						type="button"
-						onClick={() => handlePaymentChange("Credit Card")}
-						className={` flex flex-col justify-between py-3 w-52 h-20 text-left px-5 border rounded-md text-sm font-medium  text-gray-700
-              ${paymentMethod === "Credit Card" ? "bg-white text-gray-700" : "bg-transparent"}`}
-					>
-						<img src={creditCard} alt="credit card" className="h-5 w-5" />
-						Credit Card
-					</button>
-				</div>
-			</div>
+// CardForm component that uses Stripe Elements
+const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [cardError, setCardError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+//   const { user } = useAuthStore();
 
-			{paymentMethod === "Credit Card" && (
-				<>
-					<div className="mb-4">
-						<label htmlFor="cardNumber" className="block mb-2 text-sm font-medium text-gray-700">
-							Card Number
-						</label>
-						<input
-							type="text"
-							id="cardNumber"
-							name="cardNumber"
-							className="w-full p-2 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
+  const handleSubmit = async (e: React.FormEvent) => {
+	e.preventDefault();
+  
+	if (!stripe || !elements) return;
+  
+	setSaving(true);
+	setCardError(null);
+  
+	try {
+	  const cardNumberElement = elements.getElement(CardNumberElement);
+	  if (!cardNumberElement) throw new Error("Card element not found");
+  
+	  const { error, paymentMethod } = await stripe.createPaymentMethod({
+		type: "card",
+		card: cardNumberElement,
+	  });
+  
+	  if (error) throw new Error(error.message);
+	  if (!paymentMethod) throw new Error("Payment method creation failed");
+  
+	  // Add the payment method to the customer
+	  const ensureCustomerResponse = await stripeService.ensureCustomer();
+	  if (!ensureCustomerResponse.success) {
+		throw new Error("Could not create or retrieve customer");
+	  }
+  
+	  const customerId = ensureCustomerResponse.customerId;
+  
+	  const attachResponse = await stripeService.addPaymentMethod(
+		customerId,
+		paymentMethod.id
+	  );
+  
+	  if (!attachResponse.success) {
+		throw new Error(attachResponse.message || "Failed to save card");
+	  }
+  
+	  message.success("Card added successfully!");
+	  cardNumberElement.clear();
+	  onCardAdded(paymentMethod.id);
+	} catch (err: unknown) {
+    if (err instanceof Error) {
+      setCardError(err.message || "Failed to add card");
+      message.error(err.message || "Failed to add card");
+    } else {
+      setCardError("Failed to add card");
+      message.error("Failed to add card");
+    }
+	} finally {
+	  setSaving(false);
+	}
+  };
+  
 
-					<div className="mb-4">
-						<label htmlFor="expiryDate" className="block mb-2 text-sm font-medium text-gray-700">
-							Expiry Date
-						</label>
-						<input
-							type="text"
-							id="expiryDate"
-							name="expiryDate"
-							className="w-full p-2 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: '16px',
+        color: '#424770',
+        '::placeholder': {
+          color: '#aab7c4',
+        },
+      },
+      invalid: {
+        color: '#9e2146',
+      },
+    },
+  };
 
-					<div className="mb-4">
-						<label htmlFor="cvv" className="block mb-2 text-sm font-medium text-gray-700">
-							CVV
-						</label>
-						<input
-							type="password"
-							id="cvv"
-							name="cvv"
-							className="w-full p-2 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
-				</>
-			)}
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
+          Card Number
+        </label>
+        <div className="border border-gray-300 rounded-md p-3 bg-white">
+          <CardNumberElement options={cardElementOptions} />
+        </div>
+        {cardError && (
+          <p className="mt-2 text-sm text-red-600">{cardError}</p>
+        )}
+      </div>
+	  <div className="mb-4">
+        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
+		Card Expiry
+        </label>
+        <div className="border border-gray-300 rounded-md p-3 bg-white">
+          <CardExpiryElement options={cardElementOptions} />
+        </div>
+        {cardError && (
+          <p className="mt-2 text-sm text-red-600">{cardError}</p>
+        )}
+      </div>
+	  <div className="mb-4">
+        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
+		Card CVC
+        </label>
+        <div className="border border-gray-300 rounded-md p-3 bg-white">
+          <CardCvcElement options={cardElementOptions} />
+        </div>
+        {cardError && (
+          <p className="mt-2 text-sm text-red-600">{cardError}</p>
+        )}
+      </div>
 
-			{paymentMethod === "Bank Transfer" && (
-				<>
-					<div className="mb-4">
-						<label htmlFor="cardNumber" className="block mb-2 text-sm font-medium text-gray-700">
-							enter your bank
-						</label>
-						<input
-							type="text"
-							id="cardNumber"
-							name="cardNumber"
-							placeholder="Search Bank"
-							className="w-full p-2 border bg-transparent border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-					</div>
-				</>
-			)}
+      <Form.Item name="saveCard" valuePropName="checked">
+        <div className="flex items-center gap-2">
+          <input type="checkbox" id="saveCard" className="h-4 w-4" defaultChecked />
+          <label htmlFor="saveCard" className="text-sm text-gray-700">
+            Save this card for future payments
+          </label>
+        </div>
+      </Form.Item>
 
-			<div className="flex flex-col gap-4">
-				<button
-					type="submit"
-					className="flex-1 py-3 px-4 bg-primary-50 text-white rounded-full font-medium text-sm hover:bg-blue-600"
-				>
-					Buy Now
-				</button>
-				<button
-					type="button"
-					className="flex-1 py-3 px-4 bg-transparent text-gray-700 rounded-full text-sm hover:bg-gray-400 hover:text-white"
-				>
-					Cancel
-				</button>
-			</div>
-		</form>
-	);
-}
+      <Button
+        type="primary"
+        htmlType="submit"
+        loading={saving}
+        className="w-full mt-4 bg-primary-50 hover:bg-primary-200 text-white rounded-full"
+        disabled={!stripe}
+      >
+        Add Card
+      </Button>
+    </form>
+  );
+};
+
+// Main Payment Form component
+const PaymentFormContent = () => {
+//   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [savedCards, setSavedCards] = useState<StripeCard[]>([]);
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [showNewCardForm, setShowNewCardForm] = useState(false);
+  const [fetchingCards, setFetchingCards] = useState(false);
+  const { user } = useAuthStore();
+
+  const stripeCustomerId: string | undefined = user?.paymentMethod?.paymentMethodId;
+
+  // Fetch saved cards when component mounts
+  useEffect(() => {
+    if (stripeCustomerId) {
+      fetchSavedCards();
+    } else {
+      // No saved cards, show new card form by default
+      setShowNewCardForm(true);
+    }
+  }, [stripeCustomerId]);
+
+  const fetchSavedCards = async () => {
+    if (!stripeCustomerId) return;
+    
+    try {
+      setFetchingCards(true);
+      const response = await stripeService.getCustomerCards(stripeCustomerId);
+      
+      if (response.success && response.paymentMethods) {
+        setSavedCards(response.paymentMethods);
+        
+        // If there's a default card, select it
+        const defaultCard = response.paymentMethods.find(card => card.isDefault);
+        if (defaultCard) {
+          setSelectedCard(defaultCard.id);
+        } else if (response.paymentMethods.length > 0) {
+          setSelectedCard(response.paymentMethods[0].id);
+        }
+      } else {
+        throw new Error(response.message || 'Failed to load payment methods');
+      }
+    } catch (error) {
+      console.error('Error fetching saved cards:', error);
+      message.error('Could not load your saved payment methods');
+      // If we couldn't load cards, show the new card form
+      setShowNewCardForm(true);
+    } finally {
+      setFetchingCards(false);
+    }
+  };
+
+  const getCardIcon = (brand: string) => {
+    switch (brand.toLowerCase()) {
+      case 'visa':
+        return visaIcon;
+      case 'mastercard':
+        return mastercardIcon;
+      case 'amex':
+        return amexIcon;
+      case 'discover':
+        return discoverIcon;
+      default:
+        return <CreditCard className="w-6 h-6" />;
+    }
+  };
+
+  const handleCardChange = (value: string) => {
+    if (value === 'new') {
+      setShowNewCardForm(true);
+      setSelectedCard(null);
+    } else {
+      setShowNewCardForm(false);
+      setSelectedCard(value);
+    }
+  };
+
+  const handleCardAdded = (cardId: string) => {
+    // Refresh the saved cards list
+    fetchSavedCards();
+    // Select the newly added card
+    setSelectedCard(cardId);
+    // Hide the new card form
+    setShowNewCardForm(false);
+  };
+
+  const handlePayment = async () => {
+    if (!selectedCard && !showNewCardForm) {
+      message.error('Please select a payment method or add a new card');
+      return;
+    }
+    
+    setLoading(true);
+    try {
+      // Ensure customer exists
+      let customerId: string | undefined = stripeCustomerId;
+      if (!customerId) {
+        const customerResponse = await stripeService.ensureCustomer();
+        if (customerResponse.success) {
+          customerId = customerResponse.customerId;
+        } else {
+          throw new Error('Could not create customer profile');
+        }
+      }
+
+      if (selectedCard && customerId) {
+        // Process payment with selected card
+        const response = await stripeService.buyCredits(
+          5500, // $55.00 (amount in cents)
+          selectedCard,
+          55 // 55 credits
+        );
+        
+        if (response.success) {
+          message.success('Payment successful! Credits added to your account.');
+          // Update user credits in your app state
+          // For example: updateUserCredits(response.updatedCredits);
+        } else {
+          throw new Error(response.message || 'Payment failed');
+        }
+      } else {
+        message.error('Please add a payment method first');
+      }
+    } catch (error: unknown) {
+      console.error('Payment error:', error);
+      if (error instanceof Error) {
+        message.error(error.message || 'Payment failed. Please try again.');
+      } else {
+        message.error('Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex-1 bg-white p-9 rounded-md">
+      <h2 className="text-[36px] font-semibold text-left mb-6">Payment Details</h2>
+      
+      <div className="space-y-6">
+        {savedCards.length > 0 && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Select Payment Method
+            </label>
+            {fetchingCards ? (
+              <div className="flex justify-center py-4">
+                <Spin tip="Loading saved cards..." />
+              </div>
+            ) : (
+              <Select 
+                value={selectedCard || 'new'}
+                onChange={handleCardChange}
+                className="w-full"
+                disabled={loading}
+              >
+                {savedCards.map(card => (
+                  <Option key={card.id} value={card.id}>
+                    <div className="flex items-center gap-2">
+                      {typeof getCardIcon(card.brand) === 'string' ? (
+                    //    <img src={getCardIcon(card.brand)} alt={card.brand} className="w-6 h-6" />
+					<span> image </span>
+                      ) : (
+                        getCardIcon(card.brand)
+                      )}
+                      <span>
+                        {card.brand.charAt(0).toUpperCase() + card.brand.slice(1)} •••• {card.last4}
+                        {card.exp_month && card.exp_year && ` (${card.exp_month}/${card.exp_year})`}
+                      </span>
+                      {card.isDefault && (
+                        <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full ml-2">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                  </Option>
+                ))}
+                <Option value="new">+ Add new card</Option>
+              </Select>
+            )}
+          </div>
+        )}
+
+        {showNewCardForm && (
+          <div className="mt-6 border border-gray-200 p-4 rounded-md bg-gray-50">
+            <h3 className="text-lg font-medium mb-4">Add New Card</h3>
+            <CardForm onCardAdded={handleCardAdded} />
+          </div>
+        )}
+
+        {!showNewCardForm && (
+          <Form.Item
+            label="Email Address"
+            name="email"
+            initialValue={user?.email}
+            rules={[
+              { required: true, message: 'Please enter your email' },
+              { type: 'email', message: 'Please enter a valid email' }
+            ]}
+          >
+            <Input placeholder="your@email.com" />
+          </Form.Item>
+        )}
+
+        {!showNewCardForm && (
+          <div className="pt-4">
+            <Button 
+              type="primary"
+              onClick={handlePayment}
+              loading={loading}
+              className="w-full h-12 bg-primary-50 hover:bg-primary-200 text-white text-lg rounded-full"
+            >
+              Pay $55 USD
+            </Button>
+          </div>
+        )}
+        
+        <p className="text-gray-500 text-sm text-center mt-4">
+          Your payment information is secure. We use industry-standard encryption.
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// Wrap the payment form in Stripe Elements
+const PaymentForm = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <PaymentFormContent />
+    </Elements>
+  );
+};
 
 export default PaymentForm;
