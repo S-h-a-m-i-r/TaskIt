@@ -11,6 +11,7 @@ import { DatePicker, message, Radio, RadioChangeEvent, Select, Tooltip } from 'a
 import { MAX_FILE_SIZE, MAX_FILES_COUNT } from '../../utils/fileUtils';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import useCreditsStore from '../../stores/creditsStore';
 // Define types for the component
 interface TaskFormData {
 	title: string;
@@ -37,7 +38,7 @@ const CreateTask = () => {
 	const navigate = useNavigate();
 	const { createTask } = useTaskStore() as TaskStore;
 	const { uploadFiles, attachFilesToTask, uploading, progress, error, clearError } = useFileUpload();
-
+	const { available } = useCreditsStore();
 	const [formData, setFormData] = useState<TaskFormData>({
 		title: '',
 		description: '',
@@ -398,13 +399,13 @@ const CreateTask = () => {
 								{' '}
 								Credit required for this task
 							</p>
-							<p className="font-semibold text-3xl"> 01 </p>
+							<p className="font-semibold text-3xl"> upto 2 </p>
 							<div className="w-full justify-center flex px-10">
 								<img src={addOn} alt="credit icon" width={30} />
 							</div>
 							<p className="text-primary-300 text-lg font-medium">
 								{' '}
-								12 credits left{' '}
+								{available} credits left{' '}
 							</p>
 						</div>
 					</div>
