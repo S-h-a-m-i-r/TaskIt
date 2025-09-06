@@ -25,7 +25,7 @@ const AdminTaskDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id: taskId } = useParams<{ id: string }>();
   const { user }: { user: User | null } = useAuthStore();
-  const { viewTask, assignTask, deleteTask, reassignTask } = useTaskStore();
+  const { viewTask, assignTask, deleteTask, reassignTask } = useTaskStore() as any;
   const { users, loading: usersLoading, getUsersByRole } = useUserStore();
 
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
@@ -134,7 +134,6 @@ const AdminTaskDetails: React.FC = () => {
           message.error("Failed to fetch task details");
         }
       } catch {
-        console.error("Error fetching task details:", error);
         message.error("Error loading task details");
       } finally {
         setLoading(false);
@@ -235,8 +234,12 @@ const AdminTaskDetails: React.FC = () => {
         message.error(response?.message || "Failed to delete task");
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
-      message.error("Failed to delete task. Please try again.");
+     
+      if (error instanceof Error) {
+        message.error(error.message || "Failed to delete task. Please try again.");
+      } else {
+        message.error("Failed to delete task. Please try again.");
+      }
     } finally {
       setAssigning(false);
       setIsDeleteModalOpen(false);
@@ -426,7 +429,6 @@ const AdminTaskDetails: React.FC = () => {
 
   
   
-console.log("Selected File:", isCompleteModalOpen);
   return (
     <div className="p-4 sm:p-6 lg:p-9 w-full">
       {/* Header */}

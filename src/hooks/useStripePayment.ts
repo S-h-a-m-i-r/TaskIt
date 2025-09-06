@@ -5,9 +5,10 @@ import {
   CardNumberElement,
 } from '@stripe/react-stripe-js';
 import { StripeCardNumberElement } from '@stripe/stripe-js';
-
+import { createCustomer } from '../services/stripeService';
 interface PaymentMethod {
   paymentMethodId: string;
+  customerId: string;
   cardLast4: string;
   cardBrand: string;
   cardExpMonth: number;
@@ -21,6 +22,7 @@ interface UseStripePaymentProps {
     firstName: string;
     lastName: string;
     email: string;
+    customerId?: string;
   };
   onPaymentSuccess: (paymentMethod: PaymentMethod) => void;
   onPaymentError: (error: string) => void;
@@ -91,14 +93,34 @@ const useStripePayment = ({
         },
       });
 
+      
+
       if (paymentMethodResponse.error) {
         setCardErrorMessage(paymentMethodResponse.error.message || 'Error creating payment method.');
         onPaymentError(paymentMethodResponse.error.message || 'Error creating payment method.');
         return;
       }
 
+      const paymentMethodId = paymentMethodResponse.paymentMethod?.id;
+      if (!paymentMethodId) {
+        throw new Error('Payment method ID not returned from Stripe.');
+      }
+
+      // Now handle the customer creation/retrieval and payment method attachment
+      const customerResponse = await createCustomer({
+        email: userDetails.email,
+        name: `${userDetails.firstName} ${userDetails.lastName}`,
+        paymentMethodId,
+      });
+      const customerId = customerResponse.customerId || userDetails.customerId;
+
+      if (!customerId) {
+        throw new Error('Customer ID not returned from backend.');
+      }
+
       const paymentMethod: PaymentMethod = {
         paymentMethodId: paymentMethodResponse.paymentMethod?.id || '',
+        customerId: customerId || '',
         cardLast4: paymentMethodResponse.paymentMethod?.card?.last4 || '',
         cardBrand: paymentMethodResponse.paymentMethod?.card?.brand || '',
         cardExpMonth: paymentMethodResponse.paymentMethod?.card?.exp_month || 0,

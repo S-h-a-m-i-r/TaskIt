@@ -48,6 +48,7 @@ export const completeRegistration = (
 		planCredits: registrationData.planDetails.credits,
 		paymentMethod: {
 			paymentMethodId: registrationData.paymentMethod.paymentMethodId,
+			customerId: registrationData.paymentMethod.customerId,
 			cardLast4: registrationData.paymentMethod.cardLast4,
 			cardBrand: registrationData.paymentMethod.cardBrand,
 			cardExpMonth: registrationData.paymentMethod.cardExpMonth,

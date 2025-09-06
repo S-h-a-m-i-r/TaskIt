@@ -23,7 +23,7 @@ const AdminTasks = () => {
 
 	const { user } = useAuthStore();
 	const name = user?.role || localStorage.getItem('role') || '';
-	const { getTaskList, tasks: allTasks } = useTaskStore();
+	const { getTaskList, tasks: allTasks } = useTaskStore() as any;
 
 	const handleInputChange = (event: InputChangeEvent) => {
 		setSearchQuery(event.target.value);
@@ -52,27 +52,27 @@ const AdminTasks = () => {
 		// Apply status filter
 		if (activeTab === 'Active') {
 			filtered = allTasks.filter(
-				(task) =>
+				(task: { status: string; }) =>
 					task.status === 'InProgress' ||
 					task.status === 'Submitted'
 			);
 		} else if (activeTab === 'Completed') {
 			filtered = allTasks.filter(
-				(task) => task.status === 'Completed' || task.status === 'Task Closed'
+				(task: { status: string; }) => task.status === 'Completed' || task.status === 'Task Closed'
 			);
 		}
 
 		// Apply search filter
 		if (searchQuery) {
 			filtered = filtered.filter(
-				(task) =>
+				(task: { title: string; description: string; status: string; }) =>
 					task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					task.status.toLowerCase().includes(searchQuery.toLowerCase())
 			);
 		}
 
-		return filtered.map((task) => {
+		return filtered.map((task: { _id: any; createdBy: { userName: any; }; title: any; status: any; assignedTo: any; dueDate: string | number | Date; isRecurring: any; }) => {
 			return {
 				id: task._id,
 				customerName: typeof task.createdBy === "object" && task.createdBy?.userName ? task.createdBy.userName : undefined,

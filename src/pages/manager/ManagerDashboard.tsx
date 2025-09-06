@@ -34,15 +34,15 @@ const ManagerDashboard = () => {
 	// const [allTasks, setAllTasks] = useState<Task[]>([]);
 	const { user } = useAuthStore();
 	const navigate = useNavigate();
-	const { getTaskList, tasks: allTasks } = useTaskStore();
+	const { getTaskList, tasks: allTasks } = useTaskStore() as any
 
 	const getTasksByStatus = useMemo(() => {
 		const tasksByStatus = {
-			inProgress: allTasks?.filter((task) => task.status === 'InProgress')
+			inProgress: allTasks?.filter((task: { status: string; }) => task.status === 'InProgress')
 				.length,
-			submitted: allTasks?.filter((task) => task.status === 'Submitted').length,
-			completed: allTasks?.filter((task) => task.status === 'Completed').length,
-			closed: allTasks?.filter((task) => task.status === 'Closed').length,
+			submitted: allTasks?.filter((task: { status: string; }) => task.status === 'Submitted').length,
+			completed: allTasks?.filter((task: { status: string; }) => task.status === 'Completed').length,
+			closed: allTasks?.filter((task: { status: string; }) => task.status === 'Closed').length,
 		};
 
 		return tasksByStatus;

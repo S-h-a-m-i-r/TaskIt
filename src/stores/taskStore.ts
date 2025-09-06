@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 import {
 	createTaskService,
 	getAllTaskService,
@@ -52,11 +52,13 @@ interface TaskState {
 		success: boolean;
 		message?: string;
 	}>;
+
+	
 }
 
 const useTaskStore = create(
 	devtools(
-		persist(
+		
 			(set): TaskState => ({
 				tasks: [],
 				messages: [],
@@ -183,14 +185,6 @@ const useTaskStore = create(
 				},
 
 			}),
-
-			{
-				name: 'task-storage',
-				partialize: (state: TaskState) => ({
-					tasks: state.tasks,
-				}),
-			}
-		),
 		{ name: 'TaskStore' }
 	)
 );

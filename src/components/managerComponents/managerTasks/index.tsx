@@ -19,7 +19,7 @@ const ManagerTasks = () => {
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('All');
 
-	const { getTaskList, tasks: storeTasks } = useTaskStore();
+	const { getTaskList, tasks: storeTasks } = useTaskStore() as any
 
 	const handleInputChange = (event: InputChangeEvent) => {
 		setSearchQuery(event.target.value);
@@ -50,27 +50,27 @@ const ManagerTasks = () => {
 		// Apply status filter
 		if (activeTab === 'Active') {
 			filtered = filtered?.filter(
-				(task) =>
+				(task: { status: string; }) =>
 					task.status === 'InProgress' ||
 					task.status === 'Submitted'
 			);
 		} else if (activeTab === 'Completed') {
 			filtered = filtered.filter(
-				(task) => task.status === 'Completed' || task.status === 'Task Closed'
+				(task: { status: string; }) => task.status === 'Completed' || task.status === 'Task Closed'
 			);
 		}
 
 		// Apply search filter
 		if (searchQuery) {
 			filtered = filtered.filter(
-				(task) =>
+				(task: { title: string; description: string; status: string; }) =>
 					task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
 					task.status.toLowerCase().includes(searchQuery.toLowerCase())
 			);
 		}
 
-		return filtered.map((task) => ({
+		return filtered.map((task: { _id: any; title: any; status: any; createdAt: string | number | Date; dueDate: any; }) => ({
 			id: task._id,
 			type: task.title || 'Task',
 			status: task.status,

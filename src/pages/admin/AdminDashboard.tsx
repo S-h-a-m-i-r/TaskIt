@@ -33,7 +33,7 @@ const AdminDashboard = () => {
 	// const [allTasks, setAllTasks] = useState<Task[]>([]);
 	// const [teamMembers, setTeamMembers] = useState<User[]>([]);
 	const { user } = useAuthStore();
-	const { tasks: allTasks } = useTaskStore();
+	const { tasks: allTasks } = useTaskStore() as any;
 	const { teamMembers, getAllTeamMembers } = useUserStore();
 
 	const navigate = useNavigate();
@@ -41,15 +41,15 @@ const AdminDashboard = () => {
 		navigate('/credits');
 	};
 
-	const { getTaskList } = useTaskStore();
+	const { getTaskList } = useTaskStore() as any
 	// const { getAllUsers } = useAuthStore();
 	const getTasksByStatus = useMemo(() => {
 		const tasksByStatus = {
-			inProgress: allTasks?.filter((task) => task.status === 'InProgress')
+			inProgress: allTasks?.filter((task: { status: string; }) => task.status === 'InProgress')
 				.length,
-			submitted: allTasks?.filter((task) => task.status === 'Submitted').length,
-			completed: allTasks?.filter((task) => task.status === 'Completed').length,
-			closed: allTasks?.filter((task) => task.status === 'Closed').length,
+			submitted: allTasks?.filter((task: { status: string; }) => task.status === 'Submitted').length,
+			completed: allTasks?.filter((task: { status: string; }) => task.status === 'Completed').length,
+			closed: allTasks?.filter((task: { status: string; }) => task.status === 'Closed').length,
 		};
 
 		return tasksByStatus;

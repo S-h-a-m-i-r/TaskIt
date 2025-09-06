@@ -1,35 +1,139 @@
 import { request } from './request';
 
-// Define types for Stripe responses and requests
-export interface StripeCard {
-  id: string;
-  brand: string;
-  last4: string;
-  exp_month: number;
-  exp_year: number;
-  isDefault?: boolean;
+// Types for API responses
+interface CustomerResponse {
+  success: boolean;
+  customerId: string;
+  message?: string;
 }
 
-export interface StripeCustomer {
-  id: string;
+interface AttachPaymentMethodResponse {
+  success: boolean;
+  paymentMethod: {
+    id: string;
+    card: {
+      brand: string;
+      last4: string;
+      exp_month: number;
+      exp_year: number;
+    };
+  };
+  isDefault: boolean;
+  message?: string;
+}
+
+interface PaymentMethodsResponse {
+  success: boolean;
+  paymentMethods: Array<{
+    id: string;
+    card: {
+      brand: string;
+      last4: string;
+      exp_month: number;
+      exp_year: number;
+    };
+    isDefault: boolean;
+  }>;
+  message?: string;
+}
+
+/**
+ * Create a new Stripe customer and attach the specified payment method
+ * @param data Customer data with payment method
+ * @returns Customer response with customerId
+ */
+export const createCustomer = (data: {
   email: string;
-  name?: string;
-}
+  name: string;
+  paymentMethodId: string;
+}): Promise<CustomerResponse> => {
+  return request<CustomerResponse>({
+    method: 'post',
+    url: '/stripe/create/customer',
+    data,
+  });
+};
 
-interface GetCustomerCardsResponse {
-  success: boolean;
-  paymentMethods: StripeCard[];
-  message?: string;
-}
+/**
+ * Attach a payment method to an existing Stripe customer
+ * @param customerId Stripe customer ID
+ * @param paymentMethodId Stripe payment method ID
+ * @returns Response with attached payment method details
+ */
+export const attachPaymentMethod = (
+  customerId: string,
+  paymentMethodId: string
+): Promise<AttachPaymentMethodResponse> => {
+  return request<AttachPaymentMethodResponse>({
+    method: 'post',
+    url: `/stripe/customer/${customerId}/payment-methods`,
+    data: {
+      paymentMethodId,
+    },
+  });
+};
 
-interface CreatePaymentIntentResponse {
-  success: boolean;
-  clientSecret: string;
-  paymentIntentId: string;
-  message?: string;
-}
+/**
+ * Set a payment method as the default for a customer
+ * @param customerId Stripe customer ID
+ * @param paymentMethodId Stripe payment method ID to set as default
+ * @returns Success response
+ */
+export const setDefaultPaymentMethod = (
+  customerId: string,
+  paymentMethodId: string
+): Promise<{ success: boolean; message?: string }> => {
+  return request<{ success: boolean; message?: string }>({
+    method: 'post',
+    url: `/stripe/customers/${customerId}/default-payment-method`,
+    data: {
+      paymentMethodId,
+    },
+  });
+};
 
-interface ProcessPaymentResponse {
+/**
+ * Get all payment methods for a customer
+ * @param customerId Stripe customer ID
+ * @returns List of payment methods attached to the customer
+ */
+export const getCustomerPaymentMethods = (
+  customerId: string
+): Promise<PaymentMethodsResponse> => {
+  return request<PaymentMethodsResponse>({
+    method: 'get',
+    url: `/stripe/customers/${customerId}/payment-methods`,
+  });
+};
+
+/**
+ * Delete a payment method
+ * @param paymentMethodId Stripe payment method ID to delete
+ * @returns Success response
+ */
+export const deletePaymentMethod = (
+  paymentMethodId: string
+): Promise<{ success: boolean; message?: string }> => {
+  return request<{ success: boolean; message?: string }>({
+    method: 'delete',
+    url: `/stripe/payment-methods/${paymentMethodId}`,
+  });
+};
+
+/**
+ * Process a payment with a saved payment method
+ * @param amount Amount in cents to charge
+ * @param paymentMethodId Payment method ID to use
+ * @param customerId Customer ID
+ * @param description Optional description for the payment
+ * @returns Payment response
+ */
+export const processPayment = (
+  amount: number,
+  paymentMethodId: string,
+  customerId: string,
+  description?: string
+): Promise<{
   success: boolean;
   payment: {
     id: string;
@@ -37,163 +141,62 @@ interface ProcessPaymentResponse {
     status: string;
   };
   message?: string;
-}
-
-interface AddPaymentMethodResponse {
-  success: boolean;
-  paymentMethod: StripeCard;
-  message?: string;
-}
-
-interface SetDefaultPaymentMethodResponse {
-  success: boolean;
-  customer: StripeCustomer;
-  message?: string;
-}
-
-interface DeletePaymentMethodResponse {
-  success: boolean;
-  message?: string;
-}
-
-interface BuyCreditsResponse {
-  success: boolean;
-  updatedCredits: number;
-  transaction: {
-    id: string;
-    amount: number;
-    creditsAdded: number;
-    date: string;
-  };
-  message?: string;
-}
-
-/**
- * Service for handling Stripe payment operations
- */
-const stripeService = {
-  /**
-   * Get all payment methods for a customer
-   */
-  getCustomerCards: (customerId: string): Promise<GetCustomerCardsResponse> => {
-    return request<GetCustomerCardsResponse>({
-      method: 'get',
-      url: `/stripe/customers/${customerId}/payment-methods`,
-    });
-  },
-
-  /**
-   * Create a payment intent for client-side confirmation
-   */
-  createPaymentIntent: (
-    amount: number, 
-    currency: string = 'usd', 
-    customerId?: string
-  ): Promise<CreatePaymentIntentResponse> => {
-    return request<CreatePaymentIntentResponse>({
-      method: 'post',
-      url: '/stripe/payment-intents',
-      data: {
-        amount,
-        currency,
-        customerId,
-      },
-    });
-  },
-
-  /**
-   * Add a new payment method to customer
-   */
-  addPaymentMethod: (
-    customerId: string, 
-    paymentMethodId: string
-  ): Promise<AddPaymentMethodResponse> => {
-    return request<AddPaymentMethodResponse>({
-      method: 'post',
-      url: `/stripe/customers/${customerId}/payment-methods`,
-      data: {
-        paymentMethodId,
-      },
-    });
-  },
-
-  /**
-   * Set default payment method for a customer
-   */
-  setDefaultPaymentMethod: (
-    customerId: string, 
-    paymentMethodId: string
-  ): Promise<SetDefaultPaymentMethodResponse> => {
-    return request<SetDefaultPaymentMethodResponse>({
-      method: 'post',
-      url: `/stripe/customers/${customerId}/default-payment-method`,
-      data: {
-        paymentMethodId,
-      },
-    });
-  },
-
-  /**
-   * Delete a payment method
-   */
-  deletePaymentMethod: (
-    paymentMethodId: string
-  ): Promise<DeletePaymentMethodResponse> => {
-    return request<DeletePaymentMethodResponse>({
-      method: 'delete',
-      url: `/stripe/payment-methods/${paymentMethodId}`,
-    });
-  },
-
-  /**
-   * Process payment with existing payment method
-   */
-  processPaymentWithSavedCard: (
-    amount: number,
-    paymentMethodId: string,
-    customerId: string,
-    description?: string
-  ): Promise<ProcessPaymentResponse> => {
-    return request<ProcessPaymentResponse>({
-      method: 'post',
-      url: '/stripe/charge',
-      data: {
-        amount,
-        paymentMethodId,
-        customerId,
-        description,
-      },
-    });
-  },
-
-  /**
-   * Buy credits with saved payment method
-   */
-  buyCredits: (
-    amount: number,
-    paymentMethodId: string,
-    creditsAmount: number
-  ): Promise<BuyCreditsResponse> => {
-    return request<BuyCreditsResponse>({
-      method: 'post',
-      url: '/stripe/buy-credits',
-      data: {
-        amount,
-        paymentMethodId,
-        creditsAmount,
-      },
-    });
-  },
-
-  /**
-   * Check if user has Stripe customer record, create if not
-   */
-  ensureCustomer: (): Promise<{ success: boolean; customerId: string }> => {
-    return request<{ success: boolean; customerId: string }>({
-      method: 'post',
-      url: '/stripe/ensure-customer',
-    });
-  },
+}> => {
+  return request<{
+    success: boolean;
+    payment: {
+      id: string;
+      amount: number;
+      status: string;
+    };
+    message?: string;
+  }>({
+    method: 'post',
+    url: '/stripe/charge',
+    data: {
+      amount,
+      paymentMethodId,
+      customerId,
+      description,
+    },
+  });
 };
 
-export default stripeService;
+/**
+ * Create a setup intent for future payments
+ * @param customerId Stripe customer ID
+ * @returns Setup intent client secret
+ */
+export const createSetupIntent = (
+  customerId: string
+): Promise<{ success: boolean; clientSecret: string; message?: string }> => {
+  return request<{ success: boolean; clientSecret: string; message?: string }>({
+    method: 'post',
+    url: '/stripe/setup-intents',
+    data: {
+      customerId,
+    },
+  });
+};
+
+/**
+ * Check if a customer exists, create if not
+ * @param email Customer email
+ * @param name Customer name
+ * @returns Customer ID
+ */
+export const ensureCustomer = (
+  email: string,
+  name: string
+): Promise<{ success: boolean; customerId: string; message?: string }> => {
+  return request<{ success: boolean; customerId: string; message?: string }>({
+    method: 'post',
+    url: '/stripe/ensure-customer',
+    data: {
+      email,
+      name,
+    },
+  });
+};
+
+

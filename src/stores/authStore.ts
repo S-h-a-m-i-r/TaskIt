@@ -72,6 +72,7 @@ const useAuthStore = create(
 				completeRegistration: async (
 					registrationData: CompleteRegistrationData
 				) => {
+					
 					set({ loading: true });
 					try {
 						const res = await completeRegistration(registrationData);

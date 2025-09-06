@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import InputField from "../../generalComponents/InputField";
 import { useForm } from "react-hook-form";
 import ButtonComponent from "../../generalComponents/ButtonComponent";
-import { Select, Radio, RadioChangeEvent } from "antd";
+import { Select, Radio, RadioChangeEvent, message } from "antd";
 import useUserStore from "../../../stores/userStore";
 import { useNavigate, useParams } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -59,7 +59,6 @@ const AddTeam = () => {
   // Populate form when team member data is loaded
   useEffect(() => {
     if (selectedTeamMember && isEditMode) {
-      console.log("Populating form with team member data:", selectedTeamMember);
       reset({
         firstName: selectedTeamMember.firstName,
         lastName: selectedTeamMember.lastName,
@@ -79,17 +78,14 @@ const AddTeam = () => {
     if (loading) return; // Prevent multiple submissions
 
     try {
-      console.log("Sending data:", data);
       let response;
 
       if (isEditMode && id) {
         // Update existing team member
         response = await updateTeamMember(id, data);
-        console.log("Update Success:", response);
       } else {
         // Add new team member
         response = await addTeamMember(data);
-        console.log("Add Success:", response);
       }
 
       if (response.success) {
@@ -97,7 +93,11 @@ const AddTeam = () => {
       }
       // You can add success notification here
     } catch (error) {
-      console.error("Error saving team member:", error);
+      if (error instanceof Error) {
+        message.error(error.message || 'An error occurred while saving the team member. Please try again.');
+      } else {
+        message.error('An error occurred while saving the team member. Please try again.');
+      }
       // You can add error notification here
     }
   };
@@ -123,7 +123,11 @@ const AddTeam = () => {
       }
       // You can add success notification here
     } catch (error) {
-      console.error("Error deleting team member:", error);
+      if (error instanceof Error) {
+        message.error(error.message || 'An error occurred');
+      } else {
+        message.error('An error occurred ');
+      }
       // You can add error notification here
     }
   };

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useTaskStore from "../../stores/taskStore";
 import { TasksHeadersData } from "../../datadump";
@@ -21,6 +20,7 @@ interface TaskStore {
 		tasks: Task[];
 		message?: string;
 	}>;
+	tasks: Task[];
 }
 
 interface StatusColorMap {
@@ -36,23 +36,23 @@ export const statusColor: StatusColorMap = {
 };
 
 const AllUsersTasksList = () => {
-	const [tasks, setTasks] = useState<Task[]>([]);
-	const { getTaskList } = useTaskStore() as unknown as TaskStore;
+	const { tasks } = useTaskStore() as TaskStore;
+	
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		const fetchTasks = async () => {
-			try {
-				const res = await getTaskList();
-				if (res.success) {
-					setTasks(res.tasks);
-				}
-			} catch (error) {
-				console.error('Failed to fetch tasks:', error);
-			}
-		};
-		fetchTasks();
-	}, [getTaskList]);
+	// useEffect(() => {
+	// 	const fetchTasks = async () => {
+	// 		try {
+	// 			const res = await getTaskList();
+	// 			if (res.success) {
+	// 				setTasks(res.tasks);
+	// 			}
+	// 		} catch (error) {
+	// 			console.error('Failed to fetch tasks:', error);
+	// 		}
+	// 	};
+	// 	fetchTasks();
+	// }, [getTaskList]);
 
 	const goToTask = (id: string) => navigate(`/task/${id}`);
 

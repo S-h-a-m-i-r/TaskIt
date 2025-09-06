@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Select, Form, Input, Button, message, Spin } from 'antd';
 import { CreditCard } from 'lucide-react';
 import useAuthStore from '../../stores/authStore';
-import stripeService, { StripeCard } from '../../services/stripeService';
+import { attachPaymentMethod} from '../../services/stripeService';
 import { loadStripe } from '@stripe/stripe-js';
 import {  CardNumberElement,
 	CardExpiryElement,
@@ -49,14 +49,14 @@ const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) =>
 	  if (!paymentMethod) throw new Error("Payment method creation failed");
   
 	  // Add the payment method to the customer
-	  const ensureCustomerResponse = await stripeService.ensureCustomer();
-	  if (!ensureCustomerResponse.success) {
-		throw new Error("Could not create or retrieve customer");
-	  }
+	  // const ensureCustomerResponse = await ensureCustomer();
+	  // if (!ensureCustomerResponse.success) {
+		// throw new Error("Could not create or retrieve customer");
+	  // }
   
-	  const customerId = ensureCustomerResponse.customerId;
+	  const customerId = ''
   
-	  const attachResponse = await stripeService.addPaymentMethod(
+	  const attachResponse = await attachPaymentMethod(
 		customerId,
 		paymentMethod.id
 	  );
@@ -159,10 +159,10 @@ const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) =>
 const PaymentFormContent = () => {
 //   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [savedCards, setSavedCards] = useState<StripeCard[]>([]);
+  const [savedCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
-  const [fetchingCards, setFetchingCards] = useState(false);
+  const [fetchingCards] = useState(false);
   const { user } = useAuthStore();
 
   const stripeCustomerId: string | undefined = user?.paymentMethod?.paymentMethodId;
@@ -180,31 +180,31 @@ const PaymentFormContent = () => {
   const fetchSavedCards = async () => {
     if (!stripeCustomerId) return;
     
-    try {
-      setFetchingCards(true);
-      const response = await stripeService.getCustomerCards(stripeCustomerId);
+  //   try {
+  //     setFetchingCards(true);
+  //     const response = {}
       
-      if (response.success && response.paymentMethods) {
-        setSavedCards(response.paymentMethods);
+  //     if (response.success && response.paymentMethods) {
+  //       setSavedCards(response.paymentMethods);
         
-        // If there's a default card, select it
-        const defaultCard = response.paymentMethods.find(card => card.isDefault);
-        if (defaultCard) {
-          setSelectedCard(defaultCard.id);
-        } else if (response.paymentMethods.length > 0) {
-          setSelectedCard(response.paymentMethods[0].id);
-        }
-      } else {
-        throw new Error(response.message || 'Failed to load payment methods');
-      }
-    } catch (error) {
-      console.error('Error fetching saved cards:', error);
-      message.error('Could not load your saved payment methods');
-      // If we couldn't load cards, show the new card form
-      setShowNewCardForm(true);
-    } finally {
-      setFetchingCards(false);
-    }
+  //       // If there's a default card, select it
+  //       const defaultCard = response.paymentMethods.find(card => card.isDefault);
+  //       if (defaultCard) {
+  //         setSelectedCard(defaultCard.id);
+  //       } else if (response.paymentMethods.length > 0) {
+  //         setSelectedCard(response.paymentMethods[0].id);
+  //       }
+  //     } else {
+  //       throw new Error(response.message || 'Failed to load payment methods');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching saved cards:', error);
+  //     message.error('Could not load your saved payment methods');
+  //     // If we couldn't load cards, show the new card form
+  //     setShowNewCardForm(true);
+  //   } finally {
+  //     setFetchingCards(false);
+  //   }
   };
 
   const getCardIcon = (brand: string) => {
@@ -248,47 +248,45 @@ const PaymentFormContent = () => {
     }
     
     setLoading(true);
-    try {
+    // try {
       // Ensure customer exists
-      let customerId: string | undefined = stripeCustomerId;
-      if (!customerId) {
-        const customerResponse = await stripeService.ensureCustomer();
-        if (customerResponse.success) {
-          customerId = customerResponse.customerId;
-        } else {
-          throw new Error('Could not create customer profile');
-        }
-      }
+      // let customerId: string | undefined = stripeCustomerId;
+      // if (!customerId) {
+      //   const customerResponse = await stripeService.ensureCustomer();
+      //   if (customerResponse.success) {
+      //     customerId = customerResponse.customerId;
+      //   } else {
+      //     throw new Error('Could not create customer profile');
+      //   }
+      // }
 
-      if (selectedCard && customerId) {
+      // if (selectedCard && customerId) {
         // Process payment with selected card
-        const response = await stripeService.buyCredits(
-          5500, // $55.00 (amount in cents)
-          selectedCard,
-          55 // 55 credits
-        );
+        // const response = await stripeService.buyCredits(
+        //   5500, // $55.00 (amount in cents)
+        //   selectedCard,
+        //   55 // 55 credits
+      //   // );
+      //   let response = { success: false }; // Mock response for demonstration
         
-        if (response.success) {
-          message.success('Payment successful! Credits added to your account.');
-          // Update user credits in your app state
-          // For example: updateUserCredits(response.updatedCredits);
-        } else {
-          throw new Error(response.message || 'Payment failed');
-        }
-      } else {
-        message.error('Please add a payment method first');
-      }
-    } catch (error: unknown) {
-      console.error('Payment error:', error);
-      if (error instanceof Error) {
-        message.error(error.message || 'Payment failed. Please try again.');
-      } else {
-        message.error('Payment failed. Please try again.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+      //   if (response.success) {
+      //     message.success('Payment successful! Credits added to your account.');
+      //     // Update user credits in your app state
+      //     // For example: updateUserCredits(response.updatedCredits);
+      //   } else {
+      //     throw new Error(response?.message || 'Payment failed');
+      //   }
+      // } else {
+      //   message.error('Please add a payment method first');
+      // }
+    // } catch (error: unknown) {
+    //   console.error('Payment error:', error);
+    //   if (error instanceof Error) {
+    //     message.error(error.message || 'Payment failed. Please try again.');
+    //   } else {
+    //     message.error('Payment failed. Please try again.');
+    //   }
+    } 
 
   return (
     <div className="flex-1 bg-white p-9 rounded-md">
@@ -312,15 +310,18 @@ const PaymentFormContent = () => {
                 disabled={loading}
               >
                 {savedCards.map(card => (
-                  <Option key={card.id} value={card.id}>
+                  // <Option key={card?.id} value={card?.id}>
                     <div className="flex items-center gap-2">
-                      {typeof getCardIcon(card.brand) === 'string' ? (
+                      {
+                      typeof getCardIcon(card) === 'string' ? (
                     //    <img src={getCardIcon(card.brand)} alt={card.brand} className="w-6 h-6" />
 					<span> image </span>
                       ) : (
-                        getCardIcon(card.brand)
+                        // getCardIcon(card.brand)
+                        <>
+                        </>
                       )}
-                      <span>
+                      {/* <span>
                         {card.brand.charAt(0).toUpperCase() + card.brand.slice(1)} •••• {card.last4}
                         {card.exp_month && card.exp_year && ` (${card.exp_month}/${card.exp_year})`}
                       </span>
@@ -328,9 +329,9 @@ const PaymentFormContent = () => {
                         <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full ml-2">
                           Default
                         </span>
-                      )}
+                      )} */}
                     </div>
-                  </Option>
+                  // </Option>
                 ))}
                 <Option value="new">+ Add new card</Option>
               </Select>

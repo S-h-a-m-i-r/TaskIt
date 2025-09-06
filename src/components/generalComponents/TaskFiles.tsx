@@ -63,8 +63,7 @@ const TaskFiles: React.FC<TaskFilesProps> = ({
 			 await downloadFileService(fileName, file.filename);
 			message.success(`Downloading ${file.filename}`);
 		} catch (error) {
-			console.error('Failed to download file:', error);
-			message.error(`Failed to download ${file.filename}`);
+			message.error(`Failed to download ${file.filename}, ${error}`);
 		}
 	};
 
@@ -102,7 +101,7 @@ const TaskFiles: React.FC<TaskFilesProps> = ({
 				setShowUpload(false);
 			}
 		} catch (error) {
-			console.error('Failed to upload files:', error);
+			throw new Error(error instanceof Error ? error.message : 'Failed to upload files');
 		}
 	};
 
@@ -117,7 +116,11 @@ const TaskFiles: React.FC<TaskFilesProps> = ({
 				onRemoveFile(fileKey);
 			}
 		} catch (error) {
-			console.error('Failed to remove file:', error);
+			if (error instanceof Error) {
+				message.error(error.message || 'Failed to remove file. Please try again.');
+			} else {
+				message.error('Failed to remove file. Please try again.');
+			}
 		}
 	};
 

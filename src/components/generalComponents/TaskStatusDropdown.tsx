@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import { updateTaskStatusService } from '../../services/taskService';
 import { getTaskStatusBadgeClasses } from '../../utils/taskStatusUtils';
 
@@ -54,14 +54,18 @@ const TaskStatusDropdown: React.FC<TaskStatusDropdownProps> = ({
 			const response = await updateTaskStatusService(taskId, selectedStatus);
 
 			if (!response.success) {
-				console.error('Failed to update task status');
+				message.error(response.message || 'Failed to update task status. Please try again.');
                 return;
 			}
 			
 			// Call the callback to notify parent component of the change
 			onStatusChange?.(selectedStatus);
 		} catch (error) {
-			console.error('Error updating task status:', error);
+			message.error(
+				error instanceof Error
+					? error.message
+					: 'An error occurred while updating the task status. Please try again.'
+			);
 		} finally {
 			setIsLoading(false);
 			setShowModal(false);

@@ -73,8 +73,13 @@ export const useFileUpload = (): UseFileUploadReturn => {
 						throw new Error(`Failed to get upload URL for ${file.name}`);
 					}
 				} catch (fileError) {
-					console.error(`Failed to upload file ${file.name}:`, fileError);
-					throw new Error(`Failed to upload file ${file.name}: ${fileError}`);
+message.error(
+							fileError instanceof Error
+								? fileError.message
+								: `Failed to upload file ${file.name}. Please try again.`
+						);
+						// Continue with next file instead of failing all
+						continue;
 				}
 			}
 

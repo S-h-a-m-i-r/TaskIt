@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useRegistrationStore from '../stores/registrationStore';
+import { message } from 'antd';
 
 const RegistrationProgress: React.FC = () => {
 	const { currentStep, setCurrentStep, isStepValid } = useRegistrationStore();
@@ -44,7 +45,7 @@ const RegistrationProgress: React.FC = () => {
 					stepNumber,
 					availableSteps: steps.map(s => s.number)
 				};
-				console.error('Step navigation error:', errorDetail);
+				message.error(errorDetail.message || 'An error occurred while navigating steps. Please try again.');
 				return;
 			}
 
@@ -63,7 +64,7 @@ const RegistrationProgress: React.FC = () => {
 				originalError: error instanceof Error ? error.message : String(error),
 				timestamp: new Date().toISOString()
 			};
-			console.error('Step navigation failed:', errorDetail);
+			message.error(errorDetail.message || 'An error occurred while navigating steps. Please try again.');
 		}
 	};
 

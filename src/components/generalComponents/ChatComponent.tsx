@@ -45,7 +45,6 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 
 		// Join task chat room
 		socket.emit('joinTaskChat', task._id);
-		console.log('Joined task chat room:', task._id);
 
 		// Listen for new messages
 		socket.on('receiveMessage', (message: Message) => {

@@ -19,6 +19,7 @@ interface PlanDetails {
 
 interface PaymentMethod {
 	paymentMethodId: string;
+	customerId: string;
 	cardLast4: string;
 	cardBrand: string;
 	cardExpMonth: number;

@@ -21,7 +21,7 @@ const MainPage = () => {
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
-	const { getTaskList } = useTaskStore();
+	const { getTaskList } = useTaskStore() as any;
 	const { user } = useAuthStore();
 
 	const handleRedirect = () => {
@@ -31,21 +31,21 @@ const MainPage = () => {
 	// Fetch tasks on component mount
 	useEffect(() => {
 		const fetchTasks = async () => {
-			try {
-				setLoading(true);
-				const response = await getTaskList();
-				if (response.success && response.tasks) {
-					setAllTasks(response.tasks);
-				}
-			} catch (error) {
-				console.error('Failed to fetch tasks:', error);
-			} finally {
-				setLoading(false);
+		  try {
+			setLoading(true);
+			const response = await getTaskList();
+			if (response.success && response.tasks) {
+			  setAllTasks(response.tasks);
 			}
+		  } catch (error) {
+			console.error('Failed to fetch tasks:', error);
+		  } finally {
+			setLoading(false);
+		  }
 		};
-
+	  
 		fetchTasks();
-	}, [getTaskList]);
+	  }, [])
 
 	// Calculate task counts by status
 	const taskCounts = useMemo(() => {
