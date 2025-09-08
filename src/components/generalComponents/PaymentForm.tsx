@@ -1,92 +1,127 @@
 import { useState, useEffect } from 'react';
-import { Select, Form, Input, Button, message, Spin } from 'antd';
-import { CreditCard } from 'lucide-react';
+import { Select, Input, Button, message, Spin } from 'antd';
+import { CreditCard, Plus } from 'lucide-react';
 import useAuthStore from '../../stores/authStore';
-import { attachPaymentMethod} from '../../services/stripeService';
+import { attachPaymentMethod, getCustomerCards, purchaseCreditsService } from '../../services/stripeService';
 import { loadStripe } from '@stripe/stripe-js';
-import {  CardNumberElement,
-	CardExpiryElement,
-	CardCvcElement, Elements, useStripe, useElements, 
-	} from '@stripe/react-stripe-js';
+import {
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  Elements,
+  useStripe,
+  useElements,
+} from '@stripe/react-stripe-js';
 
 // Card brand icons
 import visaIcon from '../../assets/icons/visa.svg';
 import mastercardIcon from '../../assets/icons/mastercard.svg';
 import amexIcon from '../../assets/icons/amex.svg';
 import discoverIcon from '../../assets/icons/discover.svg';
+import useCreditsStore from '../../stores/creditsStore';
 
 const { Option } = Select;
 
 // Replace with your actual Stripe publishable key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || 'pk_test_key');;
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY || 'pk_test_key');
+
+// Define interface for card data based on your API response
+interface CardData {
+  id: string;
+  type: string;
+  card: {
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+    funding: string;
+  };
+  billingDetails: {
+    address: {
+      city: string | null;
+      country: string | null;
+      line1: string | null;
+      line2: string | null;
+      postal_code: string | null;
+      state: string | null;
+    };
+    email: string | null;
+    name: string | null;
+    phone: string | null;
+  };
+}
 
 // CardForm component that uses Stripe Elements
 const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const [cardError, setCardError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-//   const { user } = useAuthStore();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuthStore();
+
+  const stripeCustomerId: string | undefined =  user?.paymentMethod?.customerId || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
-	e.preventDefault();
-  
-	if (!stripe || !elements) return;
-  
-	setSaving(true);
-	setCardError(null);
-  
-	try {
-	  const cardNumberElement = elements.getElement(CardNumberElement);
-	  if (!cardNumberElement) throw new Error("Card element not found");
-  
-	  const { error, paymentMethod } = await stripe.createPaymentMethod({
-		type: "card",
-		card: cardNumberElement,
-	  });
-  
-	  if (error) throw new Error(error.message);
-	  if (!paymentMethod) throw new Error("Payment method creation failed");
-  
-	  // Add the payment method to the customer
-	  // const ensureCustomerResponse = await ensureCustomer();
-	  // if (!ensureCustomerResponse.success) {
-		// throw new Error("Could not create or retrieve customer");
-	  // }
-  
-	  const customerId = ''
-  
-	  const attachResponse = await attachPaymentMethod(
-		customerId,
-		paymentMethod.id
-	  );
-  
-	  if (!attachResponse.success) {
-		throw new Error(attachResponse.message || "Failed to save card");
-	  }
-  
-	  message.success("Card added successfully!");
-	  cardNumberElement.clear();
-	  onCardAdded(paymentMethod.id);
-	} catch (err: unknown) {
-    if (err instanceof Error) {
-      setCardError(err.message || "Failed to add card");
-      message.error(err.message || "Failed to add card");
-    } else {
-      setCardError("Failed to add card");
-      message.error("Failed to add card");
-    }
-	} finally {
-	  setSaving(false);
-	}
-  };
-  
+    e.preventDefault();
 
+    if (!stripe || !elements || !stripeCustomerId) {
+      setError("Stripe not initialized or customer ID missing");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Get card element
+      const cardElement = elements.getElement(CardNumberElement);
+      if (!cardElement) {
+        throw new Error("Card element not found");
+      }
+
+      // Create payment method
+      const { error: stripeError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          name: `${user?.firstName || ''} ${user?.lastName || ''}`,
+          email: user?.email,
+        },
+      });
+
+      if (stripeError) {
+        throw new Error(stripeError.message);
+      }
+
+      if (!paymentMethod) {
+        throw new Error("Failed to create payment method");
+      }
+
+      // Attach payment method to customer
+      const response = await attachPaymentMethod(stripeCustomerId, paymentMethod.id);
+
+      if (!response.success) {
+        throw new Error(response.message || "Failed to attach payment method");
+      }
+
+      message.success("New card added successfully!");
+      onCardAdded(paymentMethod.id);
+    } catch (err) {
+      console.error("Error adding card:", err);
+      setError(err instanceof Error ? err.message : "Failed to add card");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Custom styles for Stripe Elements
   const cardElementOptions = {
     style: {
       base: {
+        backgroundColor: 'white',
         fontSize: '16px',
         color: '#424770',
+        fontFamily: 'sans-serif',
         '::placeholder': {
           color: '#aab7c4',
         },
@@ -100,54 +135,45 @@ const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) =>
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
-        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 text-left mb-1">
           Card Number
         </label>
-        <div className="border border-gray-300 rounded-md p-3 bg-white">
+        <div className="border rounded-md p-3 focus-within:border-primary-500 bg-white">
           <CardNumberElement options={cardElementOptions} />
         </div>
-        {cardError && (
-          <p className="mt-2 text-sm text-red-600">{cardError}</p>
-        )}
-      </div>
-	  <div className="mb-4">
-        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
-		Card Expiry
-        </label>
-        <div className="border border-gray-300 rounded-md p-3 bg-white">
-          <CardExpiryElement options={cardElementOptions} />
-        </div>
-        {cardError && (
-          <p className="mt-2 text-sm text-red-600">{cardError}</p>
-        )}
-      </div>
-	  <div className="mb-4">
-        <label className="text-left block text-sm font-medium text-gray-700 mb-2">
-		Card CVC
-        </label>
-        <div className="border border-gray-300 rounded-md p-3 bg-white">
-          <CardCvcElement options={cardElementOptions} />
-        </div>
-        {cardError && (
-          <p className="mt-2 text-sm text-red-600">{cardError}</p>
-        )}
       </div>
 
-      <Form.Item name="saveCard" valuePropName="checked">
-        <div className="flex items-center gap-2">
-          <input type="checkbox" id="saveCard" className="h-4 w-4" defaultChecked />
-          <label htmlFor="saveCard" className="text-sm text-gray-700">
-            Save this card for future payments
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 text-left mb-1">
+            Expiration Date
           </label>
+          <div className="border rounded-md p-3 focus-within:border-primary-500 bg-white">
+            <CardExpiryElement options={cardElementOptions} />
+          </div>
         </div>
-      </Form.Item>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 text-left mb-1">
+            CVC
+          </label>
+          <div className="border rounded-md p-3 focus-within:border-primary-500 bg-white">
+            <CardCvcElement options={cardElementOptions} />
+          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-4 text-red-500 text-sm">
+          {error}
+        </div>
+      )}
 
       <Button
         type="primary"
         htmlType="submit"
-        loading={saving}
-        className="w-full mt-4 bg-primary-50 hover:bg-primary-200 text-white rounded-full"
-        disabled={!stripe}
+        loading={loading}
+        disabled={!stripe || !elements}
+        className="w-full h-12 bg-primary-50 hover:bg-primary-200 text-white text-lg rounded-full"
       >
         Add Card
       </Button>
@@ -155,18 +181,98 @@ const CardForm = ({ onCardAdded }: { onCardAdded: (cardId: string) => void }) =>
   );
 };
 
+
+const CreditsSelector = ({
+  onChange,
+  disabled = false
+}: {
+  onChange: (credits: number, amount: number) => void;
+  disabled?: boolean;
+}) => {
+  const [credits, setCredits] = useState<number>(5);
+  const creditPrice = 5; // $5 per credit
+  
+  useEffect(() => {
+    // Initialize with 5 credits
+    onChange(5, 5 * creditPrice);
+  }, []);
+
+  const handleCreditsChange = (value: number | null) => {
+    if (!value) {
+      setCredits(0);
+      onChange(0, 0);
+      return;
+    }
+    
+    
+    setCredits(value);
+    onChange(value, value * creditPrice);
+  };
+
+  const increaseCredits = () => {
+    const newValue = credits + 1;
+    setCredits(newValue);
+    onChange(newValue, newValue * creditPrice);
+  };
+
+  const decreaseCredits = () => {
+    const newValue = Math.max(0, credits - 1);
+    setCredits(newValue);
+    onChange(newValue, newValue * creditPrice);
+  };
+
+  return (
+    <div className="mb-6">
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Number of Credits
+      </label>
+      <div className="flex items-center">
+        <Button
+          onClick={decreaseCredits}
+          disabled={credits <= 0 || disabled}
+          className="border border-gray-300 px-3 py-1 rounded-l-md"
+          icon={<span className="text-xl font-bold">-</span>}
+        />
+        <Input
+          type="number"
+          min={0}
+          step={1}
+          value={credits}
+          onChange={(e) => handleCreditsChange(Number(e.target.value))}
+          disabled={disabled}
+          className="text-center border-y border-gray-300"
+          style={{ borderRadius: 0 }}
+        />
+        <Button
+          onClick={increaseCredits}
+          disabled={disabled}
+          className="border border-gray-300 px-3 py-1 rounded-r-md"
+          icon={<span className="text-xl font-bold">+</span>}
+        />
+      </div>
+    </div>
+  );
+};
+
 // Main Payment Form component
 const PaymentFormContent = () => {
-//   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [savedCards] = useState([]);
+  const [savedCards, setSavedCards] = useState<CardData[]>([]);
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [showNewCardForm, setShowNewCardForm] = useState(false);
-  const [fetchingCards] = useState(false);
+  const [fetchingCards, setFetchingCards] = useState(false);
+  const [credits, setCredits] = useState(5);
+  const [amount, setAmount] = useState(35); 
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const { user } = useAuthStore();
+  const {  fetchCredits } = useCreditsStore();
 
-  const stripeCustomerId: string | undefined = user?.paymentMethod?.paymentMethodId;
+  const stripeCustomerId: string | undefined =  user?.paymentMethod?.customerId || '';
 
+  const handleCreditsChange = (credits: number, amount: number) => {
+    setCredits(credits);
+    setAmount(amount);
+  };
   // Fetch saved cards when component mounts
   useEffect(() => {
     if (stripeCustomerId) {
@@ -180,31 +286,32 @@ const PaymentFormContent = () => {
   const fetchSavedCards = async () => {
     if (!stripeCustomerId) return;
     
-  //   try {
-  //     setFetchingCards(true);
-  //     const response = {}
+    try {
+      setFetchingCards(true);
+      const response = await getCustomerCards(stripeCustomerId) as { success: boolean; data?: CardData[]; message?: string };
       
-  //     if (response.success && response.paymentMethods) {
-  //       setSavedCards(response.paymentMethods);
+      if (response.success && response.data) {
+        setSavedCards(response.data);
         
-  //       // If there's a default card, select it
-  //       const defaultCard = response.paymentMethods.find(card => card.isDefault);
-  //       if (defaultCard) {
-  //         setSelectedCard(defaultCard.id);
-  //       } else if (response.paymentMethods.length > 0) {
-  //         setSelectedCard(response.paymentMethods[0].id);
-  //       }
-  //     } else {
-  //       throw new Error(response.message || 'Failed to load payment methods');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching saved cards:', error);
-  //     message.error('Could not load your saved payment methods');
-  //     // If we couldn't load cards, show the new card form
-  //     setShowNewCardForm(true);
-  //   } finally {
-  //     setFetchingCards(false);
-  //   }
+        // If there are cards, select the first one
+        if (response.data.length > 0) {
+          setSelectedCard(response.data[0].id);
+          setShowNewCardForm(false);
+        } else {
+          // No cards, show the form
+          setShowNewCardForm(true);
+        }
+      } else {
+        throw new Error(response.message || 'Failed to load payment methods');
+      }
+    } catch (error) {
+      console.error('Error fetching saved cards:', error);
+      message.error('Could not load your saved payment methods');
+      // If we couldn't load cards, show the new card form
+      setShowNewCardForm(true);
+    } finally {
+      setFetchingCards(false);
+    }
   };
 
   const getCardIcon = (brand: string) => {
@@ -239,6 +346,7 @@ const PaymentFormContent = () => {
     setSelectedCard(cardId);
     // Hide the new card form
     setShowNewCardForm(false);
+    message.success('New card added successfully!');
   };
 
   const handlePayment = async () => {
@@ -246,53 +354,53 @@ const PaymentFormContent = () => {
       message.error('Please select a payment method or add a new card');
       return;
     }
-    
+    if (credits <= 0) {
+      message.error('Please select at least 5 credits to purchase');
+      return;
+    }
     setLoading(true);
-    // try {
+    setPurchaseError(null);
+    try {
       // Ensure customer exists
-      // let customerId: string | undefined = stripeCustomerId;
-      // if (!customerId) {
-      //   const customerResponse = await stripeService.ensureCustomer();
-      //   if (customerResponse.success) {
-      //     customerId = customerResponse.customerId;
-      //   } else {
-      //     throw new Error('Could not create customer profile');
-      //   }
-      // }
-
-      // if (selectedCard && customerId) {
-        // Process payment with selected card
-        // const response = await stripeService.buyCredits(
-        //   5500, // $55.00 (amount in cents)
-        //   selectedCard,
-        //   55 // 55 credits
-      //   // );
-      //   let response = { success: false }; // Mock response for demonstration
-        
-      //   if (response.success) {
-      //     message.success('Payment successful! Credits added to your account.');
-      //     // Update user credits in your app state
-      //     // For example: updateUserCredits(response.updatedCredits);
-      //   } else {
-      //     throw new Error(response?.message || 'Payment failed');
-      //   }
-      // } else {
-      //   message.error('Please add a payment method first');
-      // }
-    // } catch (error: unknown) {
-    //   console.error('Payment error:', error);
-    //   if (error instanceof Error) {
-    //     message.error(error.message || 'Payment failed. Please try again.');
-    //   } else {
-    //     message.error('Payment failed. Please try again.');
-    //   }
-    } 
+      if (!stripeCustomerId) {
+        message.error('Customer ID not found. Please reload the page or contact support.');
+        return;
+      }
+      const response = await purchaseCreditsService(
+        stripeCustomerId,
+        selectedCard,
+        amount * 100 // Convert to cents for API
+      );
+      
+      if (!response.success) {
+        throw new Error(response.message || 'Payment failed. Please try again.');
+      }
+      message.success(`Payment successful! ${credits} Credits have been added to your account.`);
+       fetchCredits();
+    } catch (error: unknown) {
+      console.error('Payment error:', error);
+      
+      if (error instanceof Error) {
+        setPurchaseError(error.message);
+        message.error(error.message);
+      } else {
+        setPurchaseError('Payment failed. Please try again.');
+        message.error('Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex-1 bg-white p-9 rounded-md">
       <h2 className="text-[36px] font-semibold text-left mb-6">Payment Details</h2>
       
       <div className="space-y-6">
+      <CreditsSelector 
+          onChange={handleCreditsChange} 
+          disabled={loading || fetchingCards}
+        />
         {savedCards.length > 0 && (
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -310,67 +418,59 @@ const PaymentFormContent = () => {
                 disabled={loading}
               >
                 {savedCards.map(card => (
-                  // <Option key={card?.id} value={card?.id}>
+                  <Option key={card.id} value={card.id}>
                     <div className="flex items-center gap-2">
-                      {
-                      typeof getCardIcon(card) === 'string' ? (
-                    //    <img src={getCardIcon(card.brand)} alt={card.brand} className="w-6 h-6" />
-					<span> image </span>
+                      {typeof getCardIcon(card.card.brand) === 'string' ? (
+                        <img 
+                          src={getCardIcon(card.card.brand) as string} 
+                          alt={card.card.brand} 
+                          className="w-6 h-6" 
+                        />
                       ) : (
-                        // getCardIcon(card.brand)
-                        <>
-                        </>
+                        getCardIcon(card.card.brand)
                       )}
-                      {/* <span>
-                        {card.brand.charAt(0).toUpperCase() + card.brand.slice(1)} •••• {card.last4}
-                        {card.exp_month && card.exp_year && ` (${card.exp_month}/${card.exp_year})`}
+                      <span>
+                        {card.card.brand.charAt(0).toUpperCase() + card.card.brand.slice(1)} •••• {card.card.last4}
+                        {card.card.expMonth && card.card.expYear && 
+                          ` (${card.card.expMonth}/${card.card.expYear})`}
                       </span>
-                      {card.isDefault && (
-                        <span className="text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded-full ml-2">
-                          Default
-                        </span>
-                      )} */}
                     </div>
-                  // </Option>
+                  </Option>
                 ))}
-                <Option value="new">+ Add new card</Option>
+               <Option value="new">
+                  <div className="flex items-center gap-2">
+                    <Plus className="w-5 h-5" />
+                    <span>Add new card</span>
+                  </div>
+                </Option>
               </Select>
             )}
           </div>
         )}
 
-        {showNewCardForm && (
+{showNewCardForm ? (
           <div className="mt-6 border border-gray-200 p-4 rounded-md bg-gray-50">
             <h3 className="text-lg font-medium mb-4">Add New Card</h3>
             <CardForm onCardAdded={handleCardAdded} />
           </div>
-        )}
-
-        {!showNewCardForm && (
-          <Form.Item
-            label="Email Address"
-            name="email"
-            initialValue={user?.email}
-            rules={[
-              { required: true, message: 'Please enter your email' },
-              { type: 'email', message: 'Please enter a valid email' }
-            ]}
-          >
-            <Input placeholder="your@email.com" />
-          </Form.Item>
-        )}
-
-        {!showNewCardForm && (
+        ) : (
           <div className="pt-4">
-            <Button 
-              type="primary"
-              onClick={handlePayment}
-              loading={loading}
-              className="w-full h-12 bg-primary-50 hover:bg-primary-200 text-white text-lg rounded-full"
-            >
-              Pay $55 USD
-            </Button>
-          </div>
+          {purchaseError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
+              {purchaseError}
+            </div>
+          )}
+          
+          <Button 
+            type="primary"
+            onClick={handlePayment}
+            loading={loading}
+            disabled={loading || credits < 1}
+            className="w-full h-12 bg-primary-50 hover:bg-primary-200 text-white text-lg rounded-full"
+          >
+            Pay ${amount.toFixed(2)} USD for {credits} credits
+          </Button>
+        </div>
         )}
         
         <p className="text-gray-500 text-sm text-center mt-4">

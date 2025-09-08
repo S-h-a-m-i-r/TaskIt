@@ -66,7 +66,7 @@ export const attachPaymentMethod = (
 ): Promise<AttachPaymentMethodResponse> => {
   return request<AttachPaymentMethodResponse>({
     method: 'post',
-    url: `/stripe/customer/${customerId}/payment-methods`,
+    url: `/stripe/customer/${customerId}/addCard`,
     data: {
       paymentMethodId,
     },
@@ -102,7 +102,7 @@ export const getCustomerPaymentMethods = (
 ): Promise<PaymentMethodsResponse> => {
   return request<PaymentMethodsResponse>({
     method: 'get',
-    url: `/stripe/customers/${customerId}/payment-methods`,
+    url: `/stripe/customer/${customerId}/payment-methods`,
   });
 };
 
@@ -200,3 +200,41 @@ export const ensureCustomer = (
 };
 
 
+export const getCustomerCards = async (customerId: string) => {
+  try {
+    const response = await request({
+      method: 'get',
+      url: `/stripe/customer/${customerId}/payment-methods?type=card`,
+    });
+    
+    return response;
+  } catch (error) {
+    console.error('Error fetching customer cards:', error);
+    throw error;
+  }
+};
+
+
+
+export const purchaseCreditsService = (
+  customerId: string,
+  paymentMethodId: string | null,
+  amount: number
+): Promise<{
+  success: boolean;
+  data?: {
+    totalAvailable: number;
+    recentlySpent: number;
+    transactionId: string;
+  };
+  message?: string;
+}> => {
+  return request({
+    method: 'post',
+    url: `/stripe/${customerId}/purchaseCredits`,
+    data: {
+      paymentMethodId,
+      creditAmount: amount,
+    },
+  });
+};

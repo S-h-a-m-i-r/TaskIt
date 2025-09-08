@@ -7,6 +7,8 @@ type PaymentMethodType = {
 	cardExpYear: 'number',
 	cardFunding: 'string',
 	paymentMethodId: 'string',
+	customerId?: string;
+
 }
 
 export interface User {
