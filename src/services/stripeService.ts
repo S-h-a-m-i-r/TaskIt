@@ -231,7 +231,7 @@ export const purchaseCreditsService = (
 }> => {
   return request({
     method: 'post',
-    url: `/stripe/${customerId}/purchaseCredits`,
+    url: `/stripe/${customerId}/purchaseCredits?txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     data: {
       paymentMethodId,
       creditAmount: amount,

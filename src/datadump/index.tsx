@@ -1,6 +1,7 @@
 import inprogress_icon from "../assets/icons/Inprogress_icon.svg";
 import submitted_icon from "../assets/icons/submitted_icon.svg";
 import closed_icon from "../assets/icons/closed_icon.svg";
+import complete_icon from "../assets/icons/submitted_icon.svg";
 
 
 export const adminTaskList = [
@@ -332,6 +333,14 @@ export const CardsData = [
 		percent: 8.5,
 		count: 66,
 		icon: submitted_icon,
+		path: '/submitted',
+		color: '#EFF6FF',
+	},
+	{
+		title: 'Tasks Completed',
+		percent: 8.5,
+		count: 66,
+		icon: complete_icon,
 		path: '/submitted',
 		color: '#EFF6FF',
 	},

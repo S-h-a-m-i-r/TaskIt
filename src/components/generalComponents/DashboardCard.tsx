@@ -1,13 +1,11 @@
 import CountUp from "react-countup";
-import trendingUp from "../../assets/icons/trendingUp_icon.svg";
 import { To, useNavigate } from "react-router-dom";
 
 interface DashboardCardProps {
 	title: string;
-	percent: number;
 	count: number;
 	icon: string | undefined;
-	path: string;
+	path?: string;
 	color?: string;
 }
 
@@ -21,8 +19,8 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
 	return (
 		<div
 			style={{ backgroundColor: props?.color }}
-			className={` flex-1 bg-gray-50 rounded-md p-4 shadow-md cursor-pointer transform transition-transform hover:-translate-y-1]`}
-			onClick={() => handleClick(props.path)}
+			className={` flex-1 bg-gray-50 rounded-md p-4 shadow-md cursor-pointer transform transition-transform hover:-translate-y-1] h-36`}
+			onClick={() => props?.path && handleClick(props.path)}
 		>
 			<div className="w-full flex justify-between items-start">
 				<div className="text-left flex flex-col gap-3">
@@ -37,11 +35,6 @@ const DashboardCard: React.FC<DashboardCardProps> = (props) => {
 				<div className="bg-gray-200 p-3 rounded-full">
 					<img src={props.icon} alt="icon" />
 				</div>
-			</div>
-			<div className="flex items- justify-start mt-7 gap-2">
-				<img src={trendingUp} alt="trending up/down icon" />
-				<span className="text-primary-300">{`${props.percent}%`}</span>
-				<span>Up</span>
 			</div>
 		</div>
 	);

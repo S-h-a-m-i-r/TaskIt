@@ -13,15 +13,16 @@ import { useNavigate } from 'react-router-dom';
 import useTaskStore from '../../stores/taskStore';
 import useAuthStore from '../../stores/authStore';
 import { Task } from '../../types/task';
+import CustomCalendarDay from '../../components/generalComponents/DotIndicator';
 
 
 const MainPage = () => {
-	const [selectedDate, setSelectedDate] = useState(new Date());
+	
 	const [allTasks, setAllTasks] = useState<Task[]>([]);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 
-	const { getTaskList } = useTaskStore() as any;
+	const { getTaskList } = useTaskStore() as { getTaskList: () => Promise<{ success: boolean; tasks: Task[] }> };
 	const { user } = useAuthStore();
 
 	const handleRedirect = () => {
@@ -60,30 +61,68 @@ const MainPage = () => {
 		return counts;
 	}, [allTasks]);
 
+	const getTasksByStatus = useMemo(() => {
+		const tasksByStatus = {
+			inProgress: allTasks?.filter((task: { status: string; }) => task.status === 'InProgress')
+				.length,
+			submitted: allTasks?.filter((task: { status: string; }) => task.status === 'Submitted').length,
+			completed: allTasks?.filter((task: { status: string; }) => task.status === 'Completed').length,
+			closed: allTasks?.filter((task: { status: string; }) => task.status === 'Closed').length,
+		};
+
+		return tasksByStatus;
+	}, [allTasks]);
 	// Create dynamic cards data with real task counts
 	const dynamicCardsData = useMemo(() => {
 		return [
 			{
-				...CardsData[0], // Tasks in progress
-				count: taskCounts.inProgress,
-				percent: taskCounts.inProgress > 0 ? 3.5 : 0,
-			},
-			{
-				...CardsData[1], // Tasks submitted
+				title: 'Tasks Submitted',
+				value: getTasksByStatus.submitted.toString(),
+				color: "#EEF6FF",
 				count: taskCounts.submitted,
-				percent: taskCounts.submitted > 0 ? 8.5 : 0,
+				icon: CardsData[0].icon,
+				path: '/submitted'
+
+	
 			},
 			{
-				...CardsData[2], // Tasks closed
+				title: 'Tasks In Progress',
+				value: getTasksByStatus.inProgress.toString(),
+				color: "#FEFBEB",
+				count: taskCounts.inProgress,
+				icon: CardsData[1].icon,
+				path: '/inProgress'
+	
+			},
+			
+			{
+				title: 'Tasks Completed',
+				value: getTasksByStatus.completed.toString(),
+				color: "#EFFDF4",
+				count: taskCounts.completed,
+				icon: CardsData[2].icon,
+				ipath: '/completed'
+			},
+			{
+				title: 'Tasks Closed',
+				value: getTasksByStatus.closed.toString(),
+				color: "#FEF1F2",
 				count: taskCounts.closed,
-				percent: taskCounts.closed > 0 ? 16 : 0,
+				icon: CardsData[3].icon,
+				path: '/closed'
 			},
 		];
 	}, [taskCounts]);
 
+	const renderDayContents = ( _Day:number, date: Date) => {
+		return <CustomCalendarDay date={date} tasks={allTasks} />;
+	  };
+	
 	// Get user's first name for greeting
 	const userName = user?.firstName || user?.userName || 'User';
 
+	
+	
 	return (
 		<div className="flex flex-col gap-5 p-9">
 			{/* Dynamic greeting with user's name */}
@@ -92,7 +131,7 @@ const MainPage = () => {
 			</div>
 
 			{/* Task Cards with real data */}
-			<div className="mt-14 grid grid-cols-1 max-sm:justify-center sm:grid-cols-2 md:grid-cols-3 gap-4">
+			<div className="mt-14 grid grid-cols-1 max-sm:justify-center sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
 				{loading ? (
 					// Beautiful skeleton loading for cards
 					<CardSkeleton count={3} />
@@ -102,7 +141,6 @@ const MainPage = () => {
 						<DashboardCard
 							key={index}
 							title={element.title}
-							percent={element.percent}
 							count={element.count}
 							icon={element.icon}
 							path={element.path}
@@ -135,13 +173,19 @@ const MainPage = () => {
 
 				{/* DatePicker + Credits - Fixed width, right aligned */}
 				<div className="flex flex-col items-end gap-4 md:max-w-[330px] w-full">
-					<div className="w-full max-md:hidden flex justify-end">
-						<DatePicker
-							selected={selectedDate}
-							onChange={(date) => setSelectedDate(date || new Date())}
-							inline
-						/>
-					</div>
+				<div className="w-full max-md:hidden flex justify-end">
+				<DatePicker
+              onChange={() => {/* Do nothing */}}
+              inline
+              renderDayContents={renderDayContents}
+              calendarClassName="task-calendar"
+              dayClassName={() => ""}
+              todayButton={null}
+              showPopperArrow={false}
+              disabledKeyboardNavigation
+              readOnly={true}
+            />
+          </div>
 					<div className="bg-white rounded-md w-full p-6 flex flex-col gap-5">
 						<h2 className="text-2xl">Credits</h2>
 						<CircularChart />

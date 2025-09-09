@@ -59,7 +59,7 @@ interface TaskState {
 const useTaskStore = create(
 	devtools(
 		
-			(set): TaskState => ({
+			(set, get): TaskState => ({
 				tasks: [],
 				messages: [],
 				task: null,
@@ -104,6 +104,7 @@ const useTaskStore = create(
 						throw error;
 					} finally {
 						set({ loading: false });
+						await (get() as TaskState).getTaskList();
 					}
 				},
 				uploadFiles: async (files: File[]) => {
