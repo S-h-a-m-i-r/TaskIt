@@ -2,10 +2,6 @@ import ButtonComponent from "../../components/generalComponents/ButtonComponent"
 import { useNavigate } from "react-router-dom";
 import { generatePDF } from "../../utils/pdfGenerator";
 import {
-  dummyInvoiceData,
-  InvoiceData,
-} from "../../components/generalComponents/InvoiceTemplate";
-import {
   getTaskStatusBadgeClasses,
   getTaskStatusColors,
 } from "../../utils/taskStatusUtils";
@@ -58,8 +54,8 @@ interface Task {
   invoiceNumber?: string;
   user?: string;
   invoiceDate?: string;
-  invoiceAmount?: string;
-  invoicePaymentMethod?: string;
+  invoiceAmount?: number;
+  invoicePaymentType?: string;
   invoiceActions?: boolean;
   teamManagementName?: string;
   teamManagementEmail?: string;
@@ -99,9 +95,11 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
     navigate("/profile");
   };
 
-  const handleDownloadPdf = async (inVoiceData: InvoiceData) => {
-    await generatePDF(inVoiceData);
-  };
+  const handleDownloadPdf = async (id: string | undefined) => {
+      if (id) {
+          await generatePDF(id);
+      }
+    };
 
   const handleOpenTask = (task: Task, role: string) => {
     navigate(`/${role.toLowerCase()}/task/${task?.id}`);
@@ -325,7 +323,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
         );
 
       // Invoice related columns
-      case "invoicenumber":
+      case "invoiceNumber":
       case "invoice number":
         return (
           <td className="px-6 py-4 text-sm font-medium text-gray-900">
@@ -340,7 +338,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
           </td>
         );
 
-      case "invoicedate":
+      case "invoiceDate":
       case "invoice date":
         return (
           <td className="px-6 py-4 text-sm font-medium text-gray-900">
@@ -348,15 +346,15 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
           </td>
         );
 
-      case "invoicepaymentmethod":
-      case "invoice payment method":
+      case "invoicePaymentType":
+      case "invoice payment type":
         return (
           <td className="px-6 py-4 text-sm font-medium text-gray-900">
-            {task.invoicePaymentMethod || "-"}
+            {task.invoicePaymentType || "-"}
           </td>
         );
 
-      case "invoiceactions":
+      case "invoiceActions":
       case "invoice actions":
         return (
           <td className=" py-4 text-sm text-gray-600 flex justify-center">
@@ -365,7 +363,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
                 <ButtonComponent
                   title="Download PDF"
                   className="bg-[#EBEDF2] text-[12px] text-black font-medium hover:bg-gray-300 px-3 py-2 rounded-full w-[150px]"
-                  onClick={() => handleDownloadPdf(dummyInvoiceData)}
+                  onClick={() => handleDownloadPdf(task.invoiceNumber)}
                 />
                 {!manager && (
                   <ButtonComponent
@@ -515,51 +513,45 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
 
   return (
     <div className="w-full py-4">
-      <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="sticky top-0 z-10">
-              <tr className="bg-gray-50 border-b border-gray-200">
-                {tasksHeader?.map((header, index) => (
-                  <th
-                    key={index}
-                    className="px-6 py-4 text-left text-sm font-semibold text-gray-900 bg-gray-50 w-[155px] max-w-[155px]"
-                  >
-                    {header}
-                  </th>
-                ))}
+  <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+    <div className="overflow-x-auto">
+      <div className="max-h-[500px] overflow-y-auto">
+        <table className="w-full table-fixed border-collapse">
+          <thead className="sticky top-0 bg-gray-200 z-10">
+            <tr className="border-b border-gray-200">
+              {tasksHeader?.map((header, index) => (
+                <th
+                  key={index}
+                  className="px-6 py-3 text-left text-sm font-semibold text-gray-900 w-[155px] max-w-[155px]"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {tasks?.map((task, index) => (
+              <tr
+                key={index}
+                className={`${getRowBackgroundColor(
+                  task
+                )} hover:bg-slate-300/50 transition-colors`}
+              >
+                {tasksHeader.map((header) =>
+                  React.cloneElement(renderCell(task, header) as React.ReactElement, {
+                    className:
+                      "px-6 py-4 text-sm text-gray-600 text-left w-[155px] max-w-[155px] truncate " +
+                      ((renderCell(task, header) as React.ReactElement).props.className || ""),
+                  })
+                )}
               </tr>
-            </thead>
-          </table>
-          <div className="max-h-[500px] overflow-y-auto">
-            <table className="w-full">
-              <tbody className="divide-y divide-gray-200">
-                {tasks?.map((task, index) => (
-                  <tr
-                    key={index}
-                    className={`${getRowBackgroundColor(
-                      task
-                    )} hover:bg-slate-300/50 transition-colors w-[155px]`}
-                  >
-                   {tasksHeader.map((header) => (
-                        // Add width classes to each cell
-                        React.cloneElement(
-                            renderCell(task, header) as React.ReactElement,
-                            {
-                                className:
-                                    "px-6 py-4 text-sm text-gray-600 text-left w-[155px] max-w-[155px] truncate " +
-                                    ((renderCell(task, header) as React.ReactElement).props.className || ""),
-                            }
-                        )
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
+  </div>
+</div>
   );
 };
 

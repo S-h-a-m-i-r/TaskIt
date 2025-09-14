@@ -1,23 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
-import {  adminPageInvoicesDetails, adminPageInvoicesHeader} from '../../../datadump'
+import { adminPageInvoicesHeader } from '../../../datadump';
+import useInvoiceStore from '../../../stores/invoiceStore';
 import TaskTable from '../../../pages/admin/TaskTable'
 import {  ChevronDown } from 'lucide-react';
 import ButtonComponent from '../../generalComponents/ButtonComponent';
 import ProfileDropdown from '../../generalComponents/ProfileButton';
 import useAuthStore from '../../../stores/authStore';
+import LoadingDots from '../../generalComponents/LoadingDots';
 
 const AdminPageInvoices = () => {
 	const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 	const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
-	const [selectedFilters, setSelectedFilters] = useState<
-		Record<string, string>
-	>({});
+	const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
+	const { invoices, loading, error, fetchInvoices } = useInvoiceStore();
 	const { user } = useAuthStore();
 	const filterOptions = {
 		Date: ['Today', 'Tomorrow', 'this week', 'this month'],
 		Task: ['Active', 'Inactive'],
 		User: ['Alice', 'Bob', 'John', 'Jane'],
 	};
+
+	useEffect(() => {
+		fetchInvoices();
+		// eslint-disable-next-line
+	}, []);
 
 	const toggleDropdown = (filter: string) => {
 		setOpenDropdown(openDropdown === filter ? null : filter);
@@ -30,6 +36,7 @@ const AdminPageInvoices = () => {
 		}));
 		setOpenDropdown(null);
 	};
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
@@ -40,10 +47,19 @@ const AdminPageInvoices = () => {
 				setOpenDropdown(null);
 			}
 		};
-
 		document.addEventListener('mousedown', handleClickOutside);
 		return () => document.removeEventListener('mousedown', handleClickOutside);
 	}, [openDropdown]);
+
+
+	const transformedInvoices = invoices.map((invoice) => ({
+  invoiceNumber: invoice.invoiceNumber,
+  user: invoice.user,
+  invoiceAmount: invoice.invoiceAmount,
+  invoiceDate: invoice.invoiceDate,
+  invoicePaymentType: invoice.invoicePaymentType,
+  invoiceActions: true,
+}));
 
 	return (
 		<>
@@ -106,10 +122,18 @@ const AdminPageInvoices = () => {
 			<h2 className="mt-4 mb-2 text-2xl text-left font-semibold text-gray-900">
 				Customer Credit Table
 			</h2>
-			<TaskTable
-				tasks={adminPageInvoicesDetails}
-				tasksHeader={adminPageInvoicesHeader}
-			/>
+			{loading ? (
+				<div 
+				className='h-[500px] flex justify-center items-center'
+				><LoadingDots/></div>
+			) : error ? (
+				<div className="text-red-500">{error}</div>
+			) : (
+				<TaskTable
+					tasks={transformedInvoices}
+					tasksHeader={adminPageInvoicesHeader}
+				/>
+			)}
 		</>
 	);
 };

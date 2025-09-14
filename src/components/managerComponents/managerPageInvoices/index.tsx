@@ -107,7 +107,10 @@ const AdminPageInvoices = () => {
 				Customer Credit Table
 			</h2>
 			<TaskTable
-				tasks={adminPageInvoicesDetails}
+				tasks={adminPageInvoicesDetails.map((invoice) => ({
+					...invoice,
+					invoiceAmount: parseFloat(invoice.invoiceAmount),
+				}))}
 				tasksHeader={adminPageInvoicesHeader}
 				manager={true}
 			/>

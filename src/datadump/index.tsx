@@ -731,7 +731,7 @@ export const adminPageInvoicesHeader = [
 	'User',
 	'Amount',
 	'Invoice Date',
-	'Invoice Payment Method',
+	'Invoice Payment Type',
 	'Invoice Actions',
 ];
 export const adminPageInvoicesDetails = [
@@ -740,7 +740,7 @@ export const adminPageInvoicesDetails = [
 		user: 'John Doe',
 		invoiceAmount: '$100',
 		invoiceDate: '2024-07-20',
-		invoicePaymentMethod: 'Credit Card',
+		invoicePaymentType: 'Credit Card',
 		invoiceActions: true,
 	},
 	{
