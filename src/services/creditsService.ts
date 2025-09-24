@@ -40,3 +40,24 @@ export const purchaseCredits = (amount: number, paymentMethodId: string): Promis
     },
   });
 };
+
+// System credit statistics interface
+interface CreditStatistics {
+  totalCreditsUsed: number;
+  creditsUsedThisMonth: number;
+  remainingCreditsOverall: number;
+  expiringCreditsSoon: number;
+}
+
+interface CreditStatisticsResponse {
+  success: boolean;
+  data: CreditStatistics;
+  message?: string;
+}
+
+export const getCreditStatistics = (): Promise<CreditStatisticsResponse> => {
+  return request<CreditStatisticsResponse>({
+    method: 'get',
+    url: '/credits/statistics',
+  });
+};

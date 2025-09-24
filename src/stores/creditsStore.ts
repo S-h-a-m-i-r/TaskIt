@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getAvailableCredits, purchaseCredits } from '../services/creditsService';
+import { getAvailableCredits, purchaseCredits, getCreditStatistics } from '../services/creditsService';
 
 interface CreditsState {
   available: number;
@@ -11,7 +11,17 @@ interface CreditsState {
   // Actions
   fetchCredits: () => Promise<void>;
   purchaseCredits: (amount: number, paymentMethodId: string) => Promise<boolean>;
+  fetchStatistics: () => Promise<void>;
   resetError: () => void;
+  resetStatisticsError: () => void;
+  statistics: {
+    totalCreditsUsed: number;
+    creditsUsedThisMonth: number;
+    remainingCreditsOverall: number;
+    expiringCreditsSoon: number;
+  } | null;
+  statisticsLoading: boolean;
+  statisticsError: string | null;
 }
 
 const useCreditsStore = create<CreditsState>((set) => ({
@@ -20,6 +30,10 @@ const useCreditsStore = create<CreditsState>((set) => ({
   used: 0,
   loading: false,
   error: null,
+  statistics: null,
+  statisticsLoading: false,
+  statisticsError: null,
+
 
   fetchCredits: async () => {
     set({ loading: true, error: null });
@@ -74,7 +88,34 @@ const useCreditsStore = create<CreditsState>((set) => ({
     }
   },
 
+  fetchStatistics: async () => {
+    set({ statisticsLoading: true, statisticsError: null });
+    try {
+      const response = await getCreditStatistics();
+      
+      if (response.success) {
+        set({ 
+          statistics: response.data,
+          statisticsLoading: false 
+        });
+      } else {
+        set({ 
+          statisticsError: response.message || 'Failed to fetch credit statistics', 
+          statisticsLoading: false 
+        });
+      }
+    } catch (error: unknown) {
+      set({ 
+        statisticsError: error instanceof Error
+          ? error.message
+          : 'An error occurred while fetching statistics. Please try again.',
+        statisticsLoading: false 
+      });
+    }
+  },
+
   resetError: () => set({ error: null }),
+  resetStatisticsError: () => set({ statisticsError: null }),
 }));
 
 export default useCreditsStore;

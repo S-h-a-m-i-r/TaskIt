@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown } from "lucide-react";
-import { statsCards } from "../../../datadump";
+import useCreditsStore from "../../../stores/creditsStore";
 
 export default function CreditOverviewDashboard() {
 	const [searchQuery, setSearchQuery] = useState("");
@@ -8,13 +8,12 @@ export default function CreditOverviewDashboard() {
 	const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
 	const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
 
-
+	const { statistics, statisticsLoading, statisticsError, fetchStatistics } = useCreditsStore()
 	const filterOptions = {
-		"Plan Type": ["Basic", "Premium", "Enterprise", "Trial"],
+		
 		"Credits Remaining": ["0-100", "101-500", "501-1000", "1000+"],
-		"Expiry Date Range": ["Next 7 days", "Next 30 days", "Next 90 days", "Custom Range"],
 		"Date of Issuance": ["Last 7 days", "Last 30 days", "Last 90 days", "Custom Range"],
-		Status: ["Active", "Expired", "Pending", "Suspended"],
+		
 	};
 
 	const toggleDropdown = (filter: string) => {
@@ -43,21 +42,75 @@ export default function CreditOverviewDashboard() {
 		return () => document.removeEventListener("mousedown", handleClickOutside);
 	}, [openDropdown]);
 
+	// Fetch statistics on component mount
+	useEffect(() => {
+		fetchStatistics();
+	}, [fetchStatistics]);
+
+	const statsCards = statistics ? [
+		{
+			title: "Total Credits Used",
+			value: statistics.totalCreditsUsed.toLocaleString(),
+		},
+		{
+			title: "Credits Used This Month",
+			value: statistics.creditsUsedThisMonth.toLocaleString(),
+		},
+		{
+			title: "Remaining Credits Overall",
+			value: statistics.remainingCreditsOverall.toLocaleString(),
+		},
+		{
+			title: "Expiring Credits Soon",
+			value: statistics.expiringCreditsSoon.toLocaleString(),
+		},
+	] : [];
+
 	return (
 		<div className="w-full mx-auto py-6 bg-transparent">
 			
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-				{statsCards.map((card, index) => (
-					<div
-						key={index}
-						className="bg-transparent border border-gray-300 rounded-xl p-6 min-h-[136px] hover:shadow-sm transition-shadow"
-					>
-						<div className="space-y-2">
-							<h3 className="text-sm text-left font-medium text-gray-600 leading-tight">{card.title}</h3>
-							<p className="text-3xl text-left font-semibold text-gray-900">{card.value}</p>
+			{statisticsLoading ? (
+					// Loading state
+					Array.from({ length: 4 }).map((_, index) => (
+						<div
+							key={index}
+							className="bg-transparent border border-gray-300 rounded-xl p-6 min-h-[136px] animate-pulse"
+						>
+							<div className="space-y-2">
+								<div className="h-4 bg-gray-200 rounded w-3/4"></div>
+								<div className="h-8 bg-gray-200 rounded w-1/2"></div>
+							</div>
+						</div>
+					))
+				) : statisticsError ? (
+					// Error state
+					<div className="col-span-full bg-red-50 border border-red-200 rounded-xl p-6">
+						<div className="text-center">
+							<p className="text-red-600 font-medium">Failed to load credit statistics</p>
+							<p className="text-red-500 text-sm mt-1">{statisticsError}</p>
+							<button
+								onClick={() => fetchStatistics()}
+								className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+							>
+								Retry
+							</button>
 						</div>
 					</div>
-				))}
+				) : (
+					// Success state
+					statsCards.map((card, index) => (
+						<div
+							key={index}
+							className="bg-transparent border border-gray-300 rounded-xl p-6 min-h-[136px] hover:shadow-sm transition-shadow"
+						>
+							<div className="space-y-2">
+								<h3 className="text-sm text-left font-medium text-gray-600 leading-tight">{card.title}</h3>
+								<p className="text-3xl text-left font-semibold text-gray-900">{card.value}</p>
+							</div>
+						</div>
+					))
+				)}
 			</div>
 
 			{/* Search & Filter Section */}
@@ -88,7 +141,7 @@ export default function CreditOverviewDashboard() {
 									openDropdown === filter
 										? "bg-blue-50 border-blue-200 text-blue-700"
 										: selectedFilters[filter]
-										? "bg-gray-300 border-gray-300 text-gray-900"
+										? "bg-primary-50 border-gray-300 text-white"
 										: "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
 								}`}
 							>
@@ -99,7 +152,7 @@ export default function CreditOverviewDashboard() {
 							</button>
 
 							{openDropdown === filter && (
-								<div className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-xl shadow-lg z-10 py-2">
+								<div className="absolute z-50 top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-xl shadow-lg py-2">
 									{options.map((option) => (
 										<button
 											key={option}

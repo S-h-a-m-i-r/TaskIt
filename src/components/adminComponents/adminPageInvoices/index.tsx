@@ -90,7 +90,7 @@ const AdminPageInvoices = () => {
 									openDropdown === filter
 										? 'bg-blue-50 border-blue-200 text-blue-700'
 										: selectedFilters[filter]
-										? 'bg-gray-300 border-gray-100 text-gray-900'
+										? 'bg-primary-50 border-gray-100 text-white'
 										: 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
 								}`}
 							>
@@ -103,12 +103,12 @@ const AdminPageInvoices = () => {
 							</button>
 
 							{openDropdown === filter && (
-								<div className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-xl shadow-lg z-10 py-2">
+								<div className="absolute z-50 top-full left-0 mt-2 w-full min-w-[200px] bg-white border border-gray-200 rounded-xl shadow-lg py-2">
 									{options.map((option) => (
 										<button
 											key={option}
 											onClick={() => handleOptionSelect(filter, option)}
-											className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+											className="w-full  text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
 										>
 											{option}
 										</button>

@@ -466,7 +466,7 @@ const PaymentFormContent = () => {
             onClick={handlePayment}
             loading={loading}
             disabled={loading || credits < 1}
-            className="w-full h-12 bg-primary-50 hover:bg-primary-200 text-white text-lg rounded-full"
+            className="w-full h-12 bg-primary-50 hover:bg-primary-50/5 text-white text-lg rounded-full"
           >
             Pay ${amount.toFixed(2)} USD for {credits} credits
           </Button>
