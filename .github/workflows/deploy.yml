@@ -1,0 +1,60 @@
+name: Deploy TaskIt Frontend to EC2
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Create deployment artifact
+      run: |
+        tar -czf taskit-frontend.tar.gz dist/
+        
+    - name: Deploy to EC2
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_SSH_KEY }}
+        port: ${{ secrets.EC2_PORT }}
+        script: |
+          # Navigate to project directory
+          cd /home/ubuntu/TaskIt
+          
+          # Pull latest changes
+          git pull origin main
+          
+          # Install dependencies
+          npm ci
+          
+          # Build the application
+          npm run build
+          
+          # Restart PM2 processes
+          pm2 restart taskit-frontend || pm2 start ecosystem.config.js --env production
+          
+          # Save PM2 configuration
+          pm2 save
+          
+          # Show deployment status
+          echo "Deployment completed successfully!"
+          pm2 status

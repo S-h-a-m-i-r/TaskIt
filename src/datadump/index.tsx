@@ -532,7 +532,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '92',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-20',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Jane Smith',
@@ -542,7 +542,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '200',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-21',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Alice Johnson',
@@ -552,7 +552,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '150',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-19',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Bob Brown',
@@ -562,7 +562,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '300',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-22',
-		customerActions: true,
+		
 	},
 	{
 		name: 'John Doe',
@@ -572,7 +572,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '92',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-20',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Jane Smith',
@@ -582,7 +582,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '200',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-21',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Alice Johnson',
@@ -592,7 +592,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '150',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-19',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Bob Brown',
@@ -602,7 +602,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '300',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-22',
-		customerActions: true,
+		
 	},
 	{
 		name: 'John Doe',
@@ -612,7 +612,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '92',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-20',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Jane Smith',
@@ -622,7 +622,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '200',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-21',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Alice Johnson',
@@ -632,7 +632,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '150',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-19',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Bob Brown',
@@ -642,7 +642,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '300',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-22',
-		customerActions: true,
+		
 	},
 	{
 		name: 'John Doe',
@@ -652,7 +652,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '92',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-20',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Jane Smith',
@@ -662,7 +662,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '200',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-21',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Alice Johnson',
@@ -672,7 +672,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '150',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-19',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Bob Brown',
@@ -682,7 +682,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '300',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-22',
-		customerActions: true,
+		
 	},
 	{
 		name: 'John Doe',
@@ -692,7 +692,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '92',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-20',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Jane Smith',
@@ -702,7 +702,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '200',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-21',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Alice Johnson',
@@ -712,7 +712,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '150',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-19',
-		customerActions: true,
+		
 	},
 	{
 		name: 'Bob Brown',
@@ -722,7 +722,7 @@ export const adminpageCustomerDetails = [
 		customerCredits: '300',
 		customerStatus: 'Active',
 		customerLastLogin: '2024-07-22',
-		customerActions: true,
+		
 	},
 ];
 

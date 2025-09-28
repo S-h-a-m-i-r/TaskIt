@@ -1,0 +1,46 @@
+# Nginx configuration for TaskIt Frontend
+# Place this file in /etc/nginx/sites-available/taskit-frontend
+# Then create a symlink: sudo ln -s /etc/nginx/sites-available/taskit-frontend /etc/nginx/sites-enabled/
+
+server {
+    listen 80;
+    server_name 13.53.134.0 ec2-13-53-134-0.eu-north-1.compute.amazonaws.com;  # Your EC2 instance
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "no-referrer-when-downgrade" always;
+    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+    
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied expired no-cache no-store private must-revalidate auth;
+    gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript;
+    
+    # Root directory
+    root /home/ubuntu/TaskIt/dist;
+    index index.html;
+    
+    # Handle client-side routing
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+    
+    # Cache static assets
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    # Security: deny access to hidden files
+    location ~ /\. {
+        deny all;
+    }
+    
+    # Optional: Rate limiting
+    limit_req_zone $binary_remote_addr zone=api:10m rate=10r/s;
+    limit_req zone=api burst=20 nodelay;
+}

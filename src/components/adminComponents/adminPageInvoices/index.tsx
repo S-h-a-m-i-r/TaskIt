@@ -68,10 +68,7 @@ const AdminPageInvoices = () => {
 					Invoice Center
 				</h2>
 				<div className="flex items-center gap-2">
-					<ButtonComponent
-						title="Generate"
-						className="bg-primary-50 text-white text-[14px] px-4 py-2 rounded-md hover:bg-primary-200 transition-all w-[135px]"
-					/>
+					
 					<ProfileDropdown userName={user?.userName || ''} />
 				</div>
 			</div>

@@ -61,3 +61,61 @@ export const getCreditStatistics = (): Promise<CreditStatisticsResponse> => {
     url: '/credits/statistics',
   });
 };
+
+// Customer credit data interface
+interface CustomerCreditData {
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerPlanType: string;
+  totalPurchasedCredits: number;
+  totalRemainingCredits: number;
+  totalSpentCredits: number;
+  expiringSoonCredits: number;
+  lastPurchaseDate: string | null;
+  earliestExpiryDate: string | null;
+  creditBatches: {
+    batchId: string;
+    totalCredits: number;
+    remainingCredits: number;
+    expiresAt: string;
+    createdAt: string;
+  }[];
+}
+
+interface CustomersResponse {
+  success: boolean;
+  data: CustomerCreditData[];
+  count: number;
+  message?: string;
+}
+
+export const getAllCustomersWithCredits = (): Promise<CustomersResponse> => {
+  return request<CustomersResponse>({
+    method: 'get',
+    url: '/credits/customers',
+  });
+};
+
+// Add credits to a customer (admin only)
+interface AddCreditsResponse {
+  success: boolean;
+  data?: {
+    creditsAdded: number;
+    newTotal: number;
+  };
+  message?: string;
+}
+
+export const addCredits = (userId: string, amount: number, reason: string = 'Purchase'): Promise<AddCreditsResponse> => {
+  return request<AddCreditsResponse>({
+    method: 'post',
+    url: '/credits/add',
+    data: {
+      userId,
+      amount,
+      reason
+    }
+  });
+};

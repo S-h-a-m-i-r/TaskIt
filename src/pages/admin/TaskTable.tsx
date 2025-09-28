@@ -6,7 +6,9 @@ import {
   getTaskStatusColors,
 } from "../../utils/taskStatusUtils";
 import useAuthStore from "../../stores/authStore";
-import React from "react";
+import React, { useState } from "react";
+import UserProfileModal from "../../components/adminComponents/UserProfileModal";
+import { CustomerCreditData } from "../../stores/creditsStore";
 
 interface Task {
   id?: string;
@@ -51,6 +53,8 @@ interface Task {
   customerCredits?: string;
   customerLastLogin?: string;
   customerCreditsActions?: boolean;
+  customerId?: string;
+  totalPurchasedCredits?: number;
   invoiceNumber?: string;
   user?: string;
   invoiceDate?: string;
@@ -78,21 +82,40 @@ interface Task {
   memberLastLogin?: string;
   "Team memeber Count"?: string | number;
   isRecurring?: boolean;
+  customerRemainingCredits?: string;
 }
 
 type TaskTableProps = {
   tasks: Task[];
   tasksHeader: string[];
   manager?: boolean;
+  onCreditsAdded?: () => void;
 };
 
-const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
+const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTableProps) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<CustomerCreditData | null>(null);
 
-  const handleProfile = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    navigate("/profile");
+  const handleProfile = (task: Task) => {
+    // Convert task data to CustomerCreditData format
+    const userData: CustomerCreditData = {
+      customerId: task.customerId || task.id || '',
+      customerName: task.customerName || task.name || '',
+      customerEmail: task.customerEmail || task.email || '',
+      customerPhone: task.phone || '',
+      customerPlanType: task.plan || '',
+      totalPurchasedCredits: task.totalPurchasedCredits || 0,
+      totalRemainingCredits: parseInt(task.customerCreditsRemaining || '0'),
+      expiringSoonCredits: parseInt(task.customerExpiringCredits || '0'),
+      lastPurchaseDate: task.customerLastTopUpDate || null,
+      earliestExpiryDate: null, // Not available in task data
+      creditBatches: [] // Not available in task data
+    };
+    
+    setSelectedUser(userData);
+    setIsProfileModalOpen(true);
   };
 
   const handleDownloadPdf = async (id: string | undefined) => {
@@ -220,6 +243,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
       case "lastlogin":
       case "member last login":
       case "memberlastlogin":
+      case "customer last login":
         return (
           <td className="px-6 py-4 text-sm text-gray-600">
             {task?.memberLastLogin || task.customerLastLogin || "-"}
@@ -314,7 +338,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
               <ButtonComponent
                 title="View Profile"
                 className="text-[#5C758A] bg-none text-[14px] font-bold hover:bg-gray-300 px-3 py-2 rounded-full w-[100px]"
-                onClick={() => handleProfile({ preventDefault: () => {} })}
+                onClick={() => handleProfile(task)}
               />
             ) : (
               "-"
@@ -465,7 +489,12 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
             {task.plan || "-"}
           </td>
         );
-
+      case "customerRemainingCredits":
+        return (
+          <td>
+            {task.customerRemainingCredits || "-"}
+          </td>
+        )
       // Additional fields for different use cases
       case "recurring":
         return (
@@ -512,6 +541,7 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
   };
 
   return (
+    <>
     <div className="w-full py-4">
   <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
     <div className="overflow-x-auto">
@@ -552,6 +582,15 @@ const TaskTable = ({ tasks, tasksHeader, manager }: TaskTableProps) => {
     </div>
   </div>
 </div>
+
+      {/* User Profile Modal */}
+      <UserProfileModal
+        visible={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+        userData={selectedUser}
+        onCreditsAdded={onCreditsAdded}
+      />
+    </>
   );
 };
 

@@ -2,18 +2,28 @@ import { useState, useRef, useEffect } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import useCreditsStore from "../../../stores/creditsStore";
 
-export default function CreditOverviewDashboard() {
-	const [searchQuery, setSearchQuery] = useState("");
+interface CreditTaskHeaderProps {
+	searchQuery: string;
+	setSearchQuery: (query: string) => void;
+	selectedFilters: Record<string, string>;
+	setSelectedFilters: (filters: Record<string, string>) => void;
+	onClearFilters: () => void;
+}
+
+export default function CreditOverviewDashboard({ 
+	searchQuery, 
+	setSearchQuery, 
+	selectedFilters, 
+	setSelectedFilters, 
+	onClearFilters 
+}: CreditTaskHeaderProps) {
 	const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 	const dropdownRefs = useRef<Record<string, HTMLDivElement | null>>({});
-	const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
 
 	const { statistics, statisticsLoading, statisticsError, fetchStatistics } = useCreditsStore()
 	const filterOptions = {
-		
-		"Credits Remaining": ["0-100", "101-500", "501-1000", "1000+"],
-		"Date of Issuance": ["Last 7 days", "Last 30 days", "Last 90 days", "Custom Range"],
-		
+		'Credit Remaining': ['<5 Credits', '5-20 Credits', '20-50 Credits', '50+ Credits'],
+		'Date of Issuance': ['Last 7 days', 'Last 30 days', 'Last 90 days', 'Last 6 months'],
 	};
 
 	const toggleDropdown = (filter: string) => {
@@ -21,10 +31,8 @@ export default function CreditOverviewDashboard() {
 	};
 
 	const handleOptionSelect = (filter: string, option: string) => {
-		setSelectedFilters((prev) => ({
-			...prev,
-			[filter]: option,
-		}));
+		const newFilters = { ...selectedFilters, [filter]: option };
+		setSelectedFilters(newFilters);
 		setOpenDropdown(null);
 	};
 	useEffect(() => {
@@ -132,7 +140,7 @@ export default function CreditOverviewDashboard() {
 				</div>
 
 				{/* Filter Buttons with Dropdowns */}
-				<div className="flex flex-wrap gap-4">
+				<div className="flex flex-wrap gap-4 items-center">
 					{Object.entries(filterOptions).map(([filter, options]) => (
 						<div key={filter} className="relative" ref={(el) => (dropdownRefs.current[filter] = el)}>
 							<button
@@ -166,7 +174,34 @@ export default function CreditOverviewDashboard() {
 							)}
 						</div>
 					))}
+					
+					{/* Clear Filters Button */}
+					{(Object.keys(selectedFilters).length > 0 || searchQuery) && (
+						<button
+							onClick={onClearFilters}
+							className="px-4 py-3 bg-gray-300 text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-white transition-all text-sm font-medium"
+						>
+							Clear All Filters
+						</button>
+					)}
 				</div>
+
+				{/* Active Filters Summary */}
+				{(Object.keys(selectedFilters).length > 0 || searchQuery) && (
+					<div className="flex flex-wrap gap-2 items-center">
+						<span className="text-sm text-gray-600">Active filters:</span>
+						{searchQuery && (
+							<span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+								Search: "{searchQuery}"
+							</span>
+						)}
+						{Object.entries(selectedFilters).map(([filter, value]) => (
+							<span key={filter} className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+								{filter}: {value}
+							</span>
+						))}
+					</div>
+				)}
 			</div>
 		</div>
 	);

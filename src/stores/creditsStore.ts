@@ -1,5 +1,26 @@
 import { create } from 'zustand';
-import { getAvailableCredits, purchaseCredits, getCreditStatistics } from '../services/creditsService';
+import { getAvailableCredits, purchaseCredits, getCreditStatistics, getAllCustomersWithCredits } from '../services/creditsService';
+
+export interface CustomerCreditData {
+  customerId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerPlanType: string;
+  totalPurchasedCredits: number;
+  totalRemainingCredits: number;
+  totalSpentCredits: number;
+  expiringSoonCredits: number;
+  lastPurchaseDate: string | null;
+  earliestExpiryDate: string | null;
+  creditBatches: {
+    batchId: string;
+    totalCredits: number;
+    remainingCredits: number;
+    expiresAt: string;
+    createdAt: string;
+  }[];
+}
 
 interface CreditsState {
   available: number;
@@ -12,8 +33,10 @@ interface CreditsState {
   fetchCredits: () => Promise<void>;
   purchaseCredits: (amount: number, paymentMethodId: string) => Promise<boolean>;
   fetchStatistics: () => Promise<void>;
+  fetchCustomers: () => Promise<void>;
   resetError: () => void;
   resetStatisticsError: () => void;
+  resetCustomersError: () => void;
   statistics: {
     totalCreditsUsed: number;
     creditsUsedThisMonth: number;
@@ -22,6 +45,9 @@ interface CreditsState {
   } | null;
   statisticsLoading: boolean;
   statisticsError: string | null;
+  customers: CustomerCreditData[];
+  customersLoading: boolean;
+  customersError: string | null;
 }
 
 const useCreditsStore = create<CreditsState>((set) => ({
@@ -33,6 +59,9 @@ const useCreditsStore = create<CreditsState>((set) => ({
   statistics: null,
   statisticsLoading: false,
   statisticsError: null,
+  customers: [],
+  customersLoading: false,
+  customersError: null,
 
 
   fetchCredits: async () => {
@@ -114,8 +143,35 @@ const useCreditsStore = create<CreditsState>((set) => ({
     }
   },
 
+  fetchCustomers: async () => {
+    set({ customersLoading: true, customersError: null });
+    try {
+      const response = await getAllCustomersWithCredits();
+      
+      if (response.success) {
+        set({ 
+          customers: response.data,
+          customersLoading: false 
+        });
+      } else {
+        set({ 
+          customersError: response.message || 'Failed to fetch customers data', 
+          customersLoading: false 
+        });
+      }
+    } catch (error: unknown) {
+      set({ 
+        customersError: error instanceof Error
+          ? error.message
+          : 'An error occurred while fetching customers data. Please try again.',
+        customersLoading: false 
+      });
+    }
+  },
+
   resetError: () => set({ error: null }),
   resetStatisticsError: () => set({ statisticsError: null }),
+  resetCustomersError: () => set({ customersError: null }),
 }));
 
 export default useCreditsStore;
