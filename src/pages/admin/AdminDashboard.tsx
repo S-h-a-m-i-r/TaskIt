@@ -159,7 +159,7 @@ const AdminDashboard = () => {
 			<div className="mt-10 flex w-full justify-between">
 				<h1 className="font-bold text-[32px] text-primary-100 text-left">
 					{' '}
-					Dashboard
+					AdminDashboard
 				</h1>
 				<ProfileDropdown userName={user?.userName} />
 			</div>
