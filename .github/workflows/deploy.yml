@@ -25,10 +25,6 @@ jobs:
     - name: Build application
       run: npm run build
       
-    - name: Create deployment artifact
-      run: |
-        tar -czf taskit-frontend.tar.gz dist/
-        
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -37,10 +33,16 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: ${{ secrets.EC2_PORT }}
         script: |
-          # Navigate to project directory
-          cd /home/ubuntu/TaskIt
+          # Navigate to TaskAway server directory
+          cd /home/ubuntu/TaskAwayServer
           
-          # Pull latest changes
+          # Pull latest changes from main branch
+          git pull origin main
+          
+          # Navigate to TaskIt directory
+          cd ../TaskIt
+          
+          # Pull latest changes from main branch
           git pull origin main
           
           # Install dependencies
@@ -49,8 +51,15 @@ jobs:
           # Build the application
           npm run build
           
+          # Copy dist folder to TaskAway server
+          echo "Copying dist folder to TaskAway server..."
+          cp -r dist/ ../TaskAwayServer/
+          
+          # Navigate back to TaskAway server
+          cd ../TaskAwayServer
+          
           # Restart PM2 processes
-          pm2 restart taskit-frontend || pm2 start ecosystem.config.js --env production
+          pm2 restart all
           
           # Save PM2 configuration
           pm2 save
