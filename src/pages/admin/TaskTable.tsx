@@ -111,7 +111,8 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
       expiringSoonCredits: parseInt(task.customerExpiringCredits || '0'),
       lastPurchaseDate: task.customerLastTopUpDate || null,
       earliestExpiryDate: null, // Not available in task data
-      creditBatches: [] // Not available in task data
+      creditBatches: [],// Not available in task data
+      totalSpentCredits:  0,
     };
     
     setSelectedUser(userData);
