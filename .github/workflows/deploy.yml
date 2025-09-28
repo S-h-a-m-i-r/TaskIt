@@ -26,7 +26,16 @@ jobs:
         npm install
         
     - name: Build application
-      run: npm run build
+      run: |
+        echo "🔨 Starting build process..."
+        echo "📦 Checking if node_modules exists:"
+        ls -la node_modules/ | head -10
+        echo "📦 Checking package.json scripts:"
+        npm run --silent
+        echo "🔨 Running build command:"
+        npm run build
+        echo "📁 Checking if dist folder was created:"
+        ls -la dist/ || echo "❌ Dist folder not found after build"
       
     - name: Deploy to EC2
       uses: appleboy/ssh-action@v1.0.3
@@ -62,12 +71,27 @@ jobs:
           
           # Install dependencies
           echo "📦 Installing dependencies..."
-          npm ci
+          echo "🔍 Node.js version: $(node --version)"
+          echo "🔍 npm version: $(npm --version)"
+          echo "🔍 Current directory: $(pwd)"
+          echo "🔍 Directory contents:"
+          ls -la
+          # Use npm install instead of npm ci for better compatibility
+          rm -rf node_modules package-lock.json
+          npm install
           echo "✅ Dependencies installed"
           
           # Build the application
           echo "🔨 Building application..."
-          npm run build
+          echo "🔍 Running build with verbose output:"
+          npm run build 2>&1 || {
+            echo "❌ Build failed with error:"
+            echo "🔍 Checking if dist folder exists:"
+            ls -la dist/ || echo "❌ No dist folder found"
+            echo "🔍 Checking node_modules:"
+            ls -la node_modules/ | head -5
+            exit 1
+          }
           echo "✅ Build completed"
           
           # Check if dist folder exists
