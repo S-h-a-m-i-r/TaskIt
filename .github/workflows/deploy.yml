@@ -48,10 +48,12 @@ jobs:
           echo "🚀 Starting deployment process..."
           echo "📅 Deployment started at: $(date)"
           
-          # Navigate to TaskAway directory (parent directory)
-          echo "📁 Navigating to TaskAway directory..."
-          cd /home/ubuntu/TaskAway
+          # Navigate to taskAway directory (parent directory)
+          echo "📁 Navigating to taskAway directory..."
+          cd /home/ubuntu/taskAway
           echo "📍 Current directory: $(pwd)"
+          echo "🔍 Directory contents:"
+          ls -la
           
           # Pull latest changes for TaskAway server
           echo "📥 Pulling latest changes for TaskAway server..."
