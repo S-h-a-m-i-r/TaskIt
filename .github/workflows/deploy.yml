@@ -58,6 +58,9 @@ jobs:
           # Pull latest changes for TaskAway server
           echo "📥 Pulling latest changes for TaskAway server..."
           cd TaskAwayServer
+          echo "🔍 Stashing any local changes..."
+          git stash
+          echo "🔍 Pulling latest changes..."
           git pull origin main
           echo "✅ TaskAway server updated"
           
@@ -68,6 +71,9 @@ jobs:
           
           # Pull latest changes for TaskIt frontend
           echo "📥 Pulling latest changes for TaskIt frontend..."
+          echo "🔍 Stashing any local changes..."
+          git stash
+          echo "🔍 Pulling latest changes..."
           git pull origin main
           echo "✅ TaskIt frontend updated"
           
