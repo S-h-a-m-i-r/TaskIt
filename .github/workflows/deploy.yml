@@ -33,37 +33,84 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         port: ${{ secrets.EC2_PORT }}
         script: |
-          # Navigate to TaskAway server directory
-          cd /home/ubuntu/TaskAwayServer
+          echo "🚀 Starting deployment process..."
+          echo "📅 Deployment started at: $(date)"
           
-          # Pull latest changes from main branch
+          # Navigate to TaskAway directory (parent directory)
+          echo "📁 Navigating to TaskAway directory..."
+          cd /home/ubuntu/TaskAway
+          echo "📍 Current directory: $(pwd)"
+          
+          # Pull latest changes for TaskAway server
+          echo "📥 Pulling latest changes for TaskAway server..."
+          cd TaskAwayServer
           git pull origin main
+          echo "✅ TaskAway server updated"
           
           # Navigate to TaskIt directory
+          echo "📁 Navigating to TaskIt directory..."
           cd ../TaskIt
+          echo "📍 Current directory: $(pwd)"
           
-          # Pull latest changes from main branch
+          # Pull latest changes for TaskIt frontend
+          echo "📥 Pulling latest changes for TaskIt frontend..."
           git pull origin main
+          echo "✅ TaskIt frontend updated"
           
           # Install dependencies
+          echo "📦 Installing dependencies..."
           npm ci
+          echo "✅ Dependencies installed"
           
           # Build the application
+          echo "🔨 Building application..."
           npm run build
+          echo "✅ Build completed"
           
-          # Copy dist folder to TaskAway server
-          echo "Copying dist folder to TaskAway server..."
-          cp -r dist/ ../TaskAwayServer/
+          # Check if dist folder exists
+          if [ -d "dist" ]; then
+            echo "✅ Dist folder found"
+            echo "📊 Dist folder contents:"
+            ls -la dist/
+          else
+            echo "❌ Dist folder not found - build failed!"
+            exit 1
+          fi
           
-          # Navigate back to TaskAway server
+          # Copy dist folder to TaskAway server using your command
+          echo "📋 Copying dist folder to TaskAway server..."
+          cp -rf ./dist ./TaskAwayServer/
+          echo "✅ Dist folder copied successfully"
+          
+          # Navigate to TaskAway server
+          echo "📁 Navigating to TaskAway server..."
           cd ../TaskAwayServer
+          echo "📍 Current directory: $(pwd)"
+          
+          # Check if dist was copied
+          if [ -d "dist" ]; then
+            echo "✅ Dist folder found in TaskAway server"
+            echo "📊 TaskAway server dist contents:"
+            ls -la dist/
+          else
+            echo "❌ Dist folder not found in TaskAway server!"
+            exit 1
+          fi
           
           # Restart PM2 processes
+          echo "🔄 Restarting PM2 processes..."
           pm2 restart all
+          echo "✅ PM2 processes restarted"
           
           # Save PM2 configuration
+          echo "💾 Saving PM2 configuration..."
           pm2 save
+          echo "✅ PM2 configuration saved"
           
           # Show deployment status
-          echo "Deployment completed successfully!"
+          echo "📊 Final PM2 Status:"
           pm2 status
+          
+          echo "🎉 Deployment completed successfully!"
+          echo "📅 Deployment finished at: $(date)"
+          echo "🌐 Your application should be running on: http://13.53.134.0"
