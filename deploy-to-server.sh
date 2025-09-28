@@ -29,6 +29,8 @@ git reset --hard origin/main
 
 # Install dependencies
 echo -e "${YELLOW}📦 Installing dependencies...${NC}"
+echo -e "${YELLOW}🔍 Node.js version: $(node --version)${NC}"
+echo -e "${YELLOW}🔍 npm version: $(npm --version)${NC}"
 npm ci
 
 # Build the application

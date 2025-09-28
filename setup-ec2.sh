@@ -19,9 +19,9 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}📦 Updating system packages...${NC}"
 sudo apt update && sudo apt upgrade -y
 
-# Install Node.js 18.x
-echo -e "${YELLOW}📦 Installing Node.js 18.x...${NC}"
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+# Install Node.js 20.x
+echo -e "${YELLOW}📦 Installing Node.js 20.x...${NC}"
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # Verify Node.js installation
