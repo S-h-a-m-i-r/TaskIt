@@ -44,6 +44,24 @@ interface CreateTaskPayload {
 	title: string;
 	description: string;
 	files?: File[];
+	isRecurring?: boolean;
+	recurrencePattern?: "Daily" | "Weekly" | "Monthly" | "Yearly";
+	recurrenceEndDate?: Date | null;
+	recurringSettings?: {
+		pattern: "Daily" | "Weekly" | "Monthly" | "Yearly";
+		dailyInterval?: number;
+		weeklyInterval?: number;
+		weeklyDays?: string[];
+		monthlyInterval?: number;
+		monthlyDayOfWeek?: "first" | "second" | "third" | "fourth" | "last";
+		monthlyDay?: "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+		monthlyDayOfMonth?: number;
+		startDate: Date;
+		endType: "endBy" | "endAfter" | "noEnd";
+		endDate?: Date;
+		endAfterCount?: number;
+	};
+	dueDate?: Date;
 }
 
 interface CreateTaskResponse {
