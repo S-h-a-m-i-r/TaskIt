@@ -216,3 +216,11 @@ export const deleteTeamMember = (id: string): Promise<{ success: boolean; messag
 		url: `/team/deleteMember/${id}`,
 	});
 };
+
+export const loginWithGoogle = (token: string): Promise<AuthResponse> => {
+  return request<AuthResponse>({
+    method: "post",
+    url: "/auth/google",
+    data: { token } as unknown as Record<string, unknown>,
+  });
+};
