@@ -463,7 +463,8 @@ const AdminTaskDetails: React.FC = () => {
           {((typeof task?.assignedTo === "object" &&
             task?.assignedTo &&
             task.assignedTo._id === user?._id) ||
-            (user?.role == "ADMIN" || user?.role === "MANAGER") ) && (
+            user?.role == "ADMIN" ||
+            user?.role === "MANAGER") && (
             <ButtonComponent
               title="💬 Chat"
               onClick={() => setIsChatOpen(true)}
@@ -832,17 +833,17 @@ const AdminTaskDetails: React.FC = () => {
                   <div className="space-y-2">
                     {canReassignTask() ? (
                       <>
-                      <ButtonComponent
-                        title="Reassign Task"
-                        onClick={() => setIsReassigning(true)}
-                        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
-                      />
-                      <ButtonComponent
-                    title="Assign to yourself"
-                    onClick={() => handleReassignTask(user?._id)}
-                    className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
-                  />
-                  </>
+                        <ButtonComponent
+                          title="Reassign Task"
+                          onClick={() => setIsReassigning(true)}
+                          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+                        />
+                        <ButtonComponent
+                          title="Assign to yourself"
+                          onClick={() => handleReassignTask(user?._id)}
+                          className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
+                        />
+                      </>
                     ) : (
                       <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
                         <p className="text-orange-800 font-medium">
@@ -984,10 +985,10 @@ const AdminTaskDetails: React.FC = () => {
                   />
                 </div>
                 <ButtonComponent
-                    title="Assign to yourself"
-                    onClick={() => handleAssignTask(user?._id)}
-                    className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
-                  />
+                  title="Assign to yourself"
+                  onClick={() => handleAssignTask(user?._id)}
+                  className={`w-full bg-primary-50 text-white py-2 rounded-md hover:bg-primary-200`}
+                />
               </div>
             )}
           </div>
@@ -1206,7 +1207,6 @@ const AdminTaskDetails: React.FC = () => {
           disabled: assigning || !selectedUserId || !canReassignTask(),
         }}
       >
-       
         <div className="py-4">
           {!canReassignTask() && (
             <div className="bg-red-50 rounded-md p-3 border border-red-200 mb-4">
@@ -1252,109 +1252,112 @@ const AdminTaskDetails: React.FC = () => {
           </p>
         </div>
       </Modal>
-      
-<Modal
-  open={isCompleteModalOpen}
-  closable={true}
-  cancelText="Cancel"
-  okText={loading || uploading ? "Completing..." : "Complete Task"}
-  onCancel={() => {
-    setIsCompleteModalOpen(false);
-    setSelectedFiles([]);
-    clearError();
-  }}
-  onOk={async () => {
-    if (!task) return;
-    setLoading(true);
-    try {
-      // First, update the task status to "Completed"
-      await updateTaskStatusService(task._id, "Completed");
-      
-      // If there are files, upload and attach them
-      if (selectedFiles.length > 0) {
-        try {
-          // Upload files to S3
-          const uploadedFiles = await uploadFiles(selectedFiles);
-          
-          // Attach files to the task
-          const attached = await attachFilesToTask(task._id, uploadedFiles);
-          
-          if (attached) {
-            message.success("Task completed successfully with files!");
-          } else {
-            message.warning("Task completed but file attachment failed.");
-          }
-        } catch (fileError) {
-          message.warning("Task completed but file upload failed.");
-          console.error("File upload error:", fileError);
-        }
-      } else {
-        message.success("Task marked as completed!");
-      }
-      
-      setIsCompleteModalOpen(false);
-      setSelectedFiles([]);
-      
-      // Refresh task details
-      const taskResponse = await viewTask(task._id);
-      if (taskResponse?.success) setTask(taskResponse.data.task);
-      else message.error("Failed to refresh task details.");
-    } catch {
-      message.error("Failed to complete task.");
-    } finally {
-      setLoading(false);
-    }
-  }}
-  centered={true}
-  title="Complete Task"
-  okButtonProps={{
-    disabled: loading || uploading,
-    style: {
-      backgroundColor: "#22c55e",
-      borderColor: "#22c55e",
-      color: "#fff",
-    },
-  }}
->
-  <div className="space-y-4">
-    <p className="text-gray-700 mb-4">
-    Upload one or more files (optional) that will assist with the fulfilment of the task.
-    </p>
-    
-    {/* File Upload Component */}
-    <div className="border border-gray-200 rounded-lg p-4">
-      <FileUpload
-        files={selectedFiles}
-        onFilesChange={(files) => {
-          setSelectedFiles(files);
+
+      <Modal
+        open={isCompleteModalOpen}
+        closable={true}
+        cancelText="Cancel"
+        okText={loading || uploading ? "Completing..." : "Complete Task"}
+        onCancel={() => {
+          setIsCompleteModalOpen(false);
+          setSelectedFiles([]);
           clearError();
         }}
-        maxSize={MAX_FILE_SIZE}
-        maxFiles={MAX_FILES_COUNT}
-        acceptedTypes={['*/*']}
-      />
-    </div>
-    
-    {/* Upload Progress */}
-    {uploading && (
-      <UploadProgress progress={progress} className="mt-4" />
-    )}
-    
-    {/* Error Display */}
-    {error && (
-      <div className="text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200">
-        {error}
-      </div>
-    )}
-    
-    {/* File Count Info */}
-    {selectedFiles.length > 0 && (
-      <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-200 ">
-        {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} selected
-      </div>
-    )}
-  </div>
-</Modal>
+        onOk={async () => {
+          if (!task) return;
+          setLoading(true);
+          try {
+            // First, update the task status to "Completed"
+            await updateTaskStatusService(task._id, "Completed");
+
+            // If there are files, upload and attach them
+            if (selectedFiles.length > 0) {
+              try {
+                // Upload files to S3
+                const uploadedFiles = await uploadFiles(selectedFiles);
+
+                // Attach files to the task
+                const attached = await attachFilesToTask(
+                  task._id,
+                  uploadedFiles
+                );
+
+                if (attached) {
+                  message.success("Task completed successfully with files!");
+                } else {
+                  message.warning("Task completed but file attachment failed.");
+                }
+              } catch (fileError) {
+                message.warning("Task completed but file upload failed.");
+                console.error("File upload error:", fileError);
+              }
+            } else {
+              message.success("Task marked as completed!");
+            }
+
+            setIsCompleteModalOpen(false);
+            setSelectedFiles([]);
+
+            // Refresh task details
+            const taskResponse = await viewTask(task._id);
+            if (taskResponse?.success) setTask(taskResponse.data.task);
+            else message.error("Failed to refresh task details.");
+          } catch {
+            message.error("Failed to complete task.");
+          } finally {
+            setLoading(false);
+          }
+        }}
+        centered={true}
+        title="Complete Task"
+        okButtonProps={{
+          disabled: loading || uploading,
+          style: {
+            backgroundColor: "#22c55e",
+            borderColor: "#22c55e",
+            color: "#fff",
+          },
+        }}
+      >
+        <div className="space-y-4">
+          <p className="text-gray-700 mb-4">
+            Upload one or more files (optional) that will assist with the
+            fulfilment of the task.
+          </p>
+
+          {/* File Upload Component */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <FileUpload
+              files={selectedFiles}
+              onFilesChange={(files) => {
+                setSelectedFiles(files);
+                clearError();
+              }}
+              maxSize={MAX_FILE_SIZE}
+              maxFiles={MAX_FILES_COUNT}
+              acceptedTypes={["*/*"]}
+            />
+          </div>
+
+          {/* Upload Progress */}
+          {uploading && <UploadProgress progress={progress} className="mt-4" />}
+
+          {/* Error Display */}
+          {error && (
+            <div className="text-sm text-red-600 bg-red-50 p-2 rounded border border-red-200">
+              {error}
+            </div>
+          )}
+
+          {/* File Count Info */}
+          {selectedFiles.length > 0 && (
+            <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-200 ">
+              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""}{" "}
+              selected
+            </div>
+          )}
+        </div>
+      </Modal>
 
       {/* Sliding Chat Panel */}
       {/* Overlay */}
@@ -1387,7 +1390,7 @@ const AdminTaskDetails: React.FC = () => {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
               />
             </svg>
-            <h2 className="text-lg font-semibold">Task Chat</h2>
+            <h2 className="text-lg font-semibold">{customerInfo?.name}</h2>
           </div>
           <button
             onClick={() => setIsChatOpen(false)}

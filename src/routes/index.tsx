@@ -59,125 +59,131 @@ import ContactUsPage from '../pages/user/contactUs';
 import ConditionAndPrivacyPolicyPage from '../pages/ConditionAndPrivacyPage';
 
 export const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <Layout />,
-		children: [
-			{ path: 'login', element: <Login /> },
-			{
-				path: 'signup',
-				element: <Signup />,
-				children: [
-					{ path: 'plan', element: <Plan /> },
-					{ path: 'creditCardDetails', element: <CreditCardDetails /> },
-					{ path: 'createPassword', element: <CreatePassword /> },
-				],
-			},
-			{
-				path: 'forgot-password',
-				element: <ForgotPassword />,
-				children: [{ path: 'new-password', element: <Newpassword /> }],
-			},
-			{
-				path: '',
-				element: (
-					<RoleProtectedRoute
-						allowedRoles={['BASIC', 'CUSTOMER', 'MANAGER', 'ADMIN']}
-					/>
-				),
-				children: [
-					{
-						path: '',
-						element: <DashboardLayout />,
-						children: [
-							{ index: true, element: <MainPage /> },
-							{ path: 'credits', element: <CreditsPage /> },
-							{ path: 'profile', element: <ProfilePage /> },
-							{ path: 'tasks', element: <TasklistPage /> },
-							{ path: 'inProgress', element: <InprogressTasklist /> },
-							{ path: 'submitted', element: <SubmittedTasklist /> },
-							{ path: 'closed', element: <ClosedTasklist /> },
-							{ path: 'recurring', element: <RecurringTasklist /> },
-							{ path: 'task/:id', element: <TaskDetailsPage /> },
-							{ path: 'admin-task/:id', element: <AdminTaskDetails /> },
-							{ path: 'notification', element: <NotificationPage /> },
-							{ path: 'createTask', element: <CreateTask /> },
-							{ path: 'AboutUs', element: <AboutUsPage /> },
-							{ path: 'ContactUs', element: <ContactUsPage /> },
-							{
-								path: 'terms',
-								element: <ConditionAndPrivacyPolicyPage />,
-							},
-							{
-								path: 'privacy',
-								element: <ConditionAndPrivacyPolicyPage />,
-							},
-							{
-								path: 'termsAndConditions',
-								element: <ConditionAndPrivacyPolicyPage />,
-							},
-						],
-					},
-				],
-			},
-		],
-	},
-	{
-		path: 'admin',
-		element: <RoleProtectedRoute allowedRoles={['ADMIN']} />,
-		children: [
-			{
-				path: '',
-				element: <AdminLayout />,
-				children: [
-					{ index: true, element: <AdminDashboard /> },
-					{ path: 'credits', element: <Credits /> },
-					{ path: 'tasks', element: <Tasks /> },
-					{ path: 'task/:id', element: <AdminTaskDetails /> },
-					{ path: 'settings', element: <Settings /> },
-					{ path: 'teamManagement', element: <Teammanagement /> },
-					{ path: 'customers', element: <Customers /> },
-					{ path: 'invoices', element: <Invoices /> },
-					{ path: 'addCredits', element: <AddCreditsToUsers /> },
-					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
-					{ path: 'addTeam', element: <AddTeamPage /> },
-					{ path: 'addTeam/:id', element: <AddTeamPage /> },
-				],
-			},
-		],
-	},
-	{
-		path: 'manager',
-		element: <RoleProtectedRoute allowedRoles={['MANAGER', 'ADMIN']} />,
-		children: [
-			{
-				path: '',
-				element: <ManagerLayout />,
-				children: [
-					{ index: true, element: <ManagerDashboard /> },
-					{ path: 'credits', element: <ManagerCredits /> },
-					{ path: 'tasks', element: <ManagerTasks /> },
-					{ path: 'task/:id', element: <AdminTaskDetails /> },
-					{ path: 'invoices', element: <ManagerInvoices /> },
-					{ path: 'addCredits', element: <AddCreditsToUsers /> },
-					{ path: 'removeCredits', element: <RemoveCreditsToUsers /> },
-				],
-			},
-		],
-	},
-	{
-		path: 'basic',
-		element: <RoleProtectedRoute allowedRoles={['MANAGER', 'ADMIN', 'BASIC']} />,
-		children: [
-			{
-				path: '',
-				element: <ManagerLayout />,
-				children: [
-					{ index: true, element: <ManagerDashboard /> },
-					{ path: 'tasks', element: <ManagerTasks /> },
-					{ path: 'task/:id', element: <AdminTaskDetails /> },
-				],
-			},
-		],
-	},
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
+      { path: "login", element: <Login /> },
+      {
+        path: "signup",
+        element: <Signup />,
+        children: [
+          { path: "plan", element: <Plan /> },
+          { path: "creditCardDetails", element: <CreditCardDetails /> },
+          { path: "createPassword", element: <CreatePassword /> },
+        ],
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
+        children: [{ path: "new-password", element: <Newpassword /> }],
+      },
+      {
+        path: "terms",
+        element: <ConditionAndPrivacyPolicyPage />,
+      },
+      {
+        path: "",
+        element: (
+          <RoleProtectedRoute
+            allowedRoles={["BASIC", "CUSTOMER", "MANAGER", "ADMIN"]}
+          />
+        ),
+        children: [
+          {
+            path: "",
+            element: <DashboardLayout />,
+            children: [
+              { index: true, element: <MainPage /> },
+              { path: "credits", element: <CreditsPage /> },
+              { path: "profile", element: <ProfilePage /> },
+              { path: "tasks", element: <TasklistPage /> },
+              { path: "inProgress", element: <InprogressTasklist /> },
+              { path: "submitted", element: <SubmittedTasklist /> },
+              { path: "closed", element: <ClosedTasklist /> },
+              { path: "recurring", element: <RecurringTasklist /> },
+              { path: "task/:id", element: <TaskDetailsPage /> },
+              { path: "admin-task/:id", element: <AdminTaskDetails /> },
+              { path: "notification", element: <NotificationPage /> },
+              { path: "createTask", element: <CreateTask /> },
+              { path: "AboutUs", element: <AboutUsPage /> },
+              { path: "ContactUs", element: <ContactUsPage /> },
+              {
+                path: "terms",
+                element: <ConditionAndPrivacyPolicyPage />,
+              },
+              {
+                path: "privacy",
+                element: <ConditionAndPrivacyPolicyPage />,
+              },
+              {
+                path: "termsAndConditions",
+                element: <ConditionAndPrivacyPolicyPage />,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: "admin",
+    element: <RoleProtectedRoute allowedRoles={["ADMIN"]} />,
+    children: [
+      {
+        path: "",
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminDashboard /> },
+          { path: "credits", element: <Credits /> },
+          { path: "tasks", element: <Tasks /> },
+          { path: "task/:id", element: <AdminTaskDetails /> },
+          { path: "settings", element: <Settings /> },
+          { path: "teamManagement", element: <Teammanagement /> },
+          { path: "customers", element: <Customers /> },
+          { path: "invoices", element: <Invoices /> },
+          { path: "addCredits", element: <AddCreditsToUsers /> },
+          { path: "removeCredits", element: <RemoveCreditsToUsers /> },
+          { path: "addTeam", element: <AddTeamPage /> },
+          { path: "addTeam/:id", element: <AddTeamPage /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "manager",
+    element: <RoleProtectedRoute allowedRoles={["MANAGER", "ADMIN"]} />,
+    children: [
+      {
+        path: "",
+        element: <ManagerLayout />,
+        children: [
+          { index: true, element: <ManagerDashboard /> },
+          { path: "credits", element: <ManagerCredits /> },
+          { path: "tasks", element: <ManagerTasks /> },
+          { path: "task/:id", element: <AdminTaskDetails /> },
+          { path: "invoices", element: <ManagerInvoices /> },
+          { path: "addCredits", element: <AddCreditsToUsers /> },
+          { path: "removeCredits", element: <RemoveCreditsToUsers /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "basic",
+    element: (
+      <RoleProtectedRoute allowedRoles={["MANAGER", "ADMIN", "BASIC"]} />
+    ),
+    children: [
+      {
+        path: "",
+        element: <ManagerLayout />,
+        children: [
+          { index: true, element: <ManagerDashboard /> },
+          { path: "tasks", element: <ManagerTasks /> },
+          { path: "task/:id", element: <AdminTaskDetails /> },
+        ],
+      },
+    ],
+  },
 ]);

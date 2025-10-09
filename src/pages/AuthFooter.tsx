@@ -81,7 +81,26 @@ const AuthFooter = ({ tab }: AuthFooterProps) => {
           </span>
         </div>
       )}
-      <div></div>
+
+      {/* Terms and Conditions Link */}
+      <div className="flex justify-center text-center">
+        <p className="text-sm text-gray-500">
+          By continuing, you agree to our <br />
+          <Link
+            to="/terms"
+            className="text-primary-50 hover:text-primary-200 underline"
+          >
+            Terms and Conditions
+          </Link>
+          &nbsp;and&nbsp;
+          <Link
+            to="/terms?section=privacy"
+            className="text-primary-50 hover:text-primary-200 underline"
+          >
+            Privacy Policy
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

@@ -47,11 +47,16 @@ export interface Task {
 }
 
 export interface Message {
-	senderId: {
-		_id: string;
-	};
-	content: string;
-	createdAt: string;
+  _id?: string;
+  senderId: {
+    _id: string;
+    firstName?: string;
+    lastName?: string;
+    userName?: string;
+    email?: string;
+  };
+  content: string;
+  createdAt: string;
 }
 
 export interface CreateTaskPayload {
