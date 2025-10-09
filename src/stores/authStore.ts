@@ -62,12 +62,34 @@ const useAuthStore = create(
         loginWithGoogle: async (token: string) => {
           set({ loading: true });
           try {
+            console.log("🔍 Auth Store Debug - Starting Google login with token length:", token.length);
+            
             const res = await loginWithGoogle(token);
+            console.log("🔍 Auth Store Debug - Service response received:", res);
+            
+            if (!res) {
+              throw new Error("No response received from authentication service");
+            }
+            
+            if (!res.token || !res.user) {
+              console.error("❌ Auth Store Error - Invalid response structure:", res);
+              throw new Error("Invalid response structure from authentication service");
+            }
+            
             const { token: authToken, user } = res;
+            console.log("🔍 Auth Store Debug - Setting user data:", {
+              userId: user._id,
+              email: user.email,
+              role: user.role
+            });
+            
             set({ token: authToken, user, isAuthenticated: true });
+            console.log("✅ Auth Store Debug - Google login completed successfully");
             return res;
-          } finally {
+          } catch (error) {
+            console.error("❌ Auth Store Error - Google login failed:", error);
             set({ loading: false });
+            throw error; // Re-throw to be handled by the calling component
           }
         },
 

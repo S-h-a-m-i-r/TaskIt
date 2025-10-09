@@ -218,9 +218,18 @@ export const deleteTeamMember = (id: string): Promise<{ success: boolean; messag
 };
 
 export const loginWithGoogle = (token: string): Promise<AuthResponse> => {
+  console.log("🔍 Auth Service Debug - Making Google auth request to /auth/google");
+  console.log("🔍 Auth Service Debug - Token length:", token.length);
+  
   return request<AuthResponse>({
     method: "post",
     url: "/auth/google",
     data: { token } as unknown as Record<string, unknown>,
+  }).then((response) => {
+    console.log("✅ Auth Service Debug - Google auth response received:", response);
+    return response;
+  }).catch((error) => {
+    console.error("❌ Auth Service Error - Google auth request failed:", error);
+    throw error;
   });
 };
