@@ -5,125 +5,142 @@ import ProfileDropdown from '../../generalComponents/ProfileButton';
 import LoadingDots from '../../generalComponents/LoadingDots';
 import useTaskStore from '../../../stores/taskStore';
 import useAuthStore from '../../../stores/authStore';
+import { formatDate } from "../../../utils/dateFormatter";
 
 interface InputChangeEvent {
-	target: {
-		value: string;
-	};
+  target: {
+    value: string;
+  };
 }
 
-
-
-const taskListheaders = ['Customer Name', 'Task Title', 'Status', 'Date', 'isRecurring', 'Actions'];
+const taskListheaders = [
+  "Customer Name",
+  "Task Title",
+  "Status",
+  "Date",
+  "isRecurring",
+  "Actions",
+];
 
 const AdminTasks = () => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [loading, setLoading] = useState(true);
-	const [activeTab, setActiveTab] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("All");
 
-	const { user } = useAuthStore();
-	const name = user?.role || localStorage.getItem('role') || '';
-	const { getTaskList, tasks: allTasks } = useTaskStore() as any;
+  const { user } = useAuthStore();
+  const name = user?.role || localStorage.getItem("role") || "";
+  const { getTaskList, tasks: allTasks } = useTaskStore() as any;
 
-	const handleInputChange = (event: InputChangeEvent) => {
-		setSearchQuery(event.target.value);
-	};
+  const handleInputChange = (event: InputChangeEvent) => {
+    setSearchQuery(event.target.value);
+  };
 
-	// Fetch real tasks
-	useEffect(() => {
-		const fetchTasks = async () => {
-			try {
-				setLoading(true);
-				await getTaskList();
-			} catch (error) {
-				console.error('Failed to fetch tasks:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
+  // Fetch real tasks
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        await getTaskList();
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-		fetchTasks();
-	}, [getTaskList]);
+    fetchTasks();
+  }, [getTaskList]);
 
-	// Filter and transform tasks for display
-	const transformTasksForTable = useMemo(() => {
-		let filtered = allTasks;
+  // Filter and transform tasks for display
+  const transformTasksForTable = useMemo(() => {
+    let filtered = allTasks;
 
-		// Apply status filter
-		if (activeTab === 'Active') {
-			filtered = allTasks.filter(
-				(task: { status: string; }) =>
-					task.status === 'InProgress' ||
-					task.status === 'Submitted'
-			);
-		} else if (activeTab === 'Completed') {
-			filtered = allTasks.filter(
-				(task: { status: string; }) => task.status === 'Completed' || task.status === 'Task Closed'
-			);
-		}
+    // Apply status filter
+    if (activeTab === "Active") {
+      filtered = allTasks.filter(
+        (task: { status: string }) =>
+          task.status === "InProgress" || task.status === "Submitted"
+      );
+    } else if (activeTab === "Completed") {
+      filtered = allTasks.filter(
+        (task: { status: string }) =>
+          task.status === "Completed" || task.status === "Task Closed"
+      );
+    }
 
-		// Apply search filter
-		if (searchQuery) {
-			filtered = filtered.filter(
-				(task: { title: string; description: string; status: string; }) =>
-					task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					task.status.toLowerCase().includes(searchQuery.toLowerCase())
-			);
-		}
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (task: { title: string; description: string; status: string }) =>
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.status.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
-		return filtered.map((task: { _id: any; createdBy: { userName: any; }; title: any; status: any; assignedTo: any; dueDate: string | number | Date; isRecurring: any; }) => {
-			return {
-				id: task._id,
-				customerName: typeof task.createdBy === "object" && task.createdBy?.userName ? task.createdBy.userName : undefined,
-				title: task.title,
-				status: task.status,
-				assignedTo: task.assignedTo,
-				dueDate: task.dueDate
-					? new Date(task.dueDate).toLocaleDateString()
-					: task.dueDate ,
-				isRecurring: task?.isRecurring,
-				actions: true, 
-			};
-		});
-	}, [allTasks, activeTab, searchQuery]);
-	return (
-		<>
-			<div className="p-10 w-full flex justify-between items-center mb-4">
-				<h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
-				<div className="flex gap-2 items-center">
-					<ProfileDropdown userName={user?.userName} />
-				</div>
-			</div>
-			<div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-full transition-all duration-1000">
-				<img src={search} alt="search" />
-				<input
-					type="text"
-					value={searchQuery}
-					onChange={handleInputChange}
-					className="border-none w-full outline-none"
-					placeholder="Search tasks..."
-					autoFocus
-				/>
-			</div>
-			<FilterSortInterface activeTab={activeTab} setActiveTab={setActiveTab} />
-			<div>
-				{loading ? (
-					<div className="flex items-center justify-center py-8">
-						<LoadingDots text="Loading tasks" />
-					</div>
-				) : (
-					<>
-						<TaskTable
-							tasks={transformTasksForTable}
-							tasksHeader={taskListheaders}
-							manager={name === 'MANAGER'}
-						/>
-					</>
-				)}
-			</div>
-		</>
-	);
+    return filtered.map(
+      (task: {
+        _id: any;
+        createdBy: { userName: any };
+        title: any;
+        status: any;
+        assignedTo: any;
+        dueDate: string | number | Date;
+        isRecurring: any;
+      }) => {
+        return {
+          id: task._id,
+          customerName:
+            typeof task.createdBy === "object" && task.createdBy?.userName
+              ? task.createdBy.userName
+              : undefined,
+          title: task.title,
+          status: task.status,
+          assignedTo: task.assignedTo,
+          dueDate: formatDate(task?.dueDate),
+          isRecurring: task?.isRecurring,
+          actions: true,
+        };
+      }
+    );
+  }, [allTasks, activeTab, searchQuery]);
+  return (
+    <>
+      <div className="p-10 w-full flex justify-between items-center mb-4">
+        <h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
+        <div className="flex gap-2 items-center">
+          <ProfileDropdown userName={user?.userName} />
+        </div>
+      </div>
+      <div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-full transition-all duration-1000">
+        <img src={search} alt="search" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="border-none w-full outline-none"
+          placeholder="Search tasks..."
+          autoFocus
+        />
+      </div>
+      <FilterSortInterface activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <LoadingDots text="Loading tasks" />
+          </div>
+        ) : (
+          <>
+            <TaskTable
+              tasks={transformTasksForTable}
+              tasksHeader={taskListheaders}
+              manager={name === "MANAGER"}
+            />
+          </>
+        )}
+      </div>
+    </>
+  );
 };
 
 export default AdminTasks;

@@ -15,6 +15,7 @@ import { MAX_FILE_SIZE, MAX_FILES_COUNT } from "../../utils/fileUtils";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import useCreditsStore from "../../stores/creditsStore";
+import { formatDate } from "../../utils/dateFormatter";
 // Define types for the component
 interface TaskFormData {
   title: string;
@@ -321,15 +322,15 @@ const CreateTask = () => {
                         </p>
                         <p>
                           <span className="font-medium">Start:</span>{" "}
-                          {formData.recurringSettings.startDate.format(
-                            "MMM D, YYYY"
+                          {formatDate(
+                            formData.recurringSettings.startDate.toDate()
                           )}
                         </p>
                         <p>
                           <span className="font-medium">End:</span>{" "}
                           {formData.recurringSettings.endType === "endBy"
-                            ? formData.recurringSettings.endDate?.format(
-                                "MMM D, YYYY"
+                            ? formatDate(
+                                formData.recurringSettings.endDate?.toDate()
                               )
                             : formData.recurringSettings.endType === "endAfter"
                             ? `After ${formData.recurringSettings.endAfterCount} occurrences`
@@ -366,11 +367,11 @@ const CreateTask = () => {
         {!formData.isRecurring && (
           <div className="max-w-[200px]">
             <label className="text-left  flex justify-start font-semibold mb-2 text-2xl text-gray-700">
-              Due Date
+              Scheduled Date
             </label>
             <DatePicker
               className="w-full mb-2"
-              format="YYYY-MM-DD"
+              format="DD/MM/YYYY"
               placeholder="Select due date"
               value={formData.dueDate}
               onChange={(date) => handleEndDateChange(date, "dueDate")}

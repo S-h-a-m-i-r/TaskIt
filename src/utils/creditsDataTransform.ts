@@ -1,19 +1,19 @@
 import { CustomerCreditData } from '../stores/creditsStore';
+import { formatDate as formatDateUtil } from "./dateFormatter";
 
-
-export const transformCustomersDataForTable = (customers: CustomerCreditData[]) => {
+export const transformCustomersDataForTable = (
+  customers: CustomerCreditData[]
+) => {
   return customers.map((customer) => ({
     customerName: customer.customerName,
     customerEmail: customer.customerEmail,
     plan: customer.customerPlanType,
     phone: customer.customerPhone,
-    'customerCreditsRemaining': customer.totalRemainingCredits.toString(),
-    'customerExpiringCredits': customer.expiringSoonCredits.toString(),
-    'customerLastTopUpDate': customer.lastPurchaseDate 
-      ? new Date(customer.lastPurchaseDate).toLocaleDateString()
-      : 'Never',
-    'customerCreditsActions': true,
-    
+    customerCreditsRemaining: customer.totalRemainingCredits.toString(),
+    customerExpiringCredits: customer.expiringSoonCredits.toString(),
+    customerLastTopUpDate: formatDateUtil(customer.lastPurchaseDate),
+    customerCreditsActions: true,
+
     customerId: customer.customerId,
     totalPurchasedCredits: customer.totalPurchasedCredits,
     earliestExpiryDate: customer.earliestExpiryDate,
@@ -63,10 +63,8 @@ export const adminCustomersTableHeaders = [
 ];
 
 
-export const formatDate = (dateString: string | null): string => {
-  if (!dateString) return 'Never';
-  return new Date(dateString).toLocaleDateString();
-};
+// Re-export the formatDate function from dateFormatter for backward compatibility
+export { formatDate } from './dateFormatter';
 
 
 export const getExpiryStatus = (expiryDate: string | null): 'expired' | 'expiring-soon' | 'valid' => {

@@ -12,15 +12,15 @@ type PaymentMethodType = {
 }
 
 export interface User {
-	_id: string;
-	email: string;
-	firstName: string;
-	lastName: string;
-	role: string;
-	userName: string;
-	profileImage?: string;
-	credits: number;
-	paymentMethod?: PaymentMethodType;
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  userName: string;
+  profilePicture?: string;
+  credits: number;
+  paymentMethod?: PaymentMethodType;
 }
 
 export interface LoginCredentials {

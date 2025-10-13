@@ -13,6 +13,7 @@ import useAuthStore from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useMemo } from 'react';
 import useTaskStore from '../../stores/taskStore';
+import { formatDate } from "../../utils/dateFormatter";
 
 interface Task {
 	_id: string;
@@ -93,24 +94,25 @@ const ManagerDashboard = () => {
 
 	const transformTasksForTable = (tasks: Task[]) => {
 		return tasks.map((task) => ({
-			id: task._id,
-			customerName: typeof task.createdBy === 'object' && task.createdBy ? (task.createdBy).userName : 'Unknown User',
-			title: task.title,
-			status: task.status,
-			assignedTo:
-				typeof task.assignedTo === 'object' && task.assignedTo?.email
-					? `${task.assignedTo?.firstName || ''} ${
-							task.assignedTo?.lastName || ''
-					  }`.trim() || task.assignedTo?.email
-					: typeof task.assignedTo === 'string'
-					? task.assignedTo
-					: 'Unassigned',
-					dueDate: task.dueDate
-					? new Date(task.dueDate).toLocaleDateString()
-					: task.dueDate ,
-					isRecurring: task?.isRecurring,
-			actions: true, 
-		}));
+      id: task._id,
+      customerName:
+        typeof task.createdBy === "object" && task.createdBy
+          ? task.createdBy.userName
+          : "Unknown User",
+      title: task.title,
+      status: task.status,
+      assignedTo:
+        typeof task.assignedTo === "object" && task.assignedTo?.email
+          ? `${task.assignedTo?.firstName || ""} ${
+              task.assignedTo?.lastName || ""
+            }`.trim() || task.assignedTo?.email
+          : typeof task.assignedTo === "string"
+          ? task.assignedTo
+          : "Unassigned",
+      dueDate: formatDate(task.dueDate),
+      isRecurring: task?.isRecurring,
+      actions: true,
+    }));
 	};
 
 	return (

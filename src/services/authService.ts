@@ -224,3 +224,110 @@ export const loginWithGoogle = (token: string): Promise<AuthResponse> => {
     data: { token } as unknown as Record<string, unknown>,
   });
 };
+
+// Profile picture upload functions
+export const getProfilePictureUploadUrl = (data: {
+  filename: string;
+  contentType: string;
+  fileSize: number;
+}): Promise<{
+  success: boolean;
+  uploadUrl: string;
+  fileKey: string;
+  message: string;
+}> => {
+  return request({
+    method: 'post',
+    url: '/users/profile-picture/upload-url',
+    data: data as unknown as Record<string, unknown>,
+  });
+};
+
+export const updateProfilePicture = (s3Key: string): Promise<{
+  success: boolean;
+  message: string;
+  data: {
+    profilePicture: string;
+  };
+}> => {
+  return request({
+    method: 'put',
+    url: '/users/profile-picture',
+    data: { s3Key } as unknown as Record<string, unknown>,
+  });
+};
+
+// Get profile picture download URL
+export const getProfilePictureDownloadUrl = async (): Promise<{ success: boolean; data?: any; message?: string }> => {
+  const response = await request<{ success: boolean; data?: any; message?: string }>({
+    method: 'get',
+    url: '/users/profile-picture/download',
+  });
+
+  return response;
+};
+
+export const uploadProfilePictureToS3 = async (file: File): Promise<string> => {
+  try {
+    // Get presigned URL
+    const uploadUrlResponse = await getProfilePictureUploadUrl({
+      filename: file.name,
+      contentType: file.type,
+      fileSize: file.size,
+    });
+
+    if (!uploadUrlResponse.success) {
+      throw new Error('Failed to get upload URL');
+    }
+
+    const { uploadUrl, fileKey } = uploadUrlResponse;
+
+    // Upload file to S3
+    const uploadResponse = await fetch(uploadUrl, {
+      method: 'PUT',
+      body: file,
+      headers: {
+        'Content-Type': file.type,
+      },
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error('Failed to upload file to S3');
+    }
+
+    // Update user profile picture in database
+    const updateResponse = await updateProfilePicture(fileKey);
+    
+    if (!updateResponse.success) {
+      throw new Error('Failed to update profile picture in database');
+    }
+
+    // Return the S3 key (not the full URL)
+    return fileKey;
+  } catch (error) {
+    console.error('Profile picture upload error:', error);
+    throw error;
+  }
+};
+
+// Update user profile information
+export const updateUserProfileService = async (userId: string, userData: {
+  firstName?: string;
+  lastName?: string;
+  userName?: string;
+  email?: string;
+  profilePicture?: string;
+}): Promise<{ success: boolean; data?: any; message?: string }> => {
+  try {
+    const response = await request<{ success: boolean; data?: any; message?: string }>({
+      method: 'put',
+      url: `/users/${userId}`,
+      data: userData,
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Update user profile error:', error);
+    throw error;
+  }
+};
