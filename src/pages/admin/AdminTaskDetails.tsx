@@ -20,12 +20,14 @@ import { updateTaskStatusService } from "../../services/taskService";
 import { Task } from "../../types/task";
 import TaskTimeline from "../../components/generalComponents/TaskTimeline";
 import { User } from "../../types";
+import { formatDateForTaskDetails } from "../../utils/dateFormatter";
 
 const AdminTaskDetails: React.FC = () => {
   const navigate = useNavigate();
   const { id: taskId } = useParams<{ id: string }>();
   const { user }: { user: User | null } = useAuthStore();
-  const { viewTask, assignTask, deleteTask, reassignTask } = useTaskStore() as any;
+  const { viewTask, assignTask, deleteTask, reassignTask } =
+    useTaskStore() as any;
   const { users, loading: usersLoading, getUsersByRole } = useUserStore();
 
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
@@ -51,7 +53,14 @@ const AdminTaskDetails: React.FC = () => {
   // const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(
   //   null
   // );
-  const { uploadFiles, attachFilesToTask, uploading, progress, error, clearError } = useFileUpload();
+  const {
+    uploadFiles,
+    attachFilesToTask,
+    uploading,
+    progress,
+    error,
+    clearError,
+  } = useFileUpload();
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   // Check if user has access (admin, manager, or customer)
@@ -234,9 +243,10 @@ const AdminTaskDetails: React.FC = () => {
         message.error(response?.message || "Failed to delete task");
       }
     } catch (error) {
-     
       if (error instanceof Error) {
-        message.error(error.message || "Failed to delete task. Please try again.");
+        message.error(
+          error.message || "Failed to delete task. Please try again."
+        );
       } else {
         message.error("Failed to delete task. Please try again.");
       }
@@ -398,11 +408,9 @@ const AdminTaskDetails: React.FC = () => {
     if (!users || !user) return [];
 
     let filteredUsers = [...users];
-    filteredUsers = filteredUsers.filter((u: { _id: string }) => u._id !== user._id);
-
-    
-    
-    
+    filteredUsers = filteredUsers.filter(
+      (u: { _id: string }) => u._id !== user._id
+    );
 
     // Apply role-based filtering
     if (user.role === "ADMIN") {
@@ -427,8 +435,6 @@ const AdminTaskDetails: React.FC = () => {
 
   const availableUsers = getAvailableUsers();
 
-  
-  
   return (
     <div className="p-4 sm:p-6 lg:p-9 w-full">
       {/* Header */}
@@ -726,11 +732,7 @@ const AdminTaskDetails: React.FC = () => {
                     </label>
                   </div>
                   <p className="text-gray-900 font-medium">
-                    {new Date(task.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatDateForTaskDetails(task.createdAt)}
                   </p>
                 </div>
               )}
@@ -757,11 +759,7 @@ const AdminTaskDetails: React.FC = () => {
                     </label>
                   </div>
                   <p className="text-gray-900 font-medium">
-                    {new Date(task.dueDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
+                    {formatDateForTaskDetails(task.dueDate)}
                   </p>
                 </div>
               )}

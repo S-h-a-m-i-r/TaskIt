@@ -9,6 +9,7 @@ import useAuthStore from "../../stores/authStore";
 import React, { useState } from "react";
 import UserProfileModal from "../../components/adminComponents/UserProfileModal";
 import { CustomerCreditData } from "../../stores/creditsStore";
+import { formatDate } from "../../utils/dateFormatter";
 
 interface Task {
   id?: string;
@@ -92,38 +93,45 @@ type TaskTableProps = {
   onCreditsAdded?: () => void;
 };
 
-const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTableProps) => {
+const TaskTable = ({
+  tasks,
+  tasksHeader,
+  manager,
+  onCreditsAdded,
+}: TaskTableProps) => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<CustomerCreditData | null>(null);
+  const [selectedUser, setSelectedUser] = useState<CustomerCreditData | null>(
+    null
+  );
 
   const handleProfile = (task: Task) => {
     // Convert task data to CustomerCreditData format
     const userData: CustomerCreditData = {
-      customerId: task.customerId || task.id || '',
-      customerName: task.customerName || task.name || '',
-      customerEmail: task.customerEmail || task.email || '',
-      customerPhone: task.phone || '',
-      customerPlanType: task.plan || '',
+      customerId: task.customerId || task.id || "",
+      customerName: task.customerName || task.name || "",
+      customerEmail: task.customerEmail || task.email || "",
+      customerPhone: task.phone || "",
+      customerPlanType: task.plan || "",
       totalPurchasedCredits: task.totalPurchasedCredits || 0,
-      totalRemainingCredits: parseInt(task.customerCreditsRemaining || '0'),
-      expiringSoonCredits: parseInt(task.customerExpiringCredits || '0'),
+      totalRemainingCredits: parseInt(task.customerCreditsRemaining || "0"),
+      expiringSoonCredits: parseInt(task.customerExpiringCredits || "0"),
       lastPurchaseDate: task.customerLastTopUpDate || null,
       earliestExpiryDate: null, // Not available in task data
-      creditBatches: [],// Not available in task data
-      totalSpentCredits:  0,
+      creditBatches: [], // Not available in task data
+      totalSpentCredits: 0,
     };
-    
+
     setSelectedUser(userData);
     setIsProfileModalOpen(true);
   };
 
   const handleDownloadPdf = async (id: string | undefined) => {
-      if (id) {
-          await generatePDF(id);
-      }
-    };
+    if (id) {
+      await generatePDF(id);
+    }
+  };
 
   const handleOpenTask = (task: Task, role: string) => {
     navigate(`/${role.toLowerCase()}/task/${task?.id}`);
@@ -193,15 +201,14 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
           </td>
         );
 
-      
       case "date_joined":
         return (
           <td className="px-6 py-4 text-sm text-gray-600 text-left">
-            {task.Date || task.date_joined || "-"}
+            {formatDate(task.Date || task.date_joined)}
           </td>
         );
-        case "date":
-        case "due date":
+      case "date":
+      case "due date":
         return (
           <td className="py-5 pl-5 text-sm font-normal border-b border-custom-border max-md:hidden">
             {task.dueDate ? (
@@ -214,7 +221,7 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
                     : ""
                 }
               >
-                {new Date(task.dueDate).toLocaleDateString("en-US")}
+                {formatDate(task.dueDate)}
                 {
                   // Show different badges based on how close the due date is
                   new Date(task.dueDate) < new Date() ? (
@@ -247,12 +254,12 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
       case "customer last login":
         return (
           <td className="px-6 py-4 text-sm text-gray-600">
-            {task?.memberLastLogin || task.customerLastLogin || "-"}
+            {formatDate(task?.memberLastLogin || task.customerLastLogin)}
           </td>
         );
-        case "isrecurring":
-        case "isRecurring": 
-        return <td >{task.isRecurring ? "Yes" : "No"}</td>;
+      case "isrecurring":
+      case "isRecurring":
+        return <td>{task.isRecurring ? "Yes" : "No"}</td>;
       case "assignedto":
       case "assigned to":
         return (
@@ -367,7 +374,7 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
       case "invoice date":
         return (
           <td className="px-6 py-4 text-sm font-medium text-gray-900">
-            {task.invoiceDate || "-"}
+            {formatDate(task.invoiceDate)}
           </td>
         );
 
@@ -425,7 +432,7 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
       case "customer last top up date":
         return (
           <td className="px-6 py-4 text-sm text-gray-600">
-            {task.customerLastTopUpDate || "-"}
+            {formatDate(task.customerLastTopUpDate)}
           </td>
         );
 
@@ -491,11 +498,7 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
           </td>
         );
       case "customerRemainingCredits":
-        return (
-          <td>
-            {task.customerRemainingCredits || "-"}
-          </td>
-        )
+        return <td>{task.customerRemainingCredits || "-"}</td>;
       // Additional fields for different use cases
       case "recurring":
         return (
@@ -543,46 +546,50 @@ const TaskTable = ({ tasks, tasksHeader, manager, onCreditsAdded }: TaskTablePro
 
   return (
     <>
-    <div className="w-full py-4">
-  <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-    <div className="overflow-x-auto">
-      <div className="max-h-[500px] overflow-y-auto">
-        <table className="w-full table-fixed border-collapse">
-          <thead className="sticky top-0 bg-gray-200 z-10">
-            <tr className="border-b border-gray-200">
-              {tasksHeader?.map((header, index) => (
-                <th
-                  key={index}
-                  className="px-6 py-3 text-left text-sm font-semibold text-gray-900 w-[155px] max-w-[155px]"
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {tasks?.map((task, index) => (
-              <tr
-                key={index}
-                className={`${getRowBackgroundColor(
-                  task
-                )} hover:bg-slate-300/50 transition-colors`}
-              >
-                {tasksHeader.map((header) =>
-                  React.cloneElement(renderCell(task, header) as React.ReactElement, {
-                    className:
-                      "px-6 py-4 text-sm text-gray-600 text-left w-[155px] max-w-[155px] truncate " +
-                      ((renderCell(task, header) as React.ReactElement).props.className || ""),
-                  })
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="w-full py-4">
+        <div className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <div className="max-h-[500px] overflow-y-auto">
+              <table className="w-full table-fixed border-collapse">
+                <thead className="sticky top-0 bg-gray-200 z-10">
+                  <tr className="border-b border-gray-200">
+                    {tasksHeader?.map((header, index) => (
+                      <th
+                        key={index}
+                        className="px-6 py-3 text-left text-sm font-semibold text-gray-900 w-[155px] max-w-[155px]"
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {tasks?.map((task, index) => (
+                    <tr
+                      key={index}
+                      className={`${getRowBackgroundColor(
+                        task
+                      )} hover:bg-slate-300/50 transition-colors`}
+                    >
+                      {tasksHeader.map((header) =>
+                        React.cloneElement(
+                          renderCell(task, header) as React.ReactElement,
+                          {
+                            className:
+                              "px-6 py-4 text-sm text-gray-600 text-left w-[155px] max-w-[155px] truncate " +
+                              ((renderCell(task, header) as React.ReactElement)
+                                .props.className || ""),
+                          }
+                        )
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
       {/* User Profile Modal */}
       <UserProfileModal

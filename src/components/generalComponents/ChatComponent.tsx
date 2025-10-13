@@ -4,6 +4,7 @@ import sendIcon from "../../assets/icons/Send_icon.svg";
 import { Task, Message } from "../../types/task";
 import { User } from "../../types";
 import useAuthStore from "../../stores/authStore";
+import { formatDateForChat, isSameDay } from "../../utils/dateFormatter";
 
 interface ChatComponentProps {
   user: User | null;
@@ -134,8 +135,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
 
               // Check if we need to show a date separator
               const shouldShowDateSeparator =
-                !prevMessageDate ||
-                messageDate.toDateString() !== prevMessageDate.toDateString();
+                !prevMessageDate || !isSameDay(messageDate, prevMessageDate);
 
               return (
                 <div key={`${message._id || message.createdAt}-${index}`}>
@@ -143,12 +143,7 @@ const ChatComponent: React.FC<ChatComponentProps> = ({
                   {shouldShowDateSeparator && (
                     <div className="flex justify-center my-4">
                       <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
-                        {messageDate.toLocaleDateString("en-US", {
-                          weekday: "long",
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {formatDateForChat(messageDate)}
                       </div>
                     </div>
                   )}

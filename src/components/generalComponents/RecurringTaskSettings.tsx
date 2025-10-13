@@ -960,7 +960,7 @@ const RecurringTaskSettings: React.FC<RecurringTaskSettingsProps> = ({
                   <DatePicker
                     value={settings.startDate}
                     onChange={handleStartDateChange}
-                    format="ddd M/D/YYYY"
+                    format="DD/MM/YYYY"
                     className="w-40"
                     disabledDate={(current) => {
                       if (!current) return false;
@@ -992,7 +992,7 @@ const RecurringTaskSettings: React.FC<RecurringTaskSettingsProps> = ({
                             endDate: date || dayjs(),
                           }))
                         }
-                        format="ddd M/D/YYYY"
+                        format="DD/MM/YYYY"
                         className="w-40"
                         disabled={settings.endType !== "endBy"}
                         placeholder={

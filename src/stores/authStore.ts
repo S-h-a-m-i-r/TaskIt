@@ -5,14 +5,16 @@ import {
   registerUser,
   completeRegistration,
   loginWithGoogle,
+  uploadProfilePictureToS3,
+  updateUserProfileService,
 } from "../services/authService";
 import {
-	User,
-	LoginCredentials,
-	RegisterCredentials,
-	CompleteRegistrationData,
-	AuthResponse,
-} from '../types/auth';
+  User,
+  LoginCredentials,
+  RegisterCredentials,
+  CompleteRegistrationData,
+  AuthResponse,
+} from "../types/auth";
 
 interface AuthState {
   user: User | null;
@@ -28,12 +30,22 @@ interface AuthState {
   completeRegistration: (
     registrationData: CompleteRegistrationData
   ) => Promise<AuthResponse>;
+  updateProfilePicture: (file: File) => Promise<string>;
+  updateUserProfile: (userData: {
+    firstName?: string;
+    lastName?: string;
+    userName?: string;
+    email?: string;
+    phoneNumber?: string;
+    address?: string;
+    bio?: string;
+  }) => Promise<void>;
 }
 
 const useAuthStore = create(
   devtools(
     persist(
-      (set): AuthState => ({
+      (set, get): AuthState => ({
         user: null,
         token: null,
         isAuthenticated: false,
@@ -116,6 +128,60 @@ const useAuthStore = create(
             }
 
             return res;
+          } finally {
+            set({ loading: false });
+          }
+        },
+
+        updateProfilePicture: async (file: File) => {
+          set({ loading: true });
+          try {
+            const s3Key = await uploadProfilePictureToS3(file);
+            console.log("Profile picture S3 key received:", s3Key);
+
+            // Update user in store with the S3 key
+            set((state) => ({
+              user: state.user
+                ? { ...state.user, profilePicture: s3Key }
+                : null,
+            }));
+
+            return s3Key;
+          } catch (error) {
+            console.error("Profile picture update error:", error);
+            throw error;
+          } finally {
+            set({ loading: false });
+          }
+        },
+
+        updateUserProfile: async (userData) => {
+          set({ loading: true });
+          try {
+            const currentUser = get().user;
+            if (!currentUser) {
+              throw new Error("User not found");
+            }
+
+            const response = await updateUserProfileService(
+              currentUser._id,
+              userData
+            );
+            console.log("Profile update response:", response);
+
+            if (!response.success) {
+              throw new Error(response.message || "Failed to update profile");
+            }
+
+            // Update user in store with new data
+            set((state) => ({
+              user: state.user ? { ...state.user, ...response.data } : null,
+            }));
+
+            console.log("Profile updated successfully:", response.data);
+          } catch (error) {
+            console.error("Profile update error:", error);
+            throw error;
           } finally {
             set({ loading: false });
           }

@@ -143,3 +143,19 @@ export const removeFileFromTaskService = (
 		url: `/files/${taskId}/files/${fileKey}`,
 	});
 };
+
+// Get file download URL by fileKey (for presigned URL generation)
+export const getFileDownloadUrlByKey = async (
+	fileKey: string
+): Promise<{ success: boolean; downloadUrl: string; message?: string }> => {
+	try {
+		const response = await request<{ success: boolean; downloadUrl: string; message?: string }>({
+			method: 'get',
+			url: `/files/download/${fileKey}`,
+		});
+
+		return response;
+	} catch (error) {
+		throw new Error(`Failed to get download URL: ${error}`);
+	}
+};

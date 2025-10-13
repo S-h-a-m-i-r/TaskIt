@@ -5,119 +5,124 @@ import TaskTable from '../../../pages/admin/TaskTable';
 import { Link } from 'react-router-dom';
 import LoadingDots from '../../generalComponents/LoadingDots';
 import useTaskStore from '../../../stores/taskStore';
+import { formatDate } from "../../../utils/dateFormatter";
 
 interface InputChangeEvent {
-	target: {
-		value: string;
-	};
+  target: {
+    value: string;
+  };
 }
 
-const taskListheaders = ['Id', 'Type', 'Status', 'Date', 'Actions'];
+const taskListheaders = ["Id", "Type", "Status", "Date", "Actions"];
 
 const ManagerTasks = () => {
-	const [searchQuery, setSearchQuery] = useState('');
-	const [loading, setLoading] = useState(true);
-	const [activeTab, setActiveTab] = useState('All');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("All");
 
-	const { getTaskList, tasks: storeTasks } = useTaskStore() as any
+  const { getTaskList, tasks: storeTasks } = useTaskStore() as any;
 
-	const handleInputChange = (event: InputChangeEvent) => {
-		setSearchQuery(event.target.value);
-	};
+  const handleInputChange = (event: InputChangeEvent) => {
+    setSearchQuery(event.target.value);
+  };
 
+  // Fetch real tasks
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        await getTaskList();
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchTasks();
+  }, [getTaskList]);
 
-	// Fetch real tasks
-	useEffect(() => {
-		const fetchTasks = async () => {
-			try {
-				setLoading(true);
-				await getTaskList();
-			} catch (error) {
-				console.error('Failed to fetch tasks:', error);
-			} finally {
-				setLoading(false);
-			}
-		};
+  // Filter and transform tasks for display
+  const transformTasksForTable = useMemo(() => {
+    let filtered = storeTasks || [];
 
-		fetchTasks();
-	}, [getTaskList]);
+    // Apply status filter
+    if (activeTab === "Active") {
+      filtered = filtered?.filter(
+        (task: { status: string }) =>
+          task.status === "InProgress" || task.status === "Submitted"
+      );
+    } else if (activeTab === "Completed") {
+      filtered = filtered.filter(
+        (task: { status: string }) =>
+          task.status === "Completed" || task.status === "Task Closed"
+      );
+    }
 
-	// Filter and transform tasks for display
-	const transformTasksForTable = useMemo(() => {
-		let filtered = storeTasks || [];
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (task: { title: string; description: string; status: string }) =>
+          task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          task.status.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
 
-		// Apply status filter
-		if (activeTab === 'Active') {
-			filtered = filtered?.filter(
-				(task: { status: string; }) =>
-					task.status === 'InProgress' ||
-					task.status === 'Submitted'
-			);
-		} else if (activeTab === 'Completed') {
-			filtered = filtered.filter(
-				(task: { status: string; }) => task.status === 'Completed' || task.status === 'Task Closed'
-			);
-		}
+    return filtered.map(
+      (task: {
+        _id: any;
+        title: any;
+        status: any;
+        createdAt: string | number | Date;
+        dueDate: any;
+      }) => ({
+        id: task._id,
+        type: task.title || "Task",
+        status: task.status,
+        dueDate: formatDate(task.createdAt || task.dueDate),
+        actions: true, // Enable action buttons
+      })
+    );
+  }, [storeTasks, activeTab, searchQuery]);
 
-		// Apply search filter
-		if (searchQuery) {
-			filtered = filtered.filter(
-				(task: { title: string; description: string; status: string; }) =>
-					task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					task.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-					task.status.toLowerCase().includes(searchQuery.toLowerCase())
-			);
-		}
-
-		return filtered.map((task: { _id: any; title: any; status: any; createdAt: string | number | Date; dueDate: any; }) => ({
-			id: task._id,
-			type: task.title || 'Task',
-			status: task.status,
-			dueDate: task.createdAt
-				? new Date(task.createdAt).toLocaleDateString()
-				: task.dueDate || 'No due date',
-			actions: true, // Enable action buttons
-		}));
-	}, [storeTasks, activeTab, searchQuery]);
-
-	return (
-		<>
-			<div className="mt-10 w-full flex justify-between items-center mb-4">
-				<h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
-				<Link to="/createTask">
-					<ButtonComponent
-						title="New Task"
-						className="bg-primary-50 text-white text-[14px] px-4 py-2 rounded-md hover:bg-primary-200 w-[100px]"
-					/>
-				</Link>
-			</div>
-			<div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-full transition-all duration-1000">
-				<img src={search} alt="search" />
-				<input
-					type="text"
-					value={searchQuery}
-					onChange={handleInputChange}
-					className="border-none w-full outline-none"
-					placeholder="Search tasks..."
-					autoFocus
-				/>
-			</div>
-			<FilterSortInterface activeTab={activeTab} setActiveTab={setActiveTab} />
-			<div>
-				{loading ? (
-					<div className="flex items-center justify-center py-8">
-						<LoadingDots text="Loading tasks" />
-					</div>
-				) : (
-					<TaskTable
-						tasks={transformTasksForTable}
-						tasksHeader={taskListheaders}
-					/>
-				)}
-			</div>
-		</>
-	);
+  return (
+    <>
+      <div className="mt-10 w-full flex justify-between items-center mb-4">
+        <h1 className="text-[32px] font-bold text-primary-100"> Tasks </h1>
+        <Link to="/createTask">
+          <ButtonComponent
+            title="New Task"
+            className="bg-primary-50 text-white text-[14px] px-4 py-2 rounded-md hover:bg-primary-200 w-[100px]"
+          />
+        </Link>
+      </div>
+      <div className="border bg-white flex gap-2 items-center  border-gray-300 rounded-md px-3 py-3 w-full transition-all duration-1000">
+        <img src={search} alt="search" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleInputChange}
+          className="border-none w-full outline-none"
+          placeholder="Search tasks..."
+          autoFocus
+        />
+      </div>
+      <FilterSortInterface activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <LoadingDots text="Loading tasks" />
+          </div>
+        ) : (
+          <TaskTable
+            tasks={transformTasksForTable}
+            tasksHeader={taskListheaders}
+          />
+        )}
+      </div>
+    </>
+  );
 };
 
 export default ManagerTasks;
