@@ -1,15 +1,11 @@
-import backIcon from '../../assets/icons/ArrowLeft_icon.svg';
-import { useNavigate, useLocation } from "react-router-dom";
-import bell from "../../assets/icons/Bell_icon.svg";
-import ListItem from "../../components/generalComponents/ListItem";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useNotificationStore } from "../../stores/notificationStore";
-import { useEffect } from "react";
-import useAuthStore from "../../stores/authStore";
+import NotificationIcon from "../../assets/icons/Notification_icon.svg";
+import { ArrowLeft, Bell } from "lucide-react";
 
-const NotificationPage = () => {
+const AdminNotifications: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { user } = useAuthStore();
   const {
     notifications,
     unreadCount,
@@ -20,27 +16,8 @@ const NotificationPage = () => {
     fetchNotifications,
   } = useNotificationStore();
 
-  // Get the appropriate back route based on current location
-  const getBackRoute = () => {
-    const pathname = location.pathname;
-    if (pathname.includes("/admin/")) {
-      return "/admin";
-    } else if (pathname.includes("/manager/")) {
-      return "/manager";
-    } else if (pathname.includes("/basic/")) {
-      return "/basic";
-    } else {
-      return -1; // Go back to previous page
-    }
-  };
-
   const handleGoBack = () => {
-    const backRoute = getBackRoute();
-    if (typeof backRoute === "number") {
-      navigate(backRoute);
-    } else {
-      navigate(backRoute);
-    }
+    navigate("/admin");
   };
 
   // Fetch notifications when component mounts
@@ -70,26 +47,24 @@ const NotificationPage = () => {
     if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
     return date.toLocaleDateString();
   };
+
   return (
-    <div className="p-9 w-full flex flex-col gap-10">
+    <div className="p-6 w-full flex flex-col gap-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className="p-2 cursor-pointer bg-[#D1D5DB] rounded-full flex"
+        <div className="flex items-center gap-4">
+          <button
             onClick={handleGoBack}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
           >
-            <img src={backIcon} alt="back" />
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <div className="flex items-center gap-3">
+            <Bell className="w-6 h-6 text-blue-600" />
+            <h1 className="text-2xl font-bold text-gray-900">
+              Admin Notifications
+            </h1>
           </div>
-          <span className="font-semibold text-2xl">
-            {user?.role === "ADMIN"
-              ? "Admin "
-              : user?.role === "MANAGER"
-              ? "Manager "
-              : user?.role === "BASIC"
-              ? "Basic "
-              : ""}
-            Notifications
-          </span>
         </div>
 
         {/* Mark all as read button */}
@@ -98,11 +73,12 @@ const NotificationPage = () => {
             onClick={markAllAsRead}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
           >
-            Mark all as read
+            Mark all as read ({unreadCount})
           </button>
         )}
       </div>
-      <div className="bg-gray-100 w-full border border-1"></div>
+
+      <div className="bg-gray-200 w-full h-px"></div>
 
       {/* Error state */}
       {error && (
@@ -121,36 +97,61 @@ const NotificationPage = () => {
         /* Empty state */
         <div className="flex flex-col items-center justify-center py-12">
           <img
-            src={bell}
+            src={NotificationIcon}
             alt="No notifications"
             className="w-16 h-16 opacity-50 mb-4"
           />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No notifications yet
           </h3>
-          <p className="text-gray-500 text-center">
+          <p className="text-gray-500 text-center max-w-md">
             You'll see notifications here when tasks are created, assigned, or
             when you receive messages.
           </p>
         </div>
       ) : (
         /* Notifications list */
-        <div className="flex flex-col gap-4">
+        <div className="space-y-3">
           {notifications.map((notification) => (
             <div
               key={notification._id}
               onClick={() => handleNotificationClick(notification)}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+              className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 hover:shadow-md ${
                 !notification.seen
-                  ? "bg-blue-50 border-l-4 border-l-blue-500"
-                  : "bg-white"
+                  ? "bg-blue-50 border-blue-200 border-l-4 border-l-blue-500"
+                  : "bg-white border-gray-200"
               }`}
             >
-              <ListItem
-                icon={bell}
-                content={notification.message}
-                item={formatTime(notification.createdAt)}
-              />
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-gray-900 mb-1">
+                    {notification.message}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {formatTime(notification.createdAt)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!notification.seen && (
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  )}
+                  {notification.link && (
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -159,4 +160,4 @@ const NotificationPage = () => {
   );
 };
 
-export default NotificationPage
+export default AdminNotifications;

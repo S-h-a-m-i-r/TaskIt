@@ -14,3 +14,4 @@ export { default as DashboardCard } from './DashboardCard';
 export { default as PaymentForm } from './PaymentForm';
 export { default as InvoiceTemplate } from './InvoiceTemplate';
 export { default as AdminManagerSideBar } from './AdminManagerSideBar';
+export { default as GlobalNotificationListener } from "./GlobalNotificationListener";
